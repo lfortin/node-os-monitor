@@ -91,9 +91,13 @@ Osm.prototype.stop = function() {
 };
 
 Osm.prototype.setConfig = function(options) {
+  _.defaults(config, defaults);
+
   if(_.isObject(options)) {
-    return _.defaults(config, options, defaults);
+    return _.extend(config, options);
   }
+
+  return config;
 };
 
 // expose OS module
