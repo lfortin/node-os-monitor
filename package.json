@@ -1,7 +1,7 @@
 {
   "name": "os-monitor",
   "description": "simple OS monitoring for Node.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/lfortin/node-os-monitor",
   "repository": {
     "type": "git",
@@ -14,10 +14,10 @@
   },
   "main": "./os-monitor.js",
   "engines": {
-    "node": ">= 4.0.0"
+    "node": ">= 4.x"
   },
   "dependencies": {
-    "underscore": ">= 1.1.5"
+    "underscore": ">= 1.2.x"
   },
   "keywords": [
     "monitor",
