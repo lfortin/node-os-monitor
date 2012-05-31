@@ -1,0 +1,28 @@
+{
+  "name": "os-monitor",
+  "description": "simple OS monitoring for Node.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/lfortin/node-os-monitor",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lfortin/node-os-monitor.git"
+  },
+  "author": {
+    "name": "Laurent Fortin",
+    "email": "laurent.fortin@gmail.com",
+    "url": "http://lfortin.github.com"
+  },
+  "main": "./os-monitor.js",
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "dependencies": {
+    "underscore": ">= 1.1.5"
+  },
+  "keywords": [
+    "monitor",
+    "os"
+  ],
+  "devDependencies": {},
+  "optionalDependencies": {}
+}
