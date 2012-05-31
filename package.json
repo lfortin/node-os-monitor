@@ -14,7 +14,7 @@
   },
   "main": "./os-monitor.js",
   "engines": {
-    "node": ">=4.x"
+    "node": ">=0.4.x"
   },
   "dependencies": {
     "underscore": ">=1.2.x"
