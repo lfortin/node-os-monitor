@@ -47,3 +47,17 @@ osm.stop();
 
 
 ```
+
+## Event object
+
+There is some useful information in the provided event object:
+
+```
+{
+  type: 'monitor', // event type
+  loadavg: [ 0.4599609375, 0.53076171875, 0.4990234375 ], // load average values for 1, 5, 15 minutes
+  uptime: 1614056, // os uptime in seconds
+  freemem: 241262592, // free memory available in bytes
+  totalmem: 2147483648 // total memory available in bytes
+}
+```
