@@ -38,7 +38,7 @@ osm.on('monitor', function(event) {
 });
 
 // change config while monitor is running
-osm.setConfig({
+osm.config({
   freemem: 0.3 // alarm when 30% or less free memory available
 });
 

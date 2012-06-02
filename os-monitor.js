@@ -52,7 +52,7 @@ Osm.prototype.start = function(options) {
   var self = this;
 
   self.stop()
-      .setConfig(options);
+      .config(options);
 
   interval  = setInterval(function() {
     var info = {
@@ -90,7 +90,7 @@ Osm.prototype.stop = function() {
   return this;
 };
 
-Osm.prototype.setConfig = function(options) {
+Osm.prototype.config = function(options) {
   _.defaults(config, defaults);
 
   if(_.isObject(options)) {
@@ -99,6 +99,9 @@ Osm.prototype.setConfig = function(options) {
 
   return config;
 };
+
+// deprecated stuff
+Osm.prototype.setConfig = Osm.prototype.config;
 
 // expose OS module
 Osm.prototype.os = os;
