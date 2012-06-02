@@ -1,6 +1,6 @@
 # os-monitor
 
-A very simple monitor around the built-in os module in Node.js.
+A very simple monitor around the built-in `os` module in Node.js.
 
 Allows you to observe some OS parameters, such as free memory available or load average.
 
@@ -61,3 +61,16 @@ There is some useful information in the provided event object:
   totalmem: 2147483648 // total memory available in bytes
 }
 ```
+
+## Node.js os module
+
+The node `os` built-in module is also available from the os-monitor object:
+
+```
+var osm = require('os-monitor');
+
+var type = osm.os.type();
+var cpus = osm.os.cpus();
+```
+
+Documentation for the `os` module is available [here](http://nodejs.org/api/os.html).
