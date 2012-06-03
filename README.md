@@ -5,6 +5,11 @@ A very simple monitor around the built-in `os` module in Node.js.
 Allows you to observe some OS parameters, such as free memory available or load average.
 
 
+## Installation
+
+    npm install os-monitor
+
+
 # Synopsis
 
 ```javascript
