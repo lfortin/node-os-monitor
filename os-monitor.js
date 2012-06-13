@@ -79,6 +79,8 @@ Osm.prototype.start = function(options) {
     }
   }, config.delay);
 
+  self.emit('start', {type: 'start'});
+
   return self;
 };
 
@@ -87,6 +89,8 @@ Osm.prototype.stop = function() {
 
   clearInterval(interval);
 
+  this.emit('stop', {type: 'stop'});
+
   return this;
 };
 
@@ -94,7 +98,8 @@ Osm.prototype.config = function(options) {
   _.defaults(config, defaults);
 
   if(_.isObject(options)) {
-    return _.extend(config, options);
+    _.extend(config, options);
+    this.emit('config', {type: 'config', options: options});
   }
 
   return config;
