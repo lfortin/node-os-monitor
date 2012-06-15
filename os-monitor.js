@@ -1,6 +1,6 @@
 // OS Monitoring for Node.js
 
-// Copyright (c) 2009-2012 Laurent Fortin
+// Copyright (c) 2012 Laurent Fortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
