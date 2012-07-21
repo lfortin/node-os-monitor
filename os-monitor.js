@@ -35,6 +35,7 @@ var util     = require('util'),
       critical15: critical,
       freemem   : 0
     },
+    running  = false,
     config   = {};
 
 // constructor
@@ -79,7 +80,10 @@ Osm.prototype.start = function(options) {
     }
   }, config.delay);
 
-  self.emit('start', {type: 'start'});
+  if(!self.isRunning()) {
+    running = true;
+    self.emit('start', {type: 'start'});
+  }
 
   return self;
 };
@@ -89,7 +93,10 @@ Osm.prototype.stop = function() {
 
   clearInterval(interval);
 
-  this.emit('stop', {type: 'stop'});
+  if(this.isRunning()) {
+    running = false;
+    this.emit('stop', {type: 'stop'});
+  }
 
   return this;
 };
@@ -103,6 +110,10 @@ Osm.prototype.config = function(options) {
   }
 
   return config;
+};
+
+Osm.prototype.isRunning = function() {
+  return !!running;
 };
 
 // deprecated stuff
