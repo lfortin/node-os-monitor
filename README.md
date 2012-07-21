@@ -50,6 +50,9 @@ osm.config({
 // stop monitor
 osm.stop();
 
+// check either monitor is running or not
+osm.isRunning(); // -> true / false
+
 
 ```
 
@@ -66,6 +69,8 @@ There is some useful information in the provided event object:
   totalmem: 2147483648 // total memory available in bytes
 }
 ```
+All supported events are: 'monitor', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config'.
+
 
 ## Node.js os module
 
