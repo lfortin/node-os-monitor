@@ -48,6 +48,9 @@ var Osm = function() {
 util.inherits(Osm, events.EventEmitter);
 
 
+Osm.prototype.version = '0.0.6';
+
+
 Osm.prototype.start = function(options) {
 
   var self = this;
