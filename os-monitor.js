@@ -106,7 +106,7 @@ Osm.prototype.config = function(options) {
 
   if(_.isObject(options)) {
     _.extend(config, options);
-    this.emit('config', {type: 'config', options: options});
+    this.emit('config', {type: 'config', options: _.clone(options)});
   }
 
   return config;
