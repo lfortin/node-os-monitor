@@ -48,7 +48,7 @@ var Osm = function() {
 util.inherits(Osm, events.EventEmitter);
 
 
-Osm.prototype.version = '0.0.6';
+Osm.prototype.version = '0.0.7';
 
 
 Osm.prototype.start = function(options) {
@@ -124,6 +124,9 @@ Osm.prototype.setConfig = Osm.prototype.config;
 
 // expose OS module
 Osm.prototype.os = os;
+
+// expose Underscore
+Osm.prototype._ = _;
 
 module.exports = new Osm();
 
