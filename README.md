@@ -72,6 +72,9 @@ There is some useful information in the provided event object:
 }
 ```
 All supported events are: 'monitor', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config'.
+<em>Note that `os-monitor` is an instance of `EventEmitter`</em>.
+
+Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Events")
 
 
 ## Node.js os module
