@@ -48,7 +48,7 @@ var Osm = function() {
 util.inherits(Osm, events.EventEmitter);
 
 
-Osm.prototype.version = '0.0.7';
+Osm.prototype.version = '0.0.8';
 
 
 Osm.prototype.start = function(options) {
@@ -118,6 +118,10 @@ Osm.prototype.config = function(options) {
 Osm.prototype.isRunning = function() {
   return !!running;
 };
+
+Osm.prototype.throttle = _.wrap(Osm.prototype.on, function(fn, event, handler, wait) {
+  return fn.call(this, event, _.throttle(handler, wait));
+});
 
 // deprecated stuff
 Osm.prototype.setConfig = Osm.prototype.config;
