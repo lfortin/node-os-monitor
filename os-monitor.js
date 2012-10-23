@@ -24,7 +24,7 @@
 
 var util     = require('util'),
     os       = require('os'),
-    events   = require('events'),
+    through  = require('through'),
     _        = require('underscore'),
     interval = undefined,
     critical = os.cpus().length,
@@ -38,20 +38,25 @@ var util     = require('util'),
     running  = false,
     config   = {};
 
-// constructor
-var Osm = function() {
-  events.EventEmitter.call(this);
-  return this;
+// main object
+var Osm = through(function write(data) {
+                    this.emit('data', data);
+                  },
+                  function end() {
+                    this.emit('end');
+                  });
+
+Osm.version = '0.0.10';
+
+
+Osm.sendEvent = function(event, data) {
+  // for EventEmitter
+  this.emit(event, data);
+  // for readable Stream
+  this.write(JSON.stringify(data));
 };
 
-// get EventEmitter class properties
-util.inherits(Osm, events.EventEmitter);
-
-
-Osm.prototype.version = '0.0.9';
-
-
-Osm.prototype.start = function(options) {
+Osm.start = function(options) {
 
   var self = this;
 
@@ -67,59 +72,58 @@ Osm.prototype.start = function(options) {
     },
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
-    self.emit('monitor', _.extend({type: 'monitor'}, info));
+    self.sendEvent('monitor', _.extend({type: 'monitor'}, info));
 
     if(info.loadavg[0] > config.critical1) {
-      self.emit('loadavg1', _.extend({type: 'loadavg1'}, info));
+      self.sendEvent('loadavg1', _.extend({type: 'loadavg1'}, info));
     }
     if(info.loadavg[1] > config.critical5) {
-      self.emit('loadavg5', _.extend({type: 'loadavg5'}, info));
+      self.sendEvent('loadavg5', _.extend({type: 'loadavg5'}, info));
     }
     if(info.loadavg[2] > config.critical15) {
-      self.emit('loadavg15', _.extend({type: 'loadavg15'}, info));
+      self.sendEvent('loadavg15', _.extend({type: 'loadavg15'}, info));
     }
     if(info.freemem < freemem) {
-      self.emit('freemem', _.extend({type: 'freemem'}, info));
+      self.sendEvent('freemem', _.extend({type: 'freemem'}, info));
     }
   }, config.delay);
 
   if(!self.isRunning()) {
     running = true;
-    self.emit('start', {type: 'start'});
+    self.sendEvent('start', {type: 'start'});
   }
 
   return self;
 };
 
-
-Osm.prototype.stop = function() {
+Osm.stop = function() {
 
   clearInterval(interval);
 
   if(this.isRunning()) {
     running = false;
-    this.emit('stop', {type: 'stop'});
+    this.sendEvent('stop', {type: 'stop'});
   }
 
   return this;
 };
 
-Osm.prototype.config = function(options) {
+Osm.config = function(options) {
   _.defaults(config, defaults);
 
   if(_.isObject(options)) {
     _.extend(config, options);
-    this.emit('config', {type: 'config', options: _.clone(options)});
+    this.sendEvent('config', {type: 'config', options: _.clone(options)});
   }
 
   return config;
 };
 
-Osm.prototype.isRunning = function() {
+Osm.isRunning = function() {
   return !!running;
 };
 
-Osm.prototype.throttle = function(event, handler, wait) {
+Osm.throttle = function(event, handler, wait) {
   var self     = this,
       _handler = _.wrap(handler, function(fn) {
                    if(self.isRunning()) {
@@ -130,13 +134,13 @@ Osm.prototype.throttle = function(event, handler, wait) {
 };
 
 // deprecated stuff
-Osm.prototype.setConfig = Osm.prototype.config;
+Osm.setConfig = Osm.config;
 
 // expose OS module
-Osm.prototype.os = os;
+Osm.os = os;
 
 // expose Underscore
-Osm.prototype._ = _;
+Osm._ = _;
 
-module.exports = new Osm();
+module.exports = Osm;
 
