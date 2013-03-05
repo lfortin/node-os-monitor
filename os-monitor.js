@@ -24,6 +24,7 @@
 
 var util     = require('util'),
     os       = require('os'),
+    events   = require('events'),
     stream   = require('stream'),
     _        = require('underscore'),
     interval = undefined,
@@ -39,9 +40,14 @@ var util     = require('util'),
     config   = {};
 
 // main object
-var Osm = new stream.Readable();
+var Osm;
+if(stream.Readable) {
+  Osm = new stream.Readable();
+} else {
+  Osm = new events.EventEmitter();
+}
 
-Osm.version = '0.1.0';
+Osm.version = '0.1.1';
 
 
 // readable stream implementation requirement
