@@ -1,6 +1,6 @@
 // OS Monitoring for Node.js
 
-// Copyright (c) 2012 Laurent Fortin
+// Copyright (c) 2012-2013 Laurent Fortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,7 +24,7 @@
 
 var util     = require('util'),
     os       = require('os'),
-    through  = require('through'),
+    stream   = require('stream'),
     _        = require('underscore'),
     interval = undefined,
     critical = os.cpus().length,
@@ -39,21 +39,22 @@ var util     = require('util'),
     config   = {};
 
 // main object
-var Osm = through(function write(data) {
-                    this.emit('data', data);
-                  },
-                  function end() {
-                    this.emit('end');
-                  });
+var Osm = new stream.Readable();
 
-Osm.version = '0.0.10';
+Osm.version = '0.1.0';
 
+
+// readable stream implementation requirement
+Osm._read = function(size, cb) {
+};
 
 Osm.sendEvent = function(event, data) {
   // for EventEmitter
   this.emit(event, data);
   // for readable Stream
-  this.write(JSON.stringify(data));
+  if(config.stream) {
+    this.push(new Buffer(JSON.stringify(data)));
+  }
 };
 
 Osm.start = function(options) {
