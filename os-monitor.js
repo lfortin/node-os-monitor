@@ -60,7 +60,8 @@ Osm.sendEvent = function(event, data) {
   this.emit(event, data);
   // for readable Stream
   if(config.stream) {
-    this.push(new Buffer(JSON.stringify(data)));
+    var prettyJSON = "\n" + JSON.stringify(data, null, 2);
+    this.push(new Buffer(prettyJSON));
   }
 };
 
