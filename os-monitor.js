@@ -34,7 +34,8 @@ var util     = require('util'),
       critical1 : critical,
       critical5 : critical,
       critical15: critical,
-      freemem   : 0
+      freemem   : 0,
+      uptime    : 0
     },
     running  = false,
     config   = {};
@@ -92,6 +93,9 @@ Osm.start = function(options) {
     }
     if(info.freemem < freemem) {
       self.sendEvent('freemem', _.extend({type: 'freemem'}, info));
+    }
+    if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
+      self.sendEvent('uptime', _.extend({type: 'uptime'}, info));
     }
   }, config.delay);
 
