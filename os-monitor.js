@@ -48,7 +48,7 @@ if(stream.Readable) {
   Osm = new events.EventEmitter();
 }
 
-Osm.version = '0.1.1';
+Osm.version = '0.1.2';
 
 
 // readable stream implementation requirement
