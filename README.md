@@ -22,6 +22,7 @@ osm.start();
 // more advanced usage with configs.
 osm.start({ delay: 3000 // interval in ms between monitor cycles
           , freemem: 1000000000 // amount of memory in bytes under which event 'freemem' is triggered (can also be a percentage of total mem)
+          , uptime: 1000000 // number of seconds over which event 'uptime' is triggered
           , critical1: 0.7 // value of 1 minute load average over which event 'loadavg1' is triggered
           , critical5: 0.7 // value of 5 minutes load average over which event 'loadavg5' is triggered
           , critical15: 0.7 // value of 15 minutes load average over which event 'loadavg15' is triggered
@@ -78,11 +79,21 @@ There is some useful information in the provided event object:
   totalmem: 2147483648 // total memory available in bytes
 }
 ```
-All supported events are: 'monitor', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config'.
+All supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config'.
 <em>Note that `os-monitor` is an instance of `EventEmitter`</em>.
 
 Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Events")
 
+
+## Using the monitor as a Readable Stream
+
+`os-monitor` can also be used as a [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readable "Readable Stream").
+
+```
+osm.start({ stream: true });
+
+osm.pipe(process.stdout);
+```
 
 ## Node.js os module
 
