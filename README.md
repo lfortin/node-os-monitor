@@ -92,7 +92,16 @@ Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Even
 ```
 osm.start({ stream: true });
 
+
+// write to STDOUT
 osm.pipe(process.stdout);
+
+
+// write to a file
+var fs = require('fs'),
+    logFile = fs.createWriteStream('/tmp/log.txt', {flags: 'a'});
+
+osm.pipe(logFile);
 ```
 
 ## Node.js os module
