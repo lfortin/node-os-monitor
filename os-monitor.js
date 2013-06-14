@@ -81,8 +81,9 @@ Osm.start = function(options) {
     },
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
-    self.sendEvent('monitor', _.extend({type: 'monitor'}, info));
-
+    if(!config.silent) {
+      self.sendEvent('monitor', _.extend({type: 'monitor'}, info));
+    }
     if(info.loadavg[0] > config.critical1) {
       self.sendEvent('loadavg1', _.extend({type: 'loadavg1'}, info));
     }
