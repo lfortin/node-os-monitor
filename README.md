@@ -26,6 +26,8 @@ osm.start({ delay: 3000 // interval in ms between monitor cycles
           , critical1: 0.7 // value of 1 minute load average over which event 'loadavg1' is triggered
           , critical5: 0.7 // value of 5 minutes load average over which event 'loadavg5' is triggered
           , critical15: 0.7 // value of 15 minutes load average over which event 'loadavg15' is triggered
+          , silent: false // set true to mute event 'monitor'
+          , stream: false // set true to enable the monitor as a Readable Stream
           });
 
 
