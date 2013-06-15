@@ -17,7 +17,7 @@
     "node": ">=0.9.6"
   },
   "dependencies": {
-    "underscore": ">=1.2.x"
+    "underscore": "~1.4.4"
   },
   "keywords": [
     "monitor",
