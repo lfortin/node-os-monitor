@@ -35,7 +35,9 @@ var util     = require('util'),
       critical5 : critical,
       critical15: critical,
       freemem   : 0,
-      uptime    : 0
+      uptime    : 0,
+      silent    : false,
+      stream    : false
     },
     running  = false,
     config   = {};
