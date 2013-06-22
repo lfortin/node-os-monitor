@@ -147,7 +147,7 @@ Osm.throttle = function(event, handler, wait) {
 };
 
 // deprecated stuff
-Osm.setConfig = Osm.config;
+Osm.setConfig = util.deprecate(Osm.config);
 
 // expose OS module
 Osm.os = os;
