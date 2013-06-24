@@ -3,7 +3,7 @@
 var assert = require('assert'),
     domain = require('domain'),
     os = require('os'),
-    monitor = require('os-monitor');
+    monitor = require('./os-monitor');
 
 function getEOL(n) {
   var lines = [];
