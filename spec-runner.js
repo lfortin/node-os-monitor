@@ -44,8 +44,10 @@ tester.run(function() {
 
   // config
   monitor.config({test: 123});
-  assert.deepEqual(monitor.config().test, 123, "same config expected");
-
+  assert.deepEqual(monitor.config().test, 123, "config() : same config expected");
+  monitor.start({test: 456});
+  assert.deepEqual(monitor.config().test, 456, "start() : same config expected");
+  monitor.stop();
 
   process.stdout.write("config OK" + getEOL(1));
 
@@ -88,5 +90,23 @@ tester.run(function() {
   process.stdout.write("events OK" + getEOL(1));
 
   monitor.removeAllListeners();
+
+
+  // readable stream interface
+  monitor.config({stream: true});
+  monitor.sendEvent('monitor', {type: 'monitor'});
+  assert.ok(monitor.read(), "output expected from readable stream interface");
+
+  process.stdout.write("readable stream interface OK" + getEOL(1));
+
+
+  // isRunning() test
+  assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
+  monitor.start();
+  assert.deepEqual(monitor.isRunning(), true, "isRunning() === true expected");
+  monitor.stop();
+  assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
+
+  process.stdout.write("isRunning() test OK" + getEOL(1));
 });
 
