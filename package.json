@@ -19,6 +19,9 @@
   "dependencies": {
     "underscore": "~1.4.4"
   },
+  "scripts": {
+    "test": "node spec-runner.js"
+  },
   "keywords": [
     "monitor",
     "os"
