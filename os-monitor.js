@@ -27,7 +27,6 @@ var util     = require('util'),
     events   = require('events'),
     stream   = require('stream'),
     _        = require('underscore'),
-    interval = undefined,
     critical = os.cpus().length,
     defaults = {
       delay     : 3000,
@@ -38,128 +37,145 @@ var util     = require('util'),
       uptime    : 0,
       silent    : false,
       stream    : false
-    },
-    running  = false,
-    streamBuffering = true,
-    config   = {};
+    };
 
-// main object
-var Osm;
+// constructor
+var Monitor = function() {
+  if(stream.Readable) {
+    stream.Readable.call(this, {highWaterMark: 102400});
+  } else {
+    events.EventEmitter.call(this);
+  }
+
+  this._monitorState = {
+    running: false,
+    streamBuffering: true,
+    interval: undefined,
+    config: {}
+  };
+};
+
 if(stream.Readable) {
-  Osm = new stream.Readable({highWaterMark: 102400});
+  util.inherits(Monitor, stream.Readable);
 } else {
-  Osm = new events.EventEmitter();
+  util.inherits(Monitor, events.EventEmitter);
 }
 
-Osm.version = '0.1.4';
+Monitor.prototype.version = '0.1.4';
 
 
 // readable stream implementation requirement
-Osm._read = function(size, cb) {
-  streamBuffering = true;
+Monitor.prototype._read = function(size, cb) {
+  this._monitorState.streamBuffering = true;
 };
 
-Osm.sendEvent = function(event, data) {
+Monitor.prototype.sendEvent = function(event, data) {
   // for EventEmitter
   this.emit(event, data);
   // for readable Stream
-  if(config.stream && streamBuffering) {
+  if(this._monitorState.config.stream && this._monitorState.streamBuffering) {
     var prettyJSON = os.EOL + JSON.stringify(data, null, 2);
     if( !this.push(new Buffer(prettyJSON)) ) {
-      streamBuffering = false;
+      this._monitorState.streamBuffering = false;
     }
   }
 };
 
-Osm.start = function(options) {
+Monitor.prototype.start = function(options) {
 
   var self = this;
 
   self.stop()
       .config(options);
 
-  interval  = setInterval(function() {
+  this._monitorState.interval  = setInterval(function() {
     var info = {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
       totalmem : os.totalmem()
     },
-    freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
+    freemem  = (self._monitorState.config.freemem < 1) ? self._monitorState.config.freemem * info.totalmem : self._monitorState.config.freemem;
 
-    if(!config.silent) {
+    if(!self._monitorState.config.silent) {
       self.sendEvent('monitor', _.extend({type: 'monitor'}, info));
     }
-    if(info.loadavg[0] > config.critical1) {
+    if(info.loadavg[0] > self._monitorState.config.critical1) {
       self.sendEvent('loadavg1', _.extend({type: 'loadavg1'}, info));
     }
-    if(info.loadavg[1] > config.critical5) {
+    if(info.loadavg[1] > self._monitorState.config.critical5) {
       self.sendEvent('loadavg5', _.extend({type: 'loadavg5'}, info));
     }
-    if(info.loadavg[2] > config.critical15) {
+    if(info.loadavg[2] > self._monitorState.config.critical15) {
       self.sendEvent('loadavg15', _.extend({type: 'loadavg15'}, info));
     }
     if(info.freemem < freemem) {
       self.sendEvent('freemem', _.extend({type: 'freemem'}, info));
     }
-    if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
+    if(Number(self._monitorState.config.uptime) && info.uptime > Number(self._monitorState.config.uptime)) {
       self.sendEvent('uptime', _.extend({type: 'uptime'}, info));
     }
-  }, config.delay);
+  }, this._monitorState.config.delay);
 
   if(!self.isRunning()) {
-    running = true;
+    this._monitorState.running = true;
     self.sendEvent('start', {type: 'start'});
   }
 
   return self;
 };
 
-Osm.stop = function() {
+Monitor.prototype.stop = function() {
 
-  clearInterval(interval);
+  clearInterval(this._monitorState.interval);
 
   if(this.isRunning()) {
-    running = false;
+    this._monitorState.running = false;
     this.sendEvent('stop', {type: 'stop'});
   }
 
   return this;
 };
 
-Osm.config = function(options) {
-  _.defaults(config, defaults);
+Monitor.prototype.config = function(options) {
+  _.defaults(this._monitorState.config, defaults);
 
   if(_.isObject(options)) {
-    _.extend(config, options);
+    _.extend(this._monitorState.config, options);
     this.sendEvent('config', {type: 'config', options: _.clone(options)});
   }
 
-  return config;
+  return this._monitorState.config;
 };
 
-Osm.isRunning = function() {
-  return !!running;
+Monitor.prototype.isRunning = function() {
+  return !!this._monitorState.running;
 };
 
-Osm.throttle = function(event, handler, wait) {
+Monitor.prototype.throttle = function(event, handler, wait) {
   var self     = this,
       _handler = _.wrap(handler, function(fn) {
                    if(self.isRunning()) {
                      fn.apply(this, _.toArray(arguments).slice(1));
                    }
                  });
-  return self.on.call(self, event, _.throttle(_handler, wait || config.throttle));
+  return self.on.call(self, event, _.throttle(_handler, wait || this._monitorState.config.throttle));
 };
 
 // deprecated stuff
-Osm.setConfig = util.deprecate(Osm.config);
+Monitor.prototype.setConfig = util.deprecate(Monitor.prototype.config);
 
 // expose OS module
-Osm.os = os;
+Monitor.prototype.os = os;
 
 // expose Underscore
-Osm._ = _;
+Monitor.prototype._ = _;
+
+// create object
+var Osm = new Monitor();
+
+// expose main class
+Osm.Monitor = Monitor;
 
 module.exports = Osm;
 
