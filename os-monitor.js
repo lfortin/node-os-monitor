@@ -51,7 +51,7 @@ var Monitor = function() {
     running: false,
     streamBuffering: true,
     interval: undefined,
-    config: {}
+    config: _.clone(defaults)
   };
 };
 
@@ -138,7 +138,6 @@ Monitor.prototype.stop = function() {
 };
 
 Monitor.prototype.config = function(options) {
-  _.defaults(this._monitorState.config, defaults);
 
   if(_.isObject(options)) {
     _.extend(this._monitorState.config, options);
