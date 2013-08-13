@@ -40,12 +40,13 @@ var util     = require('util'),
       stream    : false
     },
     running  = false,
+    streamBuffering = true,
     config   = {};
 
 // main object
 var Osm;
 if(stream.Readable) {
-  Osm = new stream.Readable();
+  Osm = new stream.Readable({highWaterMark: 102400});
 } else {
   Osm = new events.EventEmitter();
 }
@@ -55,15 +56,18 @@ Osm.version = '0.1.4';
 
 // readable stream implementation requirement
 Osm._read = function(size, cb) {
+  streamBuffering = true;
 };
 
 Osm.sendEvent = function(event, data) {
   // for EventEmitter
   this.emit(event, data);
   // for readable Stream
-  if(config.stream) {
+  if(config.stream && streamBuffering) {
     var prettyJSON = os.EOL + JSON.stringify(data, null, 2);
-    this.push(new Buffer(prettyJSON));
+    if( !this.push(new Buffer(prettyJSON)) ) {
+      streamBuffering = false;
+    }
   }
 };
 
