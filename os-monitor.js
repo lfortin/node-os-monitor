@@ -95,7 +95,7 @@ Monitor.prototype.start = function(options) {
       freemem  : os.freemem(),
       totalmem : os.totalmem()
     },
-    config = this._monitorState.config,
+    config = self._monitorState.config,
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
