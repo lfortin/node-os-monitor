@@ -95,24 +95,25 @@ Monitor.prototype.start = function(options) {
       freemem  : os.freemem(),
       totalmem : os.totalmem()
     },
-    freemem  = (self._monitorState.config.freemem < 1) ? self._monitorState.config.freemem * info.totalmem : self._monitorState.config.freemem;
+    config = this._monitorState.config,
+    freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
-    if(!self._monitorState.config.silent) {
+    if(!config.silent) {
       self.sendEvent('monitor', _.extend({type: 'monitor'}, info));
     }
-    if(info.loadavg[0] > self._monitorState.config.critical1) {
+    if(info.loadavg[0] > config.critical1) {
       self.sendEvent('loadavg1', _.extend({type: 'loadavg1'}, info));
     }
-    if(info.loadavg[1] > self._monitorState.config.critical5) {
+    if(info.loadavg[1] > config.critical5) {
       self.sendEvent('loadavg5', _.extend({type: 'loadavg5'}, info));
     }
-    if(info.loadavg[2] > self._monitorState.config.critical15) {
+    if(info.loadavg[2] > config.critical15) {
       self.sendEvent('loadavg15', _.extend({type: 'loadavg15'}, info));
     }
     if(info.freemem < freemem) {
       self.sendEvent('freemem', _.extend({type: 'freemem'}, info));
     }
-    if(Number(self._monitorState.config.uptime) && info.uptime > Number(self._monitorState.config.uptime)) {
+    if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
       self.sendEvent('uptime', _.extend({type: 'uptime'}, info));
     }
   }, this._monitorState.config.delay);
