@@ -34,6 +34,7 @@ tester.run(function() {
   assert.ok(monitor.config, ".config() method expected");
   assert.ok(monitor.isRunning, ".isRunning() method expected");
   assert.ok(monitor.throttle, ".throttle() method expected");
+  assert.ok(monitor.Monitor, "Monitor class expected");
   assert.ok(monitor.os, "os object reference expected");
   assert.ok(monitor._, "_ object reference expected");
   //assert.ok(monitor.whetever, "whatever expected");
