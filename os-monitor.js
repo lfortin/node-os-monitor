@@ -65,7 +65,7 @@ Monitor.prototype.version = '0.1.4';
 
 
 // readable stream implementation requirement
-Monitor.prototype._read = function(size, cb) {
+Monitor.prototype._read = function() {
   this._monitorState.streamBuffering = true;
 };
 
