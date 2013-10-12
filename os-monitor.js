@@ -162,6 +162,45 @@ Monitor.prototype.throttle = function(event, handler, wait) {
   return self.on.call(self, event, _.throttle(_handler, wait || this._monitorState.config.throttle));
 };
 
+
+/*
+ * convenience methods
+ */
+
+Monitor.prototype._sanitizeNumber = function(n) {
+  if(!_.isNumber(n)) {
+    throw new Error("Number expected");
+  }
+  if(!n || n < 0) {
+    throw new Error("Number must be greater than 0");
+  }
+  // Math.pow(2, 31);
+  if(n >= 2147483648) {
+    throw new Error("Number must be smaller than 2147483648");
+  }
+};
+
+Monitor.prototype.seconds = function(n) {
+  this._sanitizeNumber(n);
+  return n * 1000;
+};
+
+Monitor.prototype.minutes = function(n) {
+  this._sanitizeNumber(n);
+  return n * this.seconds(60);
+};
+
+Monitor.prototype.hours = function(n) {
+  this._sanitizeNumber(n);
+  return n * this.minutes(60);
+};
+
+Monitor.prototype.days = function(n) {
+  this._sanitizeNumber(n);
+  return n * this.hours(24);
+};
+
+
 // deprecated stuff
 Monitor.prototype.setConfig = util.deprecate(Monitor.prototype.config);
 

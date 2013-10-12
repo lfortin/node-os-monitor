@@ -34,6 +34,10 @@ tester.run(function() {
   assert.ok(monitor.config, ".config() method expected");
   assert.ok(monitor.isRunning, ".isRunning() method expected");
   assert.ok(monitor.throttle, ".throttle() method expected");
+  assert.ok(monitor.seconds, ".seconds() method expected");
+  assert.ok(monitor.minutes, ".minutes() method expected");
+  assert.ok(monitor.hours, ".hours() method expected");
+  assert.ok(monitor.days, ".days() method expected");
   assert.ok(monitor.Monitor, "Monitor class expected");
   assert.ok(monitor.os, "os object reference expected");
   assert.ok(monitor._, "_ object reference expected");

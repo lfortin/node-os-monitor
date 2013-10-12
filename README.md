@@ -52,7 +52,7 @@ osm.throttle('loadavg5', function(event) {
   // whatever is done here will not happen
   // more than once every 5 minutes(300000 ms)
 
-}, 300000);
+}, osm.minutes(5));
 
 // change config while monitor is running
 osm.config({
