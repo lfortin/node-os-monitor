@@ -178,26 +178,23 @@ Monitor.prototype._sanitizeNumber = function(n) {
   if(n >= 2147483648) {
     throw new Error("Number must be smaller than 2147483648");
   }
+  return n;
 };
 
 Monitor.prototype.seconds = function(n) {
-  this._sanitizeNumber(n);
-  return n * 1000;
+  return this._sanitizeNumber(n * 1000);
 };
 
 Monitor.prototype.minutes = function(n) {
-  this._sanitizeNumber(n);
-  return n * this.seconds(60);
+  return this._sanitizeNumber(n * this.seconds(60));
 };
 
 Monitor.prototype.hours = function(n) {
-  this._sanitizeNumber(n);
-  return n * this.minutes(60);
+  return this._sanitizeNumber(n * this.minutes(60));
 };
 
 Monitor.prototype.days = function(n) {
-  this._sanitizeNumber(n);
-  return n * this.hours(24);
+  return this._sanitizeNumber(n * this.hours(24));
 };
 
 
