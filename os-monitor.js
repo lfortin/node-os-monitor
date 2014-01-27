@@ -36,7 +36,8 @@ var util     = require('util'),
       freemem   : 0,
       uptime    : 0,
       silent    : false,
-      stream    : false
+      stream    : false,
+      immediate : false
     };
 
 // constructor
@@ -88,7 +89,7 @@ Monitor.prototype.start = function(options) {
   self.stop()
       .config(options);
 
-  this._monitorState.interval  = setInterval(function() {
+  var cycle = function() {
     var info = {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
@@ -116,7 +117,12 @@ Monitor.prototype.start = function(options) {
     if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
       self.sendEvent('uptime', _.extend({type: 'uptime'}, info));
     }
-  }, this._monitorState.config.delay);
+  };
+  
+  if(self.config().immediate) {
+    process.nextTick(cycle);
+  }
+  this._monitorState.interval  = setInterval(cycle, self.config().delay);
 
   if(!self.isRunning()) {
     this._monitorState.running = true;
