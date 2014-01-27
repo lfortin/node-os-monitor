@@ -96,7 +96,7 @@ Monitor.prototype.start = function(options) {
       freemem  : os.freemem(),
       totalmem : os.totalmem()
     },
-    config = self._monitorState.config,
+    config = self.config(),
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
@@ -122,10 +122,10 @@ Monitor.prototype.start = function(options) {
   if(self.config().immediate) {
     process.nextTick(cycle);
   }
-  this._monitorState.interval  = setInterval(cycle, self.config().delay);
+  self._monitorState.interval = setInterval(cycle, self.config().delay);
 
   if(!self.isRunning()) {
-    this._monitorState.running = true;
+    self._monitorState.running = true;
     self.sendEvent('start', {type: 'start'});
   }
 
@@ -165,7 +165,7 @@ Monitor.prototype.throttle = function(event, handler, wait) {
                      fn.apply(this, _.toArray(arguments).slice(1));
                    }
                  });
-  return self.on.call(self, event, _.throttle(_handler, wait || this._monitorState.config.throttle));
+  return self.on.call(self, event, _.throttle(_handler, wait || self.config().throttle));
 };
 
 
