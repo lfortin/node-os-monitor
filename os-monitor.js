@@ -74,7 +74,7 @@ Monitor.prototype.sendEvent = function(event, data) {
   // for EventEmitter
   this.emit(event, data);
   // for readable Stream
-  if(this._monitorState.config.stream && this._monitorState.streamBuffering) {
+  if(this.config().stream && this._monitorState.streamBuffering) {
     var prettyJSON = os.EOL + JSON.stringify(data, null, 2);
     if( !this.push(new Buffer(prettyJSON)) ) {
       this._monitorState.streamBuffering = false;
