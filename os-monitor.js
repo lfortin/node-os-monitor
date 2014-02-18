@@ -94,7 +94,8 @@ Monitor.prototype.start = function(options) {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
-      totalmem : os.totalmem()
+      totalmem : os.totalmem(),
+      timestamp: Math.floor(new Date().getTime() / 1000)
     },
     config = self.config(),
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
