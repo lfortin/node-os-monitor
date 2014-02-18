@@ -1,6 +1,6 @@
 // OS Monitoring for Node.js
 
-// Copyright (c) 2012-2013 Laurent Fortin
+// Copyright (c) 2012-2014 Laurent Fortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -62,7 +62,7 @@ if(stream.Readable) {
   util.inherits(Monitor, events.EventEmitter);
 }
 
-Monitor.prototype.version = '0.1.5';
+Monitor.prototype.version = '0.1.6';
 
 
 // readable stream implementation requirement
