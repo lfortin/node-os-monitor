@@ -95,7 +95,7 @@ Monitor.prototype.start = function(options) {
       uptime   : os.uptime(),
       freemem  : os.freemem(),
       totalmem : os.totalmem(),
-      timestamp: Math.floor(new Date().getTime() / 1000)
+      timestamp: Math.floor(_.now() / 1000)
     },
     config = self.config(),
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
@@ -127,7 +127,10 @@ Monitor.prototype.start = function(options) {
 
   if(!self.isRunning()) {
     self._monitorState.running = true;
-    self.sendEvent('start', {type: 'start'});
+    self.sendEvent('start', {
+                              type: 'start',
+                              timestamp: Math.floor(_.now() / 1000)
+                            });
   }
 
   return self;
@@ -139,7 +142,10 @@ Monitor.prototype.stop = function() {
 
   if(this.isRunning()) {
     this._monitorState.running = false;
-    this.sendEvent('stop', {type: 'stop'});
+    this.sendEvent('stop', {
+                             type: 'stop',
+                             timestamp: Math.floor(_.now() / 1000)
+                           });
   }
 
   return this;
@@ -149,7 +155,11 @@ Monitor.prototype.config = function(options) {
 
   if(_.isObject(options)) {
     _.extend(this._monitorState.config, options);
-    this.sendEvent('config', {type: 'config', options: _.clone(options)});
+    this.sendEvent('config', {
+                               type: 'config',
+                               options: _.clone(options),
+                               timestamp: Math.floor(_.now() / 1000)
+                             });
   }
 
   return this._monitorState.config;
