@@ -70,12 +70,15 @@ Monitor.prototype._read = function() {
   this._monitorState.streamBuffering = true;
 };
 
-Monitor.prototype.sendEvent = function(event, data) {
+Monitor.prototype.sendEvent = function(event, obj) {
+
+  var eventObject = _.extend({timestamp: Math.floor(_.now() / 1000)}, obj);
+  
   // for EventEmitter
-  this.emit(event, data);
+  this.emit(event, eventObject);
   // for readable Stream
   if(this.config().stream && this._monitorState.streamBuffering) {
-    var prettyJSON = os.EOL + JSON.stringify(data, null, 2);
+    var prettyJSON = os.EOL + JSON.stringify(eventObject, null, 2);
     if( !this.push(new Buffer(prettyJSON)) ) {
       this._monitorState.streamBuffering = false;
     }
@@ -94,8 +97,7 @@ Monitor.prototype.start = function(options) {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
-      totalmem : os.totalmem(),
-      timestamp: Math.floor(_.now() / 1000)
+      totalmem : os.totalmem()
     },
     config = self.config(),
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
@@ -127,10 +129,7 @@ Monitor.prototype.start = function(options) {
 
   if(!self.isRunning()) {
     self._monitorState.running = true;
-    self.sendEvent('start', {
-                              type: 'start',
-                              timestamp: Math.floor(_.now() / 1000)
-                            });
+    self.sendEvent('start', {type: 'start'});
   }
 
   return self;
@@ -142,10 +141,7 @@ Monitor.prototype.stop = function() {
 
   if(this.isRunning()) {
     this._monitorState.running = false;
-    this.sendEvent('stop', {
-                             type: 'stop',
-                             timestamp: Math.floor(_.now() / 1000)
-                           });
+    this.sendEvent('stop', {type: 'stop'});
   }
 
   return this;
@@ -157,8 +153,7 @@ Monitor.prototype.config = function(options) {
     _.extend(this._monitorState.config, options);
     this.sendEvent('config', {
                                type: 'config',
-                               options: _.clone(options),
-                               timestamp: Math.floor(_.now() / 1000)
+                               options: _.clone(options)
                              });
   }
 
