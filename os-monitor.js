@@ -62,7 +62,7 @@ if(stream.Readable) {
   util.inherits(Monitor, events.EventEmitter);
 }
 
-Monitor.prototype.version = '0.1.6';
+Monitor.prototype.version = '0.2.0';
 
 
 // readable stream implementation requirement
