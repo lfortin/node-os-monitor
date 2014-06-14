@@ -219,11 +219,8 @@ Monitor.prototype.os = os;
 // expose Underscore
 Monitor.prototype._ = _;
 
-// create object
-var Osm = new Monitor();
-
 // expose main class
-Osm.Monitor = Monitor;
+Monitor.prototype.Monitor = Monitor;
 
-module.exports = Osm;
+module.exports = new Monitor();
 
