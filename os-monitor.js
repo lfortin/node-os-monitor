@@ -147,6 +147,12 @@ Monitor.prototype.stop = function() {
   return this;
 };
 
+Monitor.prototype.reset = function() {
+  this.sendEvent('reset', {type: 'reset'});
+  this[this.isRunning() ? 'start' : 'config'](_.clone(defaults));
+  return this;
+};
+
 Monitor.prototype.config = function(options) {
 
   if(_.isObject(options)) {
