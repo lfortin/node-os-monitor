@@ -1,5 +1,7 @@
 # os-monitor
 
+[![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
+
 A very simple monitor for the built-in `os` module in Node.js.
 
 Allows you to observe some OS parameters, such as free memory available or load average.
