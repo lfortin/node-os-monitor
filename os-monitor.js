@@ -50,6 +50,7 @@ var Monitor = function() {
 
   this._monitorState = {
     running: false,
+    ended: false,
     streamBuffering: true,
     interval: undefined,
     config: _.clone(defaults)
@@ -88,6 +89,10 @@ Monitor.prototype.sendEvent = function(event, obj) {
 Monitor.prototype.start = function(options) {
 
   var self = this;
+
+  if(this._monitorState.ended) {
+    throw new Error("monitor has been ended by .destroy() method");
+  }
 
   self.stop()
       .config(options);
@@ -150,6 +155,19 @@ Monitor.prototype.stop = function() {
 Monitor.prototype.reset = function() {
   this.sendEvent('reset', {type: 'reset'});
   this[this.isRunning() ? 'start' : 'config'](_.clone(defaults));
+  return this;
+};
+
+Monitor.prototype.destroy = function() {
+
+  this.sendEvent('destroy', {type: 'destroy'});
+  this.stop();
+  this._monitorState.ended = true;
+
+  if(this instanceof stream.Readable) {
+    this.push(null);
+  }
+  
   return this;
 };
 

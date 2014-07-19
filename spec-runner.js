@@ -32,6 +32,7 @@ tester.run(function() {
   assert.ok(monitor.start, ".start() method expected");
   assert.ok(monitor.stop, ".stop() method expected");
   assert.ok(monitor.reset, ".reset() method expected");
+  assert.ok(monitor.destroy, ".destroy() method expected");
   assert.ok(monitor.config, ".config() method expected");
   assert.ok(monitor.isRunning, ".isRunning() method expected");
   assert.ok(monitor.throttle, ".throttle() method expected");
