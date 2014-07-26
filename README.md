@@ -71,6 +71,80 @@ osm.isRunning(); // -> true / false
 
 ```
 
+## config options
+
+###  delay
+
+Delay in milliseconds between each monitor cycle. Default: 3000
+
+###  freemem
+
+Amount of memory in bytes under which event 'freemem' is triggered. Can also be a percentage of total memory. Default: 0
+
+###  uptime
+
+Number of seconds over which event 'uptime' is triggered. Default: undefined
+
+###  critical1
+
+Value of 1 minute load average over which event 'loadavg1' is triggered. Default: os.cpus().length
+
+###  critical5
+
+Value of 5 minutes load average over which event 'loadavg5' is triggered. Default: os.cpus().length
+
+###  critical10
+
+Value of 10 minutes load average over which event 'loadavg10' is triggered. Default: os.cpus().length
+
+###  silent
+
+Set true to mute event 'monitor'. Default: false
+
+###  stream
+
+Set true to enable the monitor as a [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readable "Readable Stream"). Default: false
+
+###  immediate
+
+Set true to execute a monitor cycle at start(). Default: false
+
+
+## methods
+
+### .start( [options] )
+
+Starts the monitor. Accepts an optional options object.
+
+### .stop( )
+
+Stops the monitor.
+
+### .isRunning( )
+
+Checks either the monitor is running or not; returns a boolean.
+
+### .config( [options] )
+
+Accepts an optional options object and updates monitor config. Always returns monitor config options.
+
+### .reset( )
+
+Resets monitor config to its default values.
+
+### .on( eventType, handler ), .addListener( eventType, handler )
+
+Adds a listener for the specified event type. Supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
+
+### .throttle( eventType, handler, delay )
+
+Adds a throttled handler, using [Underscore.js's throttle](http://underscorejs.org/#throttle) function. The throttled handler will not be executed more than once every delay milliseconds.
+
+### .destroy( )
+
+Permanently stops and disables the monitor.
+
+
 ## Event object
 
 There is some useful information in the provided event object:
@@ -85,7 +159,7 @@ There is some useful information in the provided event object:
   timestamp: 1394766898 // UNIX Timestamp
 }
 ```
-All supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config'.
+All supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
 <em>Note that `os-monitor` is an instance of `EventEmitter`</em>.
 
 Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Events")
