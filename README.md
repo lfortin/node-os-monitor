@@ -15,63 +15,63 @@ Allows you to observe some OS parameters, such as free memory available or load 
 # Synopsis
 
 ```javascript
-var osm = require("os-monitor");
+var monitor = require("os-monitor");
 
 
 // basic usage
-osm.start();
+monitor.start();
 
 // more advanced usage with configs.
-osm.start({ delay: 3000 // interval in ms between monitor cycles
-          , freemem: 1000000000 // amount of memory in bytes under which event 'freemem' is triggered (can also be a percentage of total mem)
-          , uptime: 1000000 // number of seconds over which event 'uptime' is triggered
-          , critical1: 0.7 // value of 1 minute load average over which event 'loadavg1' is triggered
-          , critical5: 0.7 // value of 5 minutes load average over which event 'loadavg5' is triggered
-          , critical15: 0.7 // value of 15 minutes load average over which event 'loadavg15' is triggered
-          , silent: false // set true to mute event 'monitor'
-          , stream: false // set true to enable the monitor as a Readable Stream
-          , immediate: false // set true to execute a monitor cycle at start()
-          });
+monitor.start({ delay: 3000 // interval in ms between monitor cycles
+              , freemem: 1000000000 // amount of memory in bytes under which event 'freemem' is triggered (can also be a percentage of total mem)
+              , uptime: 1000000 // number of seconds over which event 'uptime' is triggered
+              , critical1: 0.7 // value of 1 minute load average over which event 'loadavg1' is triggered
+              , critical5: 0.7 // value of 5 minutes load average over which event 'loadavg5' is triggered
+              , critical15: 0.7 // value of 15 minutes load average over which event 'loadavg15' is triggered
+              , silent: false // set true to mute event 'monitor'
+              , stream: false // set true to enable the monitor as a Readable Stream
+              , immediate: false // set true to execute a monitor cycle at start()
+              });
 
 
 // define handler that will always fire every cycle
-osm.on('monitor', function(event) {
+monitor.on('monitor', function(event) {
   console.log(event.type, ' This event always happens on each monitor cycle!');
 });
 
 // define handler for a too high 1-minute load average
-osm.on('loadavg1', function(event) {
+monitor.on('loadavg1', function(event) {
   console.log(event.type, ' Load average is exceptionally high!');
 });
 
 // define handler for a too low free memory
-osm.on('freemem', function(event) {
+monitor.on('freemem', function(event) {
   console.log(event.type, 'Free memory is very low!');
 });
 
 // define a throttled handler, using Underscore.js's throttle function (http://underscorejs.org/#throttle)
-osm.throttle('loadavg5', function(event) {
+monitor.throttle('loadavg5', function(event) {
 
   // whatever is done here will not happen
   // more than once every 5 minutes(300000 ms)
 
-}, osm.minutes(5));
+}, monitor.minutes(5));
 
 // change config while monitor is running
-osm.config({
+monitor.config({
   freemem: 0.3 // alarm when 30% or less free memory available
 });
 
 // stop monitor
-osm.stop();
+monitor.stop();
 
 // check either monitor is running or not
-osm.isRunning(); // -> true / false
+monitor.isRunning(); // -> true / false
 
 
 ```
 
-## config options
+# config options
 
 ###  delay
 
@@ -110,7 +110,7 @@ Set true to enable the monitor as a [Readable Stream](http://nodejs.org/api/stre
 Set true to execute a monitor cycle at start(). Default: false
 
 
-## methods
+# methods
 
 ### .start( [options] )
 
@@ -144,8 +144,25 @@ Adds a throttled handler, using [Underscore.js's throttle](http://underscorejs.o
 
 Permanently stops and disables the monitor.
 
+### .seconds(n), .minutes(n), .hours(n), .days(n)
 
-## Event object
+Convenience methods to get the right amount of milliseconds.
+```javascript
+monitor.seconds(10); // -> 10000 ms
+
+monitor.minutes(5); // -> 300000 ms
+
+monitor.hours(1); // -> 3600000 ms
+
+monitor.days(1); // -> 86400000 ms
+
+// start with a delay of 5000 ms
+monitor.start({ delay: monitor.seconds(5) });
+
+```
+
+
+# Event object
 
 There is some useful information in the provided event object:
 
