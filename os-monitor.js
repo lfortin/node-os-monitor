@@ -160,14 +160,16 @@ Monitor.prototype.reset = function() {
 
 Monitor.prototype.destroy = function() {
 
-  this.sendEvent('destroy', {type: 'destroy'});
-  this.stop();
-  this._monitorState.ended = true;
-
-  if(this instanceof stream.Readable) {
-    this.push(null);
+  if(!this._monitorState.ended) {
+    this.sendEvent('destroy', {type: 'destroy'});
+    this.stop();
+    if(this instanceof stream.Readable) {
+      this.emit('close');
+      this.push(null);
+    }
+    this._monitorState.ended = true;
   }
-  
+
   return this;
 };
 
