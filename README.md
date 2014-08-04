@@ -93,9 +93,9 @@ Value of 1 minute load average over which event 'loadavg1' is triggered. Default
 
 Value of 5 minutes load average over which event 'loadavg5' is triggered. Default: os.cpus().length
 
-###  critical10
+###  critical15
 
-Value of 10 minutes load average over which event 'loadavg10' is triggered. Default: os.cpus().length
+Value of 15 minutes load average over which event 'loadavg15' is triggered. Default: os.cpus().length
 
 ###  silent
 
