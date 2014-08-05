@@ -115,5 +115,56 @@ tester.run(function() {
   assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
 
   process.stdout.write("isRunning() test OK" + getEOL(1));
+    
+    
+  // reset() test
+  monitor.config({
+                 delay: 1000,
+                 critital1: 1.5,
+                 critical5: 1.5,
+                 critical15: 1.5,
+                 freemem: 1,
+                 uptime: 1,
+                 silent: true,
+                 stream: true,
+                 immediate: true
+         });
+  monitor.reset();
+
+  assert.deepEqual(monitor.config().delay, 3000, "config should be reset");
+  assert.deepEqual(monitor.config().critical1, os.cpus().length, "config should be reset");
+  assert.deepEqual(monitor.config().critical5, os.cpus().length, "config should be reset");
+  assert.deepEqual(monitor.config().critical15, os.cpus().length, "config should be reset");
+  assert.deepEqual(monitor.config().freemem, 0, "config should be reset");
+  assert.deepEqual(monitor.config().uptime, 0, "config should be reset");
+  assert.deepEqual(monitor.config().silent, false, "config should be reset");
+  assert.deepEqual(monitor.config().stream, false, "config should be reset");
+  assert.deepEqual(monitor.config().immediate, false, "config should be reset");
+
+  process.stdout.write("reset() test OK" + getEOL(1));
+    
+    
+  // destroy() test
+  monitor.on('close', function() {
+    trace.closeEvent = 'close';
+  });
+
+  monitor.destroy();
+
+  assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
+  assert.deepEqual(trace.closeEvent, "close", "'close' event expected");
+  assert.throws(function() {
+                    monitor.start();
+                },
+                "start() should throw");
+  assert.throws(function() {
+                    monitor.push('some data');
+                },
+                "push() should throw");
+
+  process.stdout.write("destroy() test OK" + getEOL(1));
+
+  monitor.removeAllListeners();
+
 });
 
