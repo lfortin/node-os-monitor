@@ -25,7 +25,7 @@
 var util     = require('util'),
     os       = require('os'),
     events   = require('events'),
-    stream   = require('stream'),
+    stream   = require('readable-stream'),
     _        = require('underscore'),
     critical = os.cpus().length,
     defaults = {
