@@ -136,9 +136,13 @@ Resets monitor config to its default values.
 
 Adds a listener for the specified event type. Supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
 
+### .once( eventType, handler )
+
+Adds a one-time listener for the specified event type. This listener is invoked only the next time the event is fired, after which it is removed.
+
 ### .throttle( eventType, handler, delay )
 
-Adds a throttled handler, using [Underscore.js's throttle](http://underscorejs.org/#throttle) function. The throttled handler will not be executed more than once every delay milliseconds.
+Adds a throttled listener, using [Underscore.js's throttle](http://underscorejs.org/#throttle) function. The throttled listener will not be executed more than once every delay milliseconds.
 
 ### .destroy( )
 
