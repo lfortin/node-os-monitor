@@ -191,19 +191,33 @@ Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Even
 `os-monitor` can also be used as a [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readable "Readable Stream").
 
 ```
-osm.start({ stream: true });
+monitor.start({ stream: true });
 
 
 // write to STDOUT
-osm.pipe(process.stdout);
+monitor.pipe(process.stdout);
 
 
 // write to a file
 var fs = require('fs'),
     logFile = fs.createWriteStream('/tmp/log.txt', {flags: 'a'});
 
-osm.pipe(logFile);
+monitor.pipe(logFile);
 ```
+
+
+## Monitor class
+
+Need concurrent monitor instances? The monitor class is available from the os-monitor object:
+
+```
+var osm = require('os-monitor');
+
+var monitor1 = new osm.Monitor();
+var monitor2 = new osm.Monitor();
+var monitor3 = new osm.Monitor();
+```
+
 
 ## Node.js os module
 
