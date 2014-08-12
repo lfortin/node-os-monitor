@@ -23,11 +23,11 @@ monitor.start();
 
 // more advanced usage with configs.
 monitor.start({ delay: 3000 // interval in ms between monitor cycles
-              , freemem: 1000000000 // amount of memory in bytes under which event 'freemem' is triggered (can also be a percentage of total mem)
-              , uptime: 1000000 // number of seconds over which event 'uptime' is triggered
-              , critical1: 0.7 // value of 1 minute load average over which event 'loadavg1' is triggered
-              , critical5: 0.7 // value of 5 minutes load average over which event 'loadavg5' is triggered
-              , critical15: 0.7 // value of 15 minutes load average over which event 'loadavg15' is triggered
+              , freemem: 1000000000 // freemem under which event 'freemem' is triggered (can also be a percentage of total mem)
+              , uptime: 1000000 // number of secs over which event 'uptime' is triggered
+              , critical1: 0.7 // value of loadavg1 over which event 'loadavg1' is triggered
+              , critical5: 0.7 // value of loadavg5 over which event 'loadavg5' is triggered
+              , critical15: 0.7 // value of loadavg15 over which event 'loadavg15' is triggered
               , silent: false // set true to mute event 'monitor'
               , stream: false // set true to enable the monitor as a Readable Stream
               , immediate: false // set true to execute a monitor cycle at start()
