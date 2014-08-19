@@ -23,11 +23,11 @@ monitor.start();
 
 // more advanced usage with configs.
 monitor.start({ delay: 3000 // interval in ms between monitor cycles
-              , freemem: 1000000000 // freemem under which event 'freemem' is triggered (can also be a percentage of total mem)
+              , freemem: 1000000000 // freemem under which event 'freemem' is triggered
               , uptime: 1000000 // number of secs over which event 'uptime' is triggered
-              , critical1: 0.7 // value of loadavg1 over which event 'loadavg1' is triggered
-              , critical5: 0.7 // value of loadavg5 over which event 'loadavg5' is triggered
-              , critical15: 0.7 // value of loadavg15 over which event 'loadavg15' is triggered
+              , critical1: 0.7 // loadavg1 over which event 'loadavg1' is triggered
+              , critical5: 0.7 // loadavg5 over which event 'loadavg5' is triggered
+              , critical15: 0.7 // loadavg15 over which event 'loadavg15' is triggered
               , silent: false // set true to mute event 'monitor'
               , stream: false // set true to enable the monitor as a Readable Stream
               , immediate: false // set true to execute a monitor cycle at start()
@@ -57,17 +57,23 @@ monitor.throttle('loadavg5', function(event) {
 
 }, monitor.minutes(5));
 
+
 // change config while monitor is running
 monitor.config({
   freemem: 0.3 // alarm when 30% or less free memory available
 });
 
+
 // stop monitor
 monitor.stop();
+
 
 // check either monitor is running or not
 monitor.isRunning(); // -> true / false
 
+
+// use as readable stream
+monitor.start({stream: true}).pipe(process.stdout);
 
 ```
 
