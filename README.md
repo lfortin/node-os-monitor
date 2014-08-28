@@ -23,11 +23,11 @@ monitor.start();
 
 // more advanced usage with configs.
 monitor.start({ delay: 3000 // interval in ms between monitor cycles
-              , freemem: 1000000000 // amount of memory in bytes under which event 'freemem' is triggered (can also be a percentage of total mem)
-              , uptime: 1000000 // number of seconds over which event 'uptime' is triggered
-              , critical1: 0.7 // value of 1 minute load average over which event 'loadavg1' is triggered
-              , critical5: 0.7 // value of 5 minutes load average over which event 'loadavg5' is triggered
-              , critical15: 0.7 // value of 15 minutes load average over which event 'loadavg15' is triggered
+              , freemem: 1000000000 // freemem under which event 'freemem' is triggered
+              , uptime: 1000000 // number of secs over which event 'uptime' is triggered
+              , critical1: 0.7 // loadavg1 over which event 'loadavg1' is triggered
+              , critical5: 0.7 // loadavg5 over which event 'loadavg5' is triggered
+              , critical15: 0.7 // loadavg15 over which event 'loadavg15' is triggered
               , silent: false // set true to mute event 'monitor'
               , stream: false // set true to enable the monitor as a Readable Stream
               , immediate: false // set true to execute a monitor cycle at start()
@@ -57,17 +57,23 @@ monitor.throttle('loadavg5', function(event) {
 
 }, monitor.minutes(5));
 
+
 // change config while monitor is running
 monitor.config({
   freemem: 0.3 // alarm when 30% or less free memory available
 });
 
+
 // stop monitor
 monitor.stop();
+
 
 // check either monitor is running or not
 monitor.isRunning(); // -> true / false
 
+
+// use as readable stream
+monitor.start({stream: true}).pipe(process.stdout);
 
 ```
 
@@ -191,19 +197,33 @@ Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Even
 `os-monitor` can also be used as a [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readable "Readable Stream").
 
 ```
-osm.start({ stream: true });
+monitor.start({ stream: true });
 
 
 // write to STDOUT
-osm.pipe(process.stdout);
+monitor.pipe(process.stdout);
 
 
 // write to a file
 var fs = require('fs'),
     logFile = fs.createWriteStream('/tmp/log.txt', {flags: 'a'});
 
-osm.pipe(logFile);
+monitor.pipe(logFile);
 ```
+
+
+## Monitor class
+
+Need concurrent monitor instances? The monitor class is available from the os-monitor object:
+
+```
+var osm = require('os-monitor');
+
+var monitor1 = new osm.Monitor();
+var monitor2 = new osm.Monitor();
+var monitor3 = new osm.Monitor();
+```
+
 
 ## Node.js os module
 
