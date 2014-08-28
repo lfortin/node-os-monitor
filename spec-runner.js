@@ -28,6 +28,7 @@ tester.run(function() {
 
   // API signature
   assert.ok(monitor._read, "internal ._read() method expected");
+  assert.ok(monitor.version, "version property expected");
   assert.ok(monitor.sendEvent, ".sendEvent() method expected");
   assert.ok(monitor.start, ".start() method expected");
   assert.ok(monitor.stop, ".stop() method expected");
