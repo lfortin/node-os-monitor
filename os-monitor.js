@@ -236,9 +236,6 @@ Monitor.prototype.days = function(n) {
 };
 
 
-// deprecated stuff
-Monitor.prototype.setConfig = util.deprecate(Monitor.prototype.config, '.setConfig(): Use .config() instead');
-
 // expose OS module
 Monitor.prototype.os = os;
 
