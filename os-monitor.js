@@ -90,7 +90,7 @@ Monitor.prototype.start = function(options) {
 
   var self = this;
 
-  if(this._monitorState.ended) {
+  if(this._isEnded()) {
     throw new Error("monitor has been ended by .destroy() method");
   }
 
@@ -160,7 +160,7 @@ Monitor.prototype.reset = function() {
 
 Monitor.prototype.destroy = function() {
 
-  if(!this._monitorState.ended) {
+  if(!this._isEnded()) {
     this.sendEvent('destroy', {type: 'destroy'});
     this.stop();
     if(this instanceof stream.Readable) {
@@ -188,6 +188,10 @@ Monitor.prototype.config = function(options) {
 
 Monitor.prototype.isRunning = function() {
   return !!this._monitorState.running;
+};
+
+Monitor.prototype._isEnded = function() {
+  return !!this._monitorState.ended;
 };
 
 Monitor.prototype.throttle = function(event, handler, wait) {
