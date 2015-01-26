@@ -1,7 +1,6 @@
 
 
 var assert = require('assert'),
-    domain = require('domain'),
     os = require('os'),
     monitor = require('./os-monitor');
 
@@ -16,15 +15,8 @@ function getEOL(n) {
 process.stdout.write("running tests..." + getEOL(2));
 
 
-var tester = domain.create();
 
-tester.on('error', function(error) {
-  process.stderr.write(error + getEOL(2));
-  process.exit();
-});
-
-
-tester.run(function() {
+assert.doesNotThrow(function() {
 
   // API signature
   assert.ok(monitor._read, "internal ._read() method expected");
@@ -167,5 +159,8 @@ tester.run(function() {
 
   monitor.removeAllListeners();
 
+}, function(error) {
+  process.stderr.write(error + getEOL(2));
+  process.exit();
 });
 
