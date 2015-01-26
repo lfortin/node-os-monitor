@@ -68,7 +68,7 @@ monitor.config({
 monitor.stop();
 
 
-// check either monitor is running or not
+// check whether monitor is running or not
 monitor.isRunning(); // -> true / false
 
 
@@ -94,6 +94,8 @@ Number of seconds over which event 'uptime' is triggered. Default: undefined
 ###  critical1
 
 Value of 1 minute load average over which event 'loadavg1' is triggered. Default: os.cpus().length
+
+(The load average is a measure of system activity, calculated by the operating system and expressed as a fractional number. As a rule of thumb, the load average should ideally be less than the number of logical CPUs in the system. ref.: [http://nodejs.org/api/os.html#os_os_loadavg](http://nodejs.org/api/os.html#os_os_loadavg "load average"))
 
 ###  critical5
 
@@ -128,7 +130,7 @@ Stops the monitor.
 
 ### .isRunning( )
 
-Checks either the monitor is running or not; returns a boolean.
+Checks whether the monitor is running or not; returns a boolean.
 
 ### .config( [options] )
 
