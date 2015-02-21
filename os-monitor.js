@@ -24,7 +24,6 @@
 
 var util     = require('util'),
     os       = require('os'),
-    events   = require('events'),
     stream   = require('readable-stream'),
     _        = require('underscore'),
     critical = os.cpus().length,
@@ -42,11 +41,8 @@ var util     = require('util'),
 
 // constructor
 var Monitor = function() {
-  if(stream.Readable) {
-    stream.Readable.call(this, {highWaterMark: 102400});
-  } else {
-    events.EventEmitter.call(this);
-  }
+
+  stream.Readable.call(this, {highWaterMark: 102400});
 
   this._monitorState = {
     running: false,
@@ -57,11 +53,8 @@ var Monitor = function() {
   };
 };
 
-if(stream.Readable) {
-  util.inherits(Monitor, stream.Readable);
-} else {
-  util.inherits(Monitor, events.EventEmitter);
-}
+
+util.inherits(Monitor, stream.Readable);
 
 Monitor.prototype.version = '1.0.2';
 
