@@ -17,8 +17,8 @@
     "node": ">=0.8.0"
   },
   "dependencies": {
-    "underscore": "~1.7.0",
-    "readable-stream": "~1.1.0"
+    "readable-stream": "~1.1.0",
+    "underscore": "~1.8.1"
   },
   "scripts": {
     "test": "node spec-runner.js"
