@@ -20,6 +20,9 @@
     "readable-stream": "~2.0.2",
     "underscore": "~1.8.3"
   },
+  "devDependencies": {
+    "mock-os": "0.0.1"
+  },
   "scripts": {
     "test": "node spec-runner.js"
   },
@@ -28,6 +31,5 @@
     "os"
   ],
   "license": "MIT",
-  "devDependencies": {},
   "optionalDependencies": {}
 }

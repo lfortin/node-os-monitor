@@ -2,7 +2,14 @@
 
 var assert = require('assert'),
     os = require('os'),
-    monitor = require('./os-monitor');
+    mock = require('mock-os');
+
+// mock os module
+mock({
+  cpus: [{}, {}]
+});
+
+var monitor = require('./os-monitor');
 
 function getEOL(n) {
   var lines = [];
@@ -164,3 +171,105 @@ assert.doesNotThrow(function() {
   process.exit();
 });
 
+
+// mock tests with 2 fake cpus
+mock({
+  cpus: [{}, {}],
+  loadavg: [3, 3, 3],
+  freemem: 1000,
+  totalmem: 5000,
+  uptime: 10000
+});
+
+var monitor2 = new monitor.Monitor();
+var monitor3 = new monitor.Monitor();
+var trace2 = {};
+var trace3 = {};
+
+monitor2.on('freemem', function() {
+  trace2.freememAbsolute = true;
+})
+.on('uptime', function() {
+  trace2.uptime = true;
+})
+.on('loadavg1', function() {
+  trace2.loadavg1 = true;
+})
+.on('loadavg5', function() {
+  trace2.loadavg5 = true;
+})
+.on('loadavg15', function() {
+  trace2.loadavg15 = true;
+});
+
+monitor3.on('freemem', function() {
+  trace3.freememAbsolute = true;
+})
+.on('uptime', function() {
+  trace3.uptime = true;
+})
+.on('loadavg1', function() {
+  trace3.loadavg1 = true;
+})
+.on('loadavg5', function() {
+  trace3.loadavg5 = true;
+})
+.on('loadavg15', function() {
+  trace3.loadavg15 = true;
+});
+
+monitor2.start({
+  freemem: 20000,
+  uptime: 1000,
+  immediate: true
+});
+
+monitor3.start({
+  freemem: 200,
+  uptime: 1000000,
+  critical1: 4,
+  critical5: 4,
+  critical15: 4,
+  immediate: true
+});
+
+process.nextTick(function() {
+  monitor2.removeAllListeners();
+  monitor3.removeAllListeners();
+  
+  monitor2.on('freemem', function() {
+    trace2.freememPct = true;
+  });
+  monitor3.on('freemem', function() {
+    trace3.freememPct = true;
+  });
+});
+
+monitor2.start({
+  freemem: 0.7,
+  immediate: true
+}).stop();
+
+monitor3.start({
+  freemem: 0.1,
+  immediate: true
+}).stop();
+
+setImmediate(function() {
+  //console.log(trace);
+  assert.ok(trace2.freememAbsolute, "freememAbsolute expected");
+  assert.ok(trace2.freememPct, "freememPct expected");
+  assert.ok(trace2.uptime, "uptime expected");
+  assert.ok(trace2.loadavg1, "loadavg1 expected");
+  assert.ok(trace2.loadavg5, "loadavg5 expected");
+  assert.ok(trace2.loadavg15, "loadavg15 expected");
+  
+  assert.ok(!trace3.freememAbsolute, "freememAbsolute not expected");
+  assert.ok(!trace3.freememPct, "freememPct not expected");
+  assert.ok(!trace3.uptime, "uptime not expected");
+  assert.ok(!trace3.loadavg1, "loadavg1 not expected");
+  assert.ok(!trace3.loadavg5, "loadavg5 not expected");
+  assert.ok(!trace3.loadavg15, "loadavg15 not expected");
+  
+  process.stdout.write("mock tests OK" + getEOL(1));
+});
