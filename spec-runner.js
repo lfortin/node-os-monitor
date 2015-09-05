@@ -186,36 +186,36 @@ var monitor3 = new monitor.Monitor();
 var trace2 = {};
 var trace3 = {};
 
-monitor2.on('freemem', function() {
-  trace2.freememAbsolute = true;
+monitor2.on('freemem', function(event) {
+  trace2.freememAbsolute = event;
 })
-.on('uptime', function() {
-  trace2.uptime = true;
+.on('uptime', function(event) {
+  trace2.uptime = event;
 })
-.on('loadavg1', function() {
-  trace2.loadavg1 = true;
+.on('loadavg1', function(event) {
+  trace2.loadavg1 = event;
 })
-.on('loadavg5', function() {
-  trace2.loadavg5 = true;
+.on('loadavg5', function(event) {
+  trace2.loadavg5 = event;
 })
-.on('loadavg15', function() {
-  trace2.loadavg15 = true;
+.on('loadavg15', function(event) {
+  trace2.loadavg15 = event;
 });
 
-monitor3.on('freemem', function() {
-  trace3.freememAbsolute = true;
+monitor3.on('freemem', function(event) {
+  trace3.freememAbsolute = event;
 })
-.on('uptime', function() {
-  trace3.uptime = true;
+.on('uptime', function(event) {
+  trace3.uptime = event;
 })
-.on('loadavg1', function() {
-  trace3.loadavg1 = true;
+.on('loadavg1', function(event) {
+  trace3.loadavg1 = event;
 })
-.on('loadavg5', function() {
-  trace3.loadavg5 = true;
+.on('loadavg5', function(event) {
+  trace3.loadavg5 = event;
 })
-.on('loadavg15', function() {
-  trace3.loadavg15 = true;
+.on('loadavg15', function(event) {
+  trace3.loadavg15 = event;
 });
 
 monitor2.start({
@@ -237,11 +237,11 @@ process.nextTick(function() {
   monitor2.removeAllListeners();
   monitor3.removeAllListeners();
   
-  monitor2.on('freemem', function() {
-    trace2.freememPct = true;
+  monitor2.on('freemem', function(event) {
+    trace2.freememPct = event;
   });
   monitor3.on('freemem', function() {
-    trace3.freememPct = true;
+    trace3.freememPct = event;
   });
 });
 
@@ -256,13 +256,54 @@ monitor3.start({
 }).stop();
 
 setImmediate(function() {
-  //console.log(trace);
   assert.ok(trace2.freememAbsolute, "freememAbsolute expected");
   assert.ok(trace2.freememPct, "freememPct expected");
   assert.ok(trace2.uptime, "uptime expected");
   assert.ok(trace2.loadavg1, "loadavg1 expected");
   assert.ok(trace2.loadavg5, "loadavg5 expected");
   assert.ok(trace2.loadavg15, "loadavg15 expected");
+  
+  assert.ok(trace2.freememAbsolute.timestamp, "event.timestamp expected");
+  assert.ok(trace2.freememPct.timestamp, "event.timestamp expected");
+  assert.ok(trace2.uptime.timestamp, "event.timestamp expected");
+  assert.ok(trace2.loadavg1.timestamp, "event.timestamp expected");
+  assert.ok(trace2.loadavg5.timestamp, "event.timestamp expected");
+  assert.ok(trace2.loadavg15.timestamp, "event.timestamp expected");
+  
+  assert.ok(trace2.freememAbsolute.loadavg, "event.loadavg expected");
+  assert.ok(trace2.freememPct.loadavg, "event.loadavg expected");
+  assert.ok(trace2.uptime.loadavg, "event.loadavg expected");
+  assert.ok(trace2.loadavg1.loadavg, "event.loadavg expected");
+  assert.ok(trace2.loadavg5.loadavg, "event.loadavg expected");
+  assert.ok(trace2.loadavg15.loadavg, "event.loadavg expected");
+  
+  assert.ok(trace2.freememAbsolute.freemem, "event.freemem expected");
+  assert.ok(trace2.freememPct.freemem, "event.freemem expected");
+  assert.ok(trace2.uptime.freemem, "event.freemem expected");
+  assert.ok(trace2.loadavg1.freemem, "event.freemem expected");
+  assert.ok(trace2.loadavg5.freemem, "event.freemem expected");
+  assert.ok(trace2.loadavg15.freemem, "event.freemem expected");
+  
+  assert.ok(trace2.freememAbsolute.totalmem, "event.totalmem expected");
+  assert.ok(trace2.freememPct.totalmem, "event.totalmem expected");
+  assert.ok(trace2.uptime.totalmem, "event.totalmem expected");
+  assert.ok(trace2.loadavg1.totalmem, "event.totalmem expected");
+  assert.ok(trace2.loadavg5.totalmem, "event.totalmem expected");
+  assert.ok(trace2.loadavg15.totalmem, "event.totalmem expected");
+  
+  assert.ok(trace2.freememAbsolute.uptime, "event.uptime expected");
+  assert.ok(trace2.freememPct.uptime, "event.uptime expected");
+  assert.ok(trace2.uptime.uptime, "event.uptime expected");
+  assert.ok(trace2.loadavg1.uptime, "event.uptime expected");
+  assert.ok(trace2.loadavg5.uptime, "event.uptime expected");
+  assert.ok(trace2.loadavg15.uptime, "event.uptime expected");
+  
+  assert.deepEqual(trace2.freememAbsolute.type, "freemem", "event.type === 'freemem' expected");
+  assert.deepEqual(trace2.freememPct.type, "freemem", "event.type === 'freemem' expected");
+  assert.deepEqual(trace2.uptime.type, "uptime", "event.type === 'uptime' expected");
+  assert.deepEqual(trace2.loadavg1.type, "loadavg1", "event.type === 'loadavg1' expected");
+  assert.deepEqual(trace2.loadavg5.type, "loadavg5", "event.type === 'loadavg5' expected");
+  assert.deepEqual(trace2.loadavg15.type, "loadavg15", "event.type === 'loadavg15' expected");
   
   assert.ok(!trace3.freememAbsolute, "freememAbsolute not expected");
   assert.ok(!trace3.freememPct, "freememPct not expected");
