@@ -66,7 +66,7 @@ Monitor.prototype._read = function() {
 
 Monitor.prototype.sendEvent = function(event, obj) {
 
-  var eventObject = _.extend({timestamp: Math.floor(_.now() / 1000)}, obj);
+  var eventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
   
   // for EventEmitter
   this.emit(event, eventObject);
@@ -101,22 +101,22 @@ Monitor.prototype.start = function(options) {
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
-      self.sendEvent('monitor', _.extend({type: 'monitor'}, info));
+      self.sendEvent('monitor', info);
     }
     if(info.loadavg[0] > config.critical1) {
-      self.sendEvent('loadavg1', _.extend({type: 'loadavg1'}, info));
+      self.sendEvent('loadavg1', info);
     }
     if(info.loadavg[1] > config.critical5) {
-      self.sendEvent('loadavg5', _.extend({type: 'loadavg5'}, info));
+      self.sendEvent('loadavg5', info);
     }
     if(info.loadavg[2] > config.critical15) {
-      self.sendEvent('loadavg15', _.extend({type: 'loadavg15'}, info));
+      self.sendEvent('loadavg15', info);
     }
     if(info.freemem < freemem) {
-      self.sendEvent('freemem', _.extend({type: 'freemem'}, info));
+      self.sendEvent('freemem', info);
     }
     if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
-      self.sendEvent('uptime', _.extend({type: 'uptime'}, info));
+      self.sendEvent('uptime', info);
     }
   };
   
@@ -127,7 +127,7 @@ Monitor.prototype.start = function(options) {
 
   if(!self.isRunning()) {
     self._monitorState.running = true;
-    self.sendEvent('start', {type: 'start'});
+    self.sendEvent('start');
   }
 
   return self;
@@ -139,14 +139,14 @@ Monitor.prototype.stop = function() {
 
   if(this.isRunning()) {
     this._monitorState.running = false;
-    this.sendEvent('stop', {type: 'stop'});
+    this.sendEvent('stop');
   }
 
   return this;
 };
 
 Monitor.prototype.reset = function() {
-  this.sendEvent('reset', {type: 'reset'});
+  this.sendEvent('reset');
   this[this.isRunning() ? 'start' : 'config'](_.clone(defaults));
   return this;
 };
@@ -154,7 +154,7 @@ Monitor.prototype.reset = function() {
 Monitor.prototype.destroy = function() {
 
   if(!this._isEnded()) {
-    this.sendEvent('destroy', {type: 'destroy'});
+    this.sendEvent('destroy');
     this.stop();
     if(this instanceof stream.Readable) {
       this.emit('close');
@@ -170,10 +170,7 @@ Monitor.prototype.config = function(options) {
 
   if(_.isObject(options)) {
     _.extend(this._monitorState.config, options);
-    this.sendEvent('config', {
-                               type: 'config',
-                               options: _.clone(options)
-                             });
+    this.sendEvent('config', { options: _.clone(options) });
   }
 
   return this._monitorState.config;
