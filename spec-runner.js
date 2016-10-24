@@ -51,9 +51,9 @@ assert.doesNotThrow(function() {
 
   // config
   monitor.config({test: 123});
-  assert.deepEqual(monitor.config().test, 123, "config() : same config expected");
+  assert.strictEqual(monitor.config().test, 123, "config() : same config expected");
   monitor.start({test: 456});
-  assert.deepEqual(monitor.config().test, 456, "start() : same config expected");
+  assert.strictEqual(monitor.config().test, 456, "start() : same config expected");
   monitor.stop();
 
   process.stdout.write("config OK" + getEOL(1));
@@ -87,12 +87,12 @@ assert.doesNotThrow(function() {
   monitor.sendEvent('freemem', {type: 'freemem'});
   monitor.sendEvent('uptime', {type: 'uptime'});
   
-  assert.deepEqual(trace.monitorEvent, "monitor", "'monitor' event expected");
-  assert.deepEqual(trace.loadavg1Event, "loadavg1", "'loadavg1' event expected");
-  assert.deepEqual(trace.loadavg5Event, "loadavg5", "'loadavg5' event expected");
-  assert.deepEqual(trace.loadavg15Event, "loadavg15", "'loadavg15' event expected");
-  assert.deepEqual(trace.freememEvent, "freemem", "'freemem' event expected");
-  assert.deepEqual(trace.uptimeEvent, "uptime", "'uptime' event expected");
+  assert.strictEqual(trace.monitorEvent, "monitor", "'monitor' event expected");
+  assert.strictEqual(trace.loadavg1Event, "loadavg1", "'loadavg1' event expected");
+  assert.strictEqual(trace.loadavg5Event, "loadavg5", "'loadavg5' event expected");
+  assert.strictEqual(trace.loadavg15Event, "loadavg15", "'loadavg15' event expected");
+  assert.strictEqual(trace.freememEvent, "freemem", "'freemem' event expected");
+  assert.strictEqual(trace.uptimeEvent, "uptime", "'uptime' event expected");
   
   process.stdout.write("events OK" + getEOL(1));
 
@@ -108,11 +108,11 @@ assert.doesNotThrow(function() {
 
 
   // isRunning() test
-  assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
+  assert.strictEqual(monitor.isRunning(), false, "isRunning() === false expected");
   monitor.start();
-  assert.deepEqual(monitor.isRunning(), true, "isRunning() === true expected");
+  assert.strictEqual(monitor.isRunning(), true, "isRunning() === true expected");
   monitor.stop();
-  assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
+  assert.strictEqual(monitor.isRunning(), false, "isRunning() === false expected");
 
   process.stdout.write("isRunning() test OK" + getEOL(1));
     
@@ -131,15 +131,15 @@ assert.doesNotThrow(function() {
          });
   monitor.reset();
 
-  assert.deepEqual(monitor.config().delay, 3000, "config should be reset");
-  assert.deepEqual(monitor.config().critical1, os.cpus().length, "config should be reset");
-  assert.deepEqual(monitor.config().critical5, os.cpus().length, "config should be reset");
-  assert.deepEqual(monitor.config().critical15, os.cpus().length, "config should be reset");
-  assert.deepEqual(monitor.config().freemem, 0, "config should be reset");
-  assert.deepEqual(monitor.config().uptime, 0, "config should be reset");
-  assert.deepEqual(monitor.config().silent, false, "config should be reset");
-  assert.deepEqual(monitor.config().stream, false, "config should be reset");
-  assert.deepEqual(monitor.config().immediate, false, "config should be reset");
+  assert.strictEqual(monitor.config().delay, 3000, "config should be reset");
+  assert.strictEqual(monitor.config().critical1, os.cpus().length, "config should be reset");
+  assert.strictEqual(monitor.config().critical5, os.cpus().length, "config should be reset");
+  assert.strictEqual(monitor.config().critical15, os.cpus().length, "config should be reset");
+  assert.strictEqual(monitor.config().freemem, 0, "config should be reset");
+  assert.strictEqual(monitor.config().uptime, 0, "config should be reset");
+  assert.strictEqual(monitor.config().silent, false, "config should be reset");
+  assert.strictEqual(monitor.config().stream, false, "config should be reset");
+  assert.strictEqual(monitor.config().immediate, false, "config should be reset");
 
   process.stdout.write("reset() test OK" + getEOL(1));
     
@@ -151,8 +151,8 @@ assert.doesNotThrow(function() {
 
   monitor.destroy();
 
-  assert.deepEqual(monitor.isRunning(), false, "isRunning() === false expected");
-  assert.deepEqual(trace.closeEvent, "close", "'close' event expected");
+  assert.strictEqual(monitor.isRunning(), false, "isRunning() === false expected");
+  assert.strictEqual(trace.closeEvent, "close", "'close' event expected");
   assert.throws(function() {
                     monitor.start();
                 },
@@ -298,12 +298,12 @@ setImmediate(function() {
   assert.ok(trace2.loadavg5.uptime, "event.uptime expected");
   assert.ok(trace2.loadavg15.uptime, "event.uptime expected");
   
-  assert.deepEqual(trace2.freememAbsolute.type, "freemem", "event.type === 'freemem' expected");
-  assert.deepEqual(trace2.freememPct.type, "freemem", "event.type === 'freemem' expected");
-  assert.deepEqual(trace2.uptime.type, "uptime", "event.type === 'uptime' expected");
-  assert.deepEqual(trace2.loadavg1.type, "loadavg1", "event.type === 'loadavg1' expected");
-  assert.deepEqual(trace2.loadavg5.type, "loadavg5", "event.type === 'loadavg5' expected");
-  assert.deepEqual(trace2.loadavg15.type, "loadavg15", "event.type === 'loadavg15' expected");
+  assert.strictEqual(trace2.freememAbsolute.type, "freemem", "event.type === 'freemem' expected");
+  assert.strictEqual(trace2.freememPct.type, "freemem", "event.type === 'freemem' expected");
+  assert.strictEqual(trace2.uptime.type, "uptime", "event.type === 'uptime' expected");
+  assert.strictEqual(trace2.loadavg1.type, "loadavg1", "event.type === 'loadavg1' expected");
+  assert.strictEqual(trace2.loadavg5.type, "loadavg5", "event.type === 'loadavg5' expected");
+  assert.strictEqual(trace2.loadavg15.type, "loadavg15", "event.type === 'loadavg15' expected");
   
   assert.ok(!trace3.freememAbsolute, "freememAbsolute not expected");
   assert.ok(!trace3.freememPct, "freememPct not expected");
