@@ -151,13 +151,16 @@ Monitor.prototype.reset = function() {
   return this;
 };
 
-Monitor.prototype.destroy = function() {
+Monitor.prototype.destroy = function(err) {
 
   if(!this._isEnded()) {
     this.sendEvent('destroy');
     this.stop();
     if(this instanceof stream.Readable) {
       this.emit('close');
+      if(_.isFunction(stream.Readable.prototype.destroy)) {
+        stream.Readable.prototype.destroy.apply(this, [err]);
+      }
       this.push(null);
     }
     this._monitorState.ended = true;
