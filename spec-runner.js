@@ -23,7 +23,7 @@ process.stdout.write("running tests..." + getEOL(2));
 
 
 
-assert.doesNotThrow(function() {
+(function() {
 
   // API signature
   assert.ok(monitor._read, "internal ._read() method expected");
@@ -166,10 +166,7 @@ assert.doesNotThrow(function() {
 
   monitor.removeAllListeners();
 
-}, function(error) {
-  process.stderr.write(error + getEOL(2));
-  process.exit();
-});
+})();
 
 
 // mock tests with 2 fake cpus
