@@ -97,7 +97,7 @@ process.stdout.write("running tests..." + getEOL(2));
   process.stdout.write("events OK" + getEOL(1));
 
   monitor.removeAllListeners();
-
+  
 
   // readable stream interface
   monitor.config({stream: true});
@@ -311,3 +311,29 @@ setImmediate(function() {
   
   process.stdout.write("mock tests OK" + getEOL(1));
 });
+
+// throttle
+var eventCount = 0;
+var monitor4 = new monitor.Monitor();
+
+monitor4.start();
+monitor4.throttle('loadavg1', function(event) {
+  eventCount++;
+}, 100);
+
+monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
+monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
+setTimeout(function() {
+  monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
+}, 10);
+setTimeout(function() {
+  monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
+  monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
+  monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
+  setImmediate(function() {
+    assert.strictEqual(eventCount, 3, "throttle: eventCount === 3 expected");
+    process.stdout.write("throttle() test OK" + getEOL(1));
+    monitor4.stop();
+  });
+}, 200);
+  
