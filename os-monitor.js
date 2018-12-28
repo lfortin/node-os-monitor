@@ -56,7 +56,7 @@ var Monitor = function() {
 
 util.inherits(Monitor, stream.Readable);
 
-Monitor.prototype.version = '1.0.6';
+Monitor.prototype.version = '1.0.7';
 
 
 // readable stream implementation requirement
