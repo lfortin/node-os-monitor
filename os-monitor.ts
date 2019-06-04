@@ -22,7 +22,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-var util     = require('util'),
+interface InfoObject {
+  loadavg  : number;
+  uptime   : number;
+  freemem  : number;
+  totalmem : number;
+}
+
+let util     = require('util'),
     os       = require('os'),
     stream   = require('readable-stream'),
     _        = require('underscore'),
@@ -40,21 +47,39 @@ var util     = require('util'),
     };
 
 // constructor
-var Monitor = function() {
-
-  stream.Readable.call(this, {highWaterMark: 102400});
-
-  this._monitorState = {
-    running: false,
-    ended: false,
-    streamBuffering: true,
-    interval: undefined,
-    config: _.clone(defaults)
-  };
+class Monitor extends stream.Readable {
+  private _monitorState: object;
+  public version: string;
+  
+  constructor(options?: object) {
+    super({highWaterMark: 102400});
+    this._monitorState = {
+      running: false,
+      ended: false,
+      streamBuffering: true,
+      interval: undefined,
+      config: _.clone(defaults)
+    };
+  }
+  
+  private _isEnded(): boolean {
+    return !!this._monitorState.ended;
+  }
+  private _sanitizeNumber(n: number): number {
+    if(!_.isNumber(n)) {
+      throw new Error("Number expected");
+    }
+    if(!n || n < 0) {
+      throw new Error("Number must be greater than 0");
+    }
+    // Math.pow(2, 31);
+    if(n >= 2147483648) {
+      throw new Error("Number must be smaller than 2147483648");
+    }
+    return n;
+  }
 };
 
-
-util.inherits(Monitor, stream.Readable);
 
 Monitor.prototype.version = '1.0.7';
 
@@ -64,73 +89,71 @@ Monitor.prototype._read = function() {
   this._monitorState.streamBuffering = true;
 };
 
-Monitor.prototype.sendEvent = function(event, obj) {
+Monitor.prototype.sendEvent = function(event: string, obj?: InfoObject): void {
 
-  var eventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
+  let eventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
   
   // for EventEmitter
   this.emit(event, eventObject);
   // for readable Stream
   if(this.config().stream && this._monitorState.streamBuffering) {
-    var prettyJSON = os.EOL + JSON.stringify(eventObject, null, 2);
+    let prettyJSON = os.EOL + JSON.stringify(eventObject, null, 2);
     if( !this.push(prettyJSON) ) {
       this._monitorState.streamBuffering = false;
     }
   }
 };
 
-Monitor.prototype.start = function(options) {
-
-  var self = this;
+Monitor.prototype.start = function(options: object) {
 
   if(this._isEnded()) {
     throw new Error("monitor has been ended by .destroy() method");
   }
 
-  self.stop()
+  this.stop()
       .config(options);
 
-  var cycle = function() {
-    var info = {
+  let cycle = (): void => {
+    let info: InfoObject = {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
       totalmem : os.totalmem()
     },
-    config = self.config(),
+    config = this.config(),
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
-      self.sendEvent('monitor', info);
+      this.sendEvent('monitor', info);
     }
     if(info.loadavg[0] > config.critical1) {
-      self.sendEvent('loadavg1', info);
+      this.sendEvent('loadavg1', info);
     }
     if(info.loadavg[1] > config.critical5) {
-      self.sendEvent('loadavg5', info);
+      this.sendEvent('loadavg5', info);
     }
     if(info.loadavg[2] > config.critical15) {
-      self.sendEvent('loadavg15', info);
+      this.sendEvent('loadavg15', info);
     }
     if(info.freemem < freemem) {
-      self.sendEvent('freemem', info);
+      this.sendEvent('freemem', info);
     }
     if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
-      self.sendEvent('uptime', info);
+      this.sendEvent('uptime', info);
     }
   };
   
-  if(self.config().immediate) {
+  if(this.config().immediate) {
     process.nextTick(cycle);
   }
-  self._monitorState.interval = setInterval(cycle, self.config().delay);
+  this._monitorState.interval = setInterval(cycle, this.config().delay);
 
-  if(!self.isRunning()) {
-    self._monitorState.running = true;
-    self.sendEvent('start');
+  if(!this.isRunning()) {
+    this._monitorState.running = true;
+    this.sendEvent('start');
   }
 
-  return self;
+  return this;
 };
 
 Monitor.prototype.stop = function() {
@@ -151,7 +174,7 @@ Monitor.prototype.reset = function() {
   return this;
 };
 
-Monitor.prototype.destroy = function(err) {
+Monitor.prototype.destroy = function(err?: any) {
 
   if(!this._isEnded()) {
     this.sendEvent('destroy');
@@ -169,7 +192,7 @@ Monitor.prototype.destroy = function(err) {
   return this;
 };
 
-Monitor.prototype.config = function(options) {
+Monitor.prototype.config = function(options?: object): object {
 
   if(_.isObject(options)) {
     _.extend(this._monitorState.config, options);
@@ -179,16 +202,16 @@ Monitor.prototype.config = function(options) {
   return this._monitorState.config;
 };
 
-Monitor.prototype.isRunning = function() {
+Monitor.prototype.isRunning = function(): boolean {
   return !!this._monitorState.running;
 };
 
-Monitor.prototype._isEnded = function() {
-  return !!this._monitorState.ended;
-};
+//Monitor.prototype._isEnded = function(): boolean {
+//  return !!this._monitorState.ended;
+//};
 
-Monitor.prototype.throttle = function(event, handler, wait) {
-  var self     = this,
+Monitor.prototype.throttle = function(event: string, handler, wait: number) {
+  let self     = this,
       _handler = _.wrap(handler, function(fn) {
                    if(self.isRunning()) {
                      fn.apply(this, _.toArray(arguments).slice(1));
@@ -202,7 +225,8 @@ Monitor.prototype.throttle = function(event, handler, wait) {
  * convenience methods
  */
 
-Monitor.prototype._sanitizeNumber = function(n) {
+/*
+Monitor.prototype._sanitizeNumber = function(n: number): number {
   if(!_.isNumber(n)) {
     throw new Error("Number expected");
   }
@@ -215,20 +239,21 @@ Monitor.prototype._sanitizeNumber = function(n) {
   }
   return n;
 };
+*/
 
-Monitor.prototype.seconds = function(n) {
+Monitor.prototype.seconds = function(n: number): number {
   return this._sanitizeNumber(n * 1000);
 };
 
-Monitor.prototype.minutes = function(n) {
+Monitor.prototype.minutes = function(n: number): number {
   return this._sanitizeNumber(n * this.seconds(60));
 };
 
-Monitor.prototype.hours = function(n) {
+Monitor.prototype.hours = function(n: number): number {
   return this._sanitizeNumber(n * this.minutes(60));
 };
 
-Monitor.prototype.days = function(n) {
+Monitor.prototype.days = function(n: number): number {
   return this._sanitizeNumber(n * this.hours(24));
 };
 
