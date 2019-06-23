@@ -1,4 +1,4 @@
-// OS Monitoring for Node.js
+// OS Monitoring for Node.js, released under the MIT license. Copyright (c) 2012-2018 lfortin
 
 // Copyright (c) 2012-2018 lfortin
 //

@@ -1,4 +1,4 @@
-// OS Monitoring for Node.js
+// OS Monitoring for Node.js, released under the MIT license. Copyright (c) 2012-2018 lfortin
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
