@@ -44,7 +44,7 @@ interface MonitorState {
 }
 
 interface InfoObject {
-  loadavg?  : number;
+  loadavg?  : number[];
   uptime?   : number;
   freemem?  : number;
   totalmem? : number;
