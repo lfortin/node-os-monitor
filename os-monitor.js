@@ -1,6 +1,6 @@
 // OS Monitoring for Node.js
 
-// Copyright (c) 2012-2018 lfortin
+// Copyright (c) 2012-2020 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -56,7 +56,7 @@ var Monitor = function() {
 
 util.inherits(Monitor, stream.Readable);
 
-Monitor.prototype.version = '1.0.7';
+Monitor.prototype.version = '1.0.8';
 
 
 // readable stream implementation requirement
