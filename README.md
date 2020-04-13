@@ -15,7 +15,7 @@ Allows you to observe some OS parameters, such as free memory available or load 
 # Synopsis
 
 ```javascript
-var monitor = require("os-monitor");
+const monitor = require("os-monitor");
 
 
 // basic usage
@@ -35,22 +35,22 @@ monitor.start({ delay: 3000 // interval in ms between monitor cycles
 
 
 // define handler that will always fire every cycle
-monitor.on('monitor', function(event) {
-  console.log(event.type, ' This event always happens on each monitor cycle!');
+monitor.on('monitor', (event) => {
+  console.log(event.type, 'This event always happens on each monitor cycle!');
 });
 
 // define handler for a too high 1-minute load average
-monitor.on('loadavg1', function(event) {
-  console.log(event.type, ' Load average is exceptionally high!');
+monitor.on('loadavg1', (event) => {
+  console.log(event.type, 'Load average is exceptionally high!');
 });
 
 // define handler for a too low free memory
-monitor.on('freemem', function(event) {
+monitor.on('freemem', (event) => {
   console.log(event.type, 'Free memory is very low!');
 });
 
 // define a throttled handler, using Underscore.js's throttle function (http://underscorejs.org/#throttle)
-monitor.throttle('loadavg5', function(event) {
+monitor.throttle('loadavg5', (event) => {
 
   // whatever is done here will not happen
   // more than once every 5 minutes(300000 ms)
@@ -207,7 +207,7 @@ monitor.pipe(process.stdout);
 
 
 // write to a file
-var fs = require('fs'),
+let fs = require('fs'),
     logFile = fs.createWriteStream('/tmp/log.txt', {flags: 'a'});
 
 monitor.pipe(logFile);
@@ -219,11 +219,11 @@ monitor.pipe(logFile);
 Need concurrent monitor instances? The monitor class is available from the os-monitor object:
 
 ```
-var osm = require('os-monitor');
+const monitor = require('os-monitor');
 
-var monitor1 = new osm.Monitor();
-var monitor2 = new osm.Monitor();
-var monitor3 = new osm.Monitor();
+let monitor1 = new monitor.Monitor();
+let monitor2 = new monitor.Monitor();
+let monitor3 = new monitor.Monitor();
 ```
 
 
@@ -232,10 +232,10 @@ var monitor3 = new osm.Monitor();
 The node `os` built-in module is also available from the os-monitor object:
 
 ```
-var osm = require('os-monitor');
+const monitor = require('os-monitor');
 
-var type = osm.os.type();
-var cpus = osm.os.cpus();
+let type = monitor.os.type();
+let cpus = monitor.os.cpus();
 ```
 
 Documentation for the `os` module is available [here](http://nodejs.org/api/os.html).
