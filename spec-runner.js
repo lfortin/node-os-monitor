@@ -1,29 +1,25 @@
 
 
-var assert = require('assert'),
+const assert = require('assert'),
     os = require('os'),
-    mock = require('mock-os');
+    mock = require('mock-os'),
+    EOL = os.EOL;
 
 // mock os module
 mock({
   cpus: [{}, {}]
 });
 
-var monitor = require('./os-monitor');
-
-function getEOL(n) {
-  var lines = [];
-  for(var i = 0; i < n; i++) {
-    lines.push(os.EOL);
-  }
-  return lines.join('');
+function log(output = '') {
+  process.stdout.write(`${output}${EOL}`);
 }
 
-process.stdout.write("running tests..." + getEOL(2));
+const monitor = require('./os-monitor');
 
+log("running tests...");
+log();
 
-
-(function() {
+(() => {
 
   // API signature
   assert.ok(monitor._read, "internal ._read() method expected");
@@ -46,7 +42,7 @@ process.stdout.write("running tests..." + getEOL(2));
   //assert.ok(monitor.whetever, "whatever expected");
 
 
-  process.stdout.write("API signature OK" + getEOL(1));
+  log("API signature OK");
 
 
   // config
@@ -56,28 +52,28 @@ process.stdout.write("running tests..." + getEOL(2));
   assert.strictEqual(monitor.config().test, 456, "start() : same config expected");
   monitor.stop();
 
-  process.stdout.write("config OK" + getEOL(1));
+  log("config OK");
 
 
   // events
-  var trace = {};
+  let trace = {};
 
-  monitor.on('monitor', function(event) {
+  monitor.on('monitor', (event) => {
     trace.monitorEvent = event.type;
   });
-  monitor.on('loadavg1', function(event) {
+  monitor.on('loadavg1', (event) => {
     trace.loadavg1Event = event.type;
   });
-  monitor.on('loadavg5', function(event) {
+  monitor.on('loadavg5', (event) => {
     trace.loadavg5Event = event.type;
   });
-  monitor.on('loadavg15', function(event) {
+  monitor.on('loadavg15', (event) => {
     trace.loadavg15Event = event.type;
   });
-  monitor.on('freemem', function(event) {
+  monitor.on('freemem', (event) => {
     trace.freememEvent = event.type;
   });
-  monitor.on('uptime', function(event) {
+  monitor.on('uptime', (event) => {
     trace.uptimeEvent = event.type;
   });
   monitor.sendEvent('monitor', {type: 'monitor'});
@@ -94,7 +90,7 @@ process.stdout.write("running tests..." + getEOL(2));
   assert.strictEqual(trace.freememEvent, "freemem", "'freemem' event expected");
   assert.strictEqual(trace.uptimeEvent, "uptime", "'uptime' event expected");
   
-  process.stdout.write("events OK" + getEOL(1));
+  log("events OK");
 
   monitor.removeAllListeners();
   
@@ -104,7 +100,7 @@ process.stdout.write("running tests..." + getEOL(2));
   monitor.sendEvent('monitor', {type: 'monitor'});
   assert.ok(monitor.read(), "output expected from readable stream interface");
 
-  process.stdout.write("readable stream interface OK" + getEOL(1));
+  log("readable stream interface OK");
 
 
   // isRunning() test
@@ -114,7 +110,7 @@ process.stdout.write("running tests..." + getEOL(2));
   monitor.stop();
   assert.strictEqual(monitor.isRunning(), false, "isRunning() === false expected");
 
-  process.stdout.write("isRunning() test OK" + getEOL(1));
+  log("isRunning() test OK");
     
     
   // reset() test
@@ -141,11 +137,11 @@ process.stdout.write("running tests..." + getEOL(2));
   assert.strictEqual(monitor.config().stream, false, "config should be reset");
   assert.strictEqual(monitor.config().immediate, false, "config should be reset");
 
-  process.stdout.write("reset() test OK" + getEOL(1));
+  log("reset() test OK");
     
     
   // destroy() test
-  monitor.on('close', function() {
+  monitor.on('close', () => {
     trace.closeEvent = 'close';
   });
 
@@ -153,16 +149,16 @@ process.stdout.write("running tests..." + getEOL(2));
 
   assert.strictEqual(monitor.isRunning(), false, "isRunning() === false expected");
   assert.strictEqual(trace.closeEvent, "close", "'close' event expected");
-  assert.throws(function() {
+  assert.throws(() => {
                     monitor.start();
                 },
                 "start() should throw");
-  assert.throws(function() {
+  assert.throws(() => {
                     monitor.push('some data');
                 },
                 "push() should throw");
 
-  process.stdout.write("destroy() test OK" + getEOL(1));
+  log("destroy() test OK");
 
   monitor.removeAllListeners();
 
@@ -178,40 +174,40 @@ mock({
   uptime: 10000
 });
 
-var monitor2 = new monitor.Monitor();
-var monitor3 = new monitor.Monitor();
-var trace2 = {};
-var trace3 = {};
+let monitor2 = new monitor.Monitor();
+let monitor3 = new monitor.Monitor();
+let trace2 = {};
+let trace3 = {};
 
-monitor2.on('freemem', function(event) {
+monitor2.on('freemem', (event) => {
   trace2.freememAbsolute = event;
 })
-.on('uptime', function(event) {
+.on('uptime', (event) => {
   trace2.uptime = event;
 })
-.on('loadavg1', function(event) {
+.on('loadavg1', (event) => {
   trace2.loadavg1 = event;
 })
-.on('loadavg5', function(event) {
+.on('loadavg5', (event) => {
   trace2.loadavg5 = event;
 })
-.on('loadavg15', function(event) {
+.on('loadavg15', (event) => {
   trace2.loadavg15 = event;
 });
 
-monitor3.on('freemem', function(event) {
+monitor3.on('freemem', (event) => {
   trace3.freememAbsolute = event;
 })
-.on('uptime', function(event) {
+.on('uptime', (event) => {
   trace3.uptime = event;
 })
-.on('loadavg1', function(event) {
+.on('loadavg1', (event) => {
   trace3.loadavg1 = event;
 })
-.on('loadavg5', function(event) {
+.on('loadavg5', (event) => {
   trace3.loadavg5 = event;
 })
-.on('loadavg15', function(event) {
+.on('loadavg15', (event) => {
   trace3.loadavg15 = event;
 });
 
@@ -230,14 +226,14 @@ monitor3.start({
   immediate: true
 });
 
-process.nextTick(function() {
+process.nextTick(() => {
   monitor2.removeAllListeners();
   monitor3.removeAllListeners();
   
-  monitor2.on('freemem', function(event) {
+  monitor2.on('freemem', (event) => {
     trace2.freememPct = event;
   });
-  monitor3.on('freemem', function() {
+  monitor3.on('freemem', () => {
     trace3.freememPct = event;
   });
 });
@@ -252,7 +248,7 @@ monitor3.start({
   immediate: true
 }).stop();
 
-setImmediate(function() {
+setImmediate(() => {
   assert.ok(trace2.freememAbsolute, "freememAbsolute expected");
   assert.ok(trace2.freememPct, "freememPct expected");
   assert.ok(trace2.uptime, "uptime expected");
@@ -309,31 +305,30 @@ setImmediate(function() {
   assert.ok(!trace3.loadavg5, "loadavg5 not expected");
   assert.ok(!trace3.loadavg15, "loadavg15 not expected");
   
-  process.stdout.write("mock tests OK" + getEOL(1));
+  log("mock tests OK");
 });
 
 // throttle
-var eventCount = 0;
-var monitor4 = new monitor.Monitor();
+let eventCount = 0;
+let monitor4 = new monitor.Monitor();
 
 monitor4.start();
-monitor4.throttle('loadavg1', function(event) {
+monitor4.throttle('loadavg1', (event) => {
   eventCount++;
 }, 100);
 
 monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
 monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
-setTimeout(function() {
+setImmediate(() => {
   monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
-}, 10);
-setTimeout(function() {
+});
+setTimeout(() => {
   monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
   monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
   monitor4.sendEvent('loadavg1', {type: 'loadavg1'});
-  setImmediate(function() {
+  setImmediate(() => {
     assert.strictEqual(eventCount, 3, "throttle: eventCount === 3 expected");
-    process.stdout.write("throttle() test OK" + getEOL(1));
+    log("throttle() test OK");
     monitor4.stop();
   });
 }, 200);
-  
