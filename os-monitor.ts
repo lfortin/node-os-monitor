@@ -46,7 +46,7 @@ class Monitor extends stream.Readable {
     super({highWaterMark: 102400});
   }
 
-  readonly version: string = '1.0.8';
+  readonly version: string = '1.0.9';
 
   // expose OS module
   public os = os;

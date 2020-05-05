@@ -49,7 +49,7 @@ var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
         var _this = _super.call(this, { highWaterMark: 102400 }) || this;
-        _this.version = '1.0.8';
+        _this.version = '1.0.9';
         // expose OS module
         _this.os = os;
         // expose Underscore
