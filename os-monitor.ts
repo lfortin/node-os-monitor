@@ -48,6 +48,22 @@ class Monitor extends stream.Readable {
 
   readonly version: string = '1.0.9';
 
+  readonly constants = {
+    events: {
+      MONITOR: 'monitor',
+      UPTIME: 'uptime',
+      FREEMEM: 'freemem',
+      LOADAVG1: 'loadavg1',
+      LOADAVG5: 'loadavg5',
+      LOADAVG15: 'loadavg15',
+      START: 'start',
+      STOP: 'stop',
+      CONFIG: 'config',
+      RESET: 'reset',
+      DESTROY: 'destroy'
+    }
+  };
+
   // expose OS module
   public os = os;
 
@@ -94,22 +110,22 @@ class Monitor extends stream.Readable {
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
-      this.sendEvent('monitor', info);
+      this.sendEvent(this.constants.events.MONITOR, info);
     }
     if(info.loadavg[0] > config.critical1) {
-      this.sendEvent('loadavg1', info);
+      this.sendEvent(this.constants.events.LOADAVG1, info);
     }
     if(info.loadavg[1] > config.critical5) {
-      this.sendEvent('loadavg5', info);
+      this.sendEvent(this.constants.events.LOADAVG5, info);
     }
     if(info.loadavg[2] > config.critical15) {
-      this.sendEvent('loadavg15', info);
+      this.sendEvent(this.constants.events.LOADAVG15, info);
     }
     if(info.freemem < freemem) {
-      this.sendEvent('freemem', info);
+      this.sendEvent(this.constants.events.FREEMEM, info);
     }
     if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
-      this.sendEvent('uptime', info);
+      this.sendEvent(this.constants.events.UPTIME, info);
     }
   }
 
@@ -128,7 +144,7 @@ class Monitor extends stream.Readable {
   
     if(!this.isRunning()) {
       this._monitorState.running = true;
-      this.sendEvent('start');
+      this.sendEvent(this.constants.events.START);
     }
   
     return this;
@@ -140,14 +156,14 @@ class Monitor extends stream.Readable {
   
     if(this.isRunning()) {
       this._monitorState.running = false;
-      this.sendEvent('stop');
+      this.sendEvent(this.constants.events.STOP);
     }
   
     return this;
   }
 
   public reset(): Monitor {
-    this.sendEvent('reset');
+    this.sendEvent(this.constants.events.RESET);
     this[this.isRunning() ? 'start' : 'config'](defaults());
     return this;
   };
@@ -155,7 +171,7 @@ class Monitor extends stream.Readable {
   public destroy(err?: any): Monitor {
 
     if(!this._isEnded()) {
-      this.sendEvent('destroy');
+      this.sendEvent(this.constants.events.DESTROY);
       this.stop();
       if(this instanceof stream.Readable) {
         this.emit('close');
@@ -174,7 +190,7 @@ class Monitor extends stream.Readable {
 
     if(_.isObject(options)) {
       _.extend(this._monitorState.config, options);
-      this.sendEvent('config', { options: _.clone(options) });
+      this.sendEvent(this.constants.events.CONFIG, { options: _.clone(options) });
     }
   
     return this._monitorState.config;

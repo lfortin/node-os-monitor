@@ -39,6 +39,7 @@ log();
   assert.ok(monitor.Monitor, "Monitor class expected");
   assert.ok(monitor.os, "os object reference expected");
   assert.ok(monitor._, "_ object reference expected");
+  assert.ok(monitor.constants, "constants object expected");
   //assert.ok(monitor.whetever, "whatever expected");
 
 
