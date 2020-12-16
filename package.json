@@ -13,6 +13,7 @@
     "url": "http://lfortin.github.io"
   },
   "main": "./os-monitor.js",
+  "types": "./os-monitor.d.ts",
   "engines": {
     "node": ">=0.8.0"
   },
@@ -25,7 +26,7 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "build": "tsc --target ES3 os-monitor.ts",
+    "build": "tsc -d -t ES3 os-monitor.ts",
     "test": "node spec-runner.js"
   },
   "keywords": [
