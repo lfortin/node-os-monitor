@@ -46,7 +46,7 @@ class Monitor extends stream.Readable {
     super({highWaterMark: 102400});
   }
 
-  readonly version: string = '1.0.9';
+  readonly version: string = '1.0.10';
 
   readonly constants = {
     events: {

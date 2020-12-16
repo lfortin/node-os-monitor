@@ -49,7 +49,7 @@ var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
         var _this = _super.call(this, { highWaterMark: 102400 }) || this;
-        _this.version = '1.0.9';
+        _this.version = '1.0.10';
         _this.constants = {
             events: {
                 MONITOR: 'monitor',
