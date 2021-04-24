@@ -213,13 +213,13 @@ class Monitor extends stream.Readable {
     let self     = this,
         _handler = _.wrap(handler, function(fn) {
                      if(self.isRunning()) {
-                       fn.apply(this, _.toArray(arguments).slice(1));
+                       fn.apply(self, _.toArray(arguments).slice(1));
                      }
                    }),
         throttledFn = _.throttle(_handler, wait || this.config().throttle);
 
     this._monitorState.throttled.push({originalFn: handler, throttledFn: throttledFn});
-    return this.on.call(this, event, throttledFn);
+    return this.on(event, throttledFn);
   }
 
   public unthrottle(event: string, handler: Function): Monitor {
