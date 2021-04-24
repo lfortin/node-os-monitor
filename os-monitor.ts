@@ -46,23 +46,27 @@ class Monitor extends stream.Readable {
     super({highWaterMark: 102400});
   }
 
-  readonly version: string = '1.0.10';
+  public get version(): string {
+    return '1.0.10';
+  }
 
-  readonly constants = {
-    events: {
-      MONITOR: 'monitor',
-      UPTIME: 'uptime',
-      FREEMEM: 'freemem',
-      LOADAVG1: 'loadavg1',
-      LOADAVG5: 'loadavg5',
-      LOADAVG15: 'loadavg15',
-      START: 'start',
-      STOP: 'stop',
-      CONFIG: 'config',
-      RESET: 'reset',
-      DESTROY: 'destroy'
-    }
-  };
+  public get constants() {
+    return {
+      events: {
+        MONITOR: 'monitor',
+        UPTIME: 'uptime',
+        FREEMEM: 'freemem',
+        LOADAVG1: 'loadavg1',
+        LOADAVG5: 'loadavg5',
+        LOADAVG15: 'loadavg15',
+        START: 'start',
+        STOP: 'stop',
+        CONFIG: 'config',
+        RESET: 'reset',
+        DESTROY: 'destroy'
+      }
+    };
+  }
 
   // expose OS module
   public os = os;

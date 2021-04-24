@@ -1,8 +1,8 @@
 declare const os: any, stream: any, _: any, critical: number, defaults: Function;
 declare class Monitor extends stream.Readable {
     constructor();
-    readonly version: string;
-    readonly constants: {
+    get version(): string;
+    get constants(): {
         events: {
             MONITOR: string;
             UPTIME: string;

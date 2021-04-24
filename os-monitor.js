@@ -51,22 +51,6 @@ var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
         var _this = _super.call(this, { highWaterMark: 102400 }) || this;
-        _this.version = '1.0.10';
-        _this.constants = {
-            events: {
-                MONITOR: 'monitor',
-                UPTIME: 'uptime',
-                FREEMEM: 'freemem',
-                LOADAVG1: 'loadavg1',
-                LOADAVG5: 'loadavg5',
-                LOADAVG15: 'loadavg15',
-                START: 'start',
-                STOP: 'stop',
-                CONFIG: 'config',
-                RESET: 'reset',
-                DESTROY: 'destroy'
-            }
-        };
         // expose OS module
         _this.os = os;
         // expose Underscore
@@ -81,6 +65,34 @@ var Monitor = /** @class */ (function (_super) {
         };
         return _this;
     }
+    Object.defineProperty(Monitor.prototype, "version", {
+        get: function () {
+            return '1.0.10';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Monitor.prototype, "constants", {
+        get: function () {
+            return {
+                events: {
+                    MONITOR: 'monitor',
+                    UPTIME: 'uptime',
+                    FREEMEM: 'freemem',
+                    LOADAVG1: 'loadavg1',
+                    LOADAVG5: 'loadavg5',
+                    LOADAVG15: 'loadavg15',
+                    START: 'start',
+                    STOP: 'stop',
+                    CONFIG: 'config',
+                    RESET: 'reset',
+                    DESTROY: 'destroy'
+                }
+            };
+        },
+        enumerable: false,
+        configurable: true
+    });
     // readable stream implementation requirement
     Monitor.prototype._read = function () {
         this._monitorState.streamBuffering = true;
