@@ -152,6 +152,10 @@ Adds a one-time listener for the specified event type. This listener is invoked 
 
 Adds a throttled listener, using [Underscore.js's throttle](http://underscorejs.org/#throttle) function. The throttled listener will not be executed more than once every delay milliseconds.
 
+### .unthrottle( eventType, handler )
+
+Removes a throttled listener previously added using `.throttle()`. `handler` must be the original function.
+
 ### .destroy( )
 
 Permanently stops and disables the monitor.

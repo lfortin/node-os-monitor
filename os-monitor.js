@@ -76,7 +76,8 @@ var Monitor = /** @class */ (function (_super) {
             ended: false,
             streamBuffering: true,
             interval: undefined,
-            config: defaults()
+            config: defaults(),
+            throttled: []
         };
         return _this;
     }
@@ -188,8 +189,20 @@ var Monitor = /** @class */ (function (_super) {
             if (self.isRunning()) {
                 fn.apply(this, _.toArray(arguments).slice(1));
             }
-        });
-        return self.on.call(self, event, _.throttle(_handler, wait || self.config().throttle));
+        }), throttledFn = _.throttle(_handler, wait || this.config().throttle);
+        this._monitorState.throttled.push({ originalFn: handler, throttledFn: throttledFn });
+        return this.on.call(this, event, throttledFn);
+    };
+    Monitor.prototype.unthrottle = function (event, handler) {
+        var throttled = this._monitorState.throttled;
+        for (var i = throttled.length - 1; i >= 0; i--) {
+            var pair = throttled[i];
+            if (pair.originalFn === handler) {
+                this.removeListener(event, pair.throttledFn);
+                throttled.splice(i, 1);
+            }
+        }
+        return this;
     };
     /*
     * convenience methods

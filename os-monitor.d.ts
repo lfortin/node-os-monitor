@@ -31,6 +31,7 @@ declare class Monitor extends stream.Readable {
     isRunning(): boolean;
     private _isEnded;
     throttle(event: string, handler: Function, wait: number): Monitor;
+    unthrottle(event: string, handler: Function): Monitor;
     private _sanitizeNumber;
     seconds(n: number): number;
     minutes(n: number): number;
@@ -55,6 +56,10 @@ interface MonitorState {
     streamBuffering: boolean;
     interval: any;
     config: ConfigObject;
+    throttled: Array<{
+        originalFn: Function;
+        throttledFn: Function;
+    }>;
 }
 interface InfoObject {
     loadavg?: Array<number>;

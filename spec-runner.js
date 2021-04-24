@@ -32,6 +32,7 @@ log();
   assert.ok(monitor.config, ".config() method expected");
   assert.ok(monitor.isRunning, ".isRunning() method expected");
   assert.ok(monitor.throttle, ".throttle() method expected");
+  assert.ok(monitor.unthrottle, ".unthrottle() method expected");
   assert.ok(monitor.seconds, ".seconds() method expected");
   assert.ok(monitor.minutes, ".minutes() method expected");
   assert.ok(monitor.hours, ".hours() method expected");
@@ -117,7 +118,7 @@ log();
   // reset() test
   monitor.config({
                  delay: 1000,
-                 critital1: 1.5,
+                 critical1: 1.5,
                  critical5: 1.5,
                  critical15: 1.5,
                  freemem: 1,
@@ -332,4 +333,27 @@ setTimeout(() => {
     log("throttle() test OK");
     monitor4.stop();
   });
+}, 200);
+
+// unthrottle
+mock({freemem: 1000});
+let eventCount2 = 0;
+let monitor5 = new monitor.Monitor();
+let handler = function(event) {
+  eventCount2++;
+};
+
+monitor5.throttle('freemem', handler, 1);
+monitor5.throttle('freemem', handler, 1);
+monitor5.throttle('freemem', handler, 1);
+monitor5.start({'freemem': 10000, delay: 100, immediate: false});
+
+setTimeout(() => {
+  monitor5.unthrottle('freemem', handler);
+  monitor5.emit('freemem');
+
+  assert.strictEqual(eventCount2, 3, "unthrottle: eventCount === 3 expected");
+  log("unthrottle() test OK");
+  monitor5.stop();
+  mock.restore();
 }, 200);

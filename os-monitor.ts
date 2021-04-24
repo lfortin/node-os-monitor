@@ -75,7 +75,8 @@ class Monitor extends stream.Readable {
     ended: false,
     streamBuffering: true,
     interval: undefined,
-    config: defaults()
+    config: defaults(),
+    throttled: []
   };
 
   // readable stream implementation requirement
@@ -210,8 +211,25 @@ class Monitor extends stream.Readable {
                      if(self.isRunning()) {
                        fn.apply(this, _.toArray(arguments).slice(1));
                      }
-                   });
-    return self.on.call(self, event, _.throttle(_handler, wait || self.config().throttle));
+                   }),
+        throttledFn = _.throttle(_handler, wait || this.config().throttle);
+
+    this._monitorState.throttled.push({originalFn: handler, throttledFn: throttledFn});
+    return this.on.call(this, event, throttledFn);
+  }
+
+  public unthrottle(event: string, handler: Function): Monitor {
+    const throttled = this._monitorState.throttled;
+
+    for(let i = throttled.length - 1; i >= 0; i--) {
+      let pair = throttled[i];
+      if(pair.originalFn === handler) {
+        this.removeListener(event, pair.throttledFn);
+        throttled.splice(i, 1);
+      }
+    }
+
+    return this;
   }
 
   /*
@@ -273,6 +291,7 @@ interface MonitorState {
   streamBuffering: boolean;
   interval: any;
   config: ConfigObject;
+  throttled: Array<{ originalFn: Function, throttledFn: Function }>;
 }
 
 interface InfoObject {
