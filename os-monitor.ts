@@ -50,7 +50,7 @@ class Monitor extends stream.Readable {
     return '1.0.10';
   }
 
-  public get constants() {
+  public get constants(): MonitorConstants {
     return {
       events: {
         MONITOR: 'monitor',
@@ -296,6 +296,22 @@ interface MonitorState {
   interval: any;
   config: ConfigObject;
   throttled: Array<{ originalFn: Function, throttledFn: Function }>;
+}
+
+interface MonitorConstants {
+  events: {
+    MONITOR: string;
+    UPTIME: string;
+    FREEMEM: string;
+    LOADAVG1: string;
+    LOADAVG5: string;
+    LOADAVG15: string;
+    START: string;
+    STOP: string;
+    CONFIG: string;
+    RESET: string;
+    DESTROY: string;
+  }
 }
 
 interface InfoObject {

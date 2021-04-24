@@ -2,21 +2,7 @@ declare const os: any, stream: any, _: any, critical: number, defaults: Function
 declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
-    get constants(): {
-        events: {
-            MONITOR: string;
-            UPTIME: string;
-            FREEMEM: string;
-            LOADAVG1: string;
-            LOADAVG5: string;
-            LOADAVG15: string;
-            START: string;
-            STOP: string;
-            CONFIG: string;
-            RESET: string;
-            DESTROY: string;
-        };
-    };
+    get constants(): MonitorConstants;
     os: any;
     _: any;
     private _monitorState;
@@ -60,6 +46,21 @@ interface MonitorState {
         originalFn: Function;
         throttledFn: Function;
     }>;
+}
+interface MonitorConstants {
+    events: {
+        MONITOR: string;
+        UPTIME: string;
+        FREEMEM: string;
+        LOADAVG1: string;
+        LOADAVG5: string;
+        LOADAVG15: string;
+        START: string;
+        STOP: string;
+        CONFIG: string;
+        RESET: string;
+        DESTROY: string;
+    };
 }
 interface InfoObject {
     loadavg?: Array<number>;
