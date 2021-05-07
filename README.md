@@ -182,7 +182,7 @@ monitor.start({ delay: monitor.seconds(5) });
 ```
 
 
-# Event object
+## Event object
 
 There is some useful information in the provided event object:
 
@@ -224,7 +224,7 @@ monitor.pipe(logFile);
 
 ## Promise / thenable
 
-`os-monitor` supports Promise, async/await via `.when()`.
+`os-monitor` supports Promise, async/await: using `.when(eventType)` returns a Promise(or a basic thenable if Promise is not supported).
 
 ```
 monitor.when('freemem').then(event => {
