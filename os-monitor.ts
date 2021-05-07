@@ -23,6 +23,7 @@
 
 
 const os       = require('os'),
+      events   = require('events'),
       stream   = require('readable-stream'),
       _        = require('underscore'),
       critical: number = os.cpus().length,
@@ -89,7 +90,7 @@ class Monitor extends stream.Readable {
   }
 
   public sendEvent(event: string, obj: InfoObject = {}): Monitor {
-    let eventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
+    let eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
   
     // for EventEmitter
     this.emit(event, eventObject);
@@ -236,6 +237,22 @@ class Monitor extends stream.Readable {
     return this;
   }
 
+  public when(event: string): Promise<Thenable> | Thenable {
+    let deferred: Thenable = new Thenable();
+    let wrappedDeferred: Promise<Thenable>;
+
+    this.once(event, (eventObj: EventObject) => {
+      deferred.resolve(eventObj);
+    });
+
+    try {
+      wrappedDeferred = Promise.resolve(deferred);
+      return wrappedDeferred;
+    } catch(err) {
+      return deferred;
+    }
+  }
+
   /*
   * convenience methods
   */
@@ -270,11 +287,75 @@ class Monitor extends stream.Readable {
   };
 };
 
-// expose main class
+class Thenable extends events.EventEmitter {
+  constructor() {
+    super();
+  }
+  static constants = {
+    state: {
+      PENDING: 'pending',
+      FULFILLED: 'fulfilled',
+      REJECTED: 'rejected'
+    }
+  };
+  private _thenableState = {
+    state: Thenable.constants.state.PENDING,
+    result: undefined
+  };
+  public resolve(result: EventObject): Thenable {
+    const state = Thenable.constants.state;
+    if(this._thenableState.state === state.PENDING) {
+      this._thenableState.state = state.FULFILLED;
+      this._thenableState.result = result;
+      this.emit('resolve', result);
+    }
+    return this;
+  }
+  public reject(error: any): Thenable {
+    const state = Thenable.constants.state;
+    if(this._thenableState.state === state.PENDING) {
+      this._thenableState.state = state.REJECTED;
+      this._thenableState.result = error;
+      this.emit('reject', error);
+    }
+    return this;
+  }
+  public then(onFulfilled: Function | undefined, onRejected: Function | undefined): void {
+    const state = Thenable.constants.state;
+
+    if(this._thenableState.state === state.PENDING) {
+      this.once('resolve', (result: EventObject) => {
+        this._callOnFulfilled(onFulfilled);
+      });
+      this.once('reject', error => {
+        this._callOnRejected(onRejected);
+      });
+    }
+    this._callOnFulfilled(onFulfilled);
+    this._callOnRejected(onRejected);
+  }
+  public catch(onRejected: Function | undefined): void {
+    return this.then(undefined, onRejected);
+  }
+  private _callOnFulfilled(onFulfilled: Function): void {
+    const state = Thenable.constants.state;
+    if(onFulfilled && this._thenableState.state === state.FULFILLED) {
+      onFulfilled(this._thenableState.result);
+    }
+  }
+  private _callOnRejected(onRejected: Function): void {
+    const state = Thenable.constants.state;
+    if(onRejected && this._thenableState.state === state.REJECTED) {
+      onRejected(this._thenableState.result);
+    }
+  }
+}
+
+// expose Thenable class
+Monitor.prototype.Thenable = Thenable;
+// expose main Monitor class
 Monitor.prototype.Monitor = Monitor;
-
 module.exports = new Monitor();
-
 
 interface ConfigObject {
   delay?     : number;
@@ -320,4 +401,9 @@ interface InfoObject {
   freemem?  : number;
   totalmem? : number;
   options?  : ConfigObject;
+}
+
+interface EventObject extends InfoObject {
+  eventType : string;
+  timestamp : number;
 }

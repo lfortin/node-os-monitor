@@ -34,7 +34,7 @@ var __extends = (this && this.__extends) || (function () {
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-var os = require('os'), stream = require('readable-stream'), _ = require('underscore'), critical = os.cpus().length, defaults = function () {
+var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), critical = os.cpus().length, defaults = function () {
     return {
         delay: 3000,
         critical1: critical,
@@ -216,6 +216,20 @@ var Monitor = /** @class */ (function (_super) {
         }
         return this;
     };
+    Monitor.prototype.when = function (event) {
+        var deferred = new Thenable();
+        var wrappedDeferred;
+        this.once(event, function (eventObj) {
+            deferred.resolve(eventObj);
+        });
+        try {
+            wrappedDeferred = Promise.resolve(deferred);
+            return wrappedDeferred;
+        }
+        catch (err) {
+            return deferred;
+        }
+    };
     /*
     * convenience methods
     */
@@ -250,6 +264,74 @@ var Monitor = /** @class */ (function (_super) {
     return Monitor;
 }(stream.Readable));
 ;
-// expose main class
+var Thenable = /** @class */ (function (_super) {
+    __extends(Thenable, _super);
+    function Thenable() {
+        var _this = _super.call(this) || this;
+        _this._thenableState = {
+            state: Thenable.constants.state.PENDING,
+            result: undefined
+        };
+        return _this;
+    }
+    Thenable.prototype.resolve = function (result) {
+        var state = Thenable.constants.state;
+        if (this._thenableState.state === state.PENDING) {
+            this._thenableState.state = state.FULFILLED;
+            this._thenableState.result = result;
+            this.emit('resolve', result);
+        }
+        return this;
+    };
+    Thenable.prototype.reject = function (error) {
+        var state = Thenable.constants.state;
+        if (this._thenableState.state === state.PENDING) {
+            this._thenableState.state = state.REJECTED;
+            this._thenableState.result = error;
+            this.emit('reject', error);
+        }
+        return this;
+    };
+    Thenable.prototype.then = function (onFulfilled, onRejected) {
+        var _this = this;
+        var state = Thenable.constants.state;
+        if (this._thenableState.state === state.PENDING) {
+            this.once('resolve', function (result) {
+                _this._callOnFulfilled(onFulfilled);
+            });
+            this.once('reject', function (error) {
+                _this._callOnRejected(onRejected);
+            });
+        }
+        this._callOnFulfilled(onFulfilled);
+        this._callOnRejected(onRejected);
+    };
+    Thenable.prototype.catch = function (onRejected) {
+        return this.then(undefined, onRejected);
+    };
+    Thenable.prototype._callOnFulfilled = function (onFulfilled) {
+        var state = Thenable.constants.state;
+        if (onFulfilled && this._thenableState.state === state.FULFILLED) {
+            onFulfilled(this._thenableState.result);
+        }
+    };
+    Thenable.prototype._callOnRejected = function (onRejected) {
+        var state = Thenable.constants.state;
+        if (onRejected && this._thenableState.state === state.REJECTED) {
+            onRejected(this._thenableState.result);
+        }
+    };
+    Thenable.constants = {
+        state: {
+            PENDING: 'pending',
+            FULFILLED: 'fulfilled',
+            REJECTED: 'rejected'
+        }
+    };
+    return Thenable;
+}(events.EventEmitter));
+// expose Thenable class
+Monitor.prototype.Thenable = Thenable;
+// expose main Monitor class
 Monitor.prototype.Monitor = Monitor;
 module.exports = new Monitor();

@@ -44,11 +44,13 @@ describe('API signature', function() {
     assert.ok(tester.isRunning, ".isRunning() method expected");
     assert.ok(tester.throttle, ".throttle() method expected");
     assert.ok(tester.unthrottle, ".unthrottle() method expected");
+    assert.ok(tester.when, ".when() method expected");
     assert.ok(tester.seconds, ".seconds() method expected");
     assert.ok(tester.minutes, ".minutes() method expected");
     assert.ok(tester.hours, ".hours() method expected");
     assert.ok(tester.days, ".days() method expected");
     assert.ok(tester.Monitor, "Monitor class expected");
+    assert.ok(tester.Thenable, "Thenable class expected");
     assert.ok(tester.os, "os object reference expected");
     assert.ok(tester._, "_ object reference expected");
     assert.ok(tester.constants, "constants object expected");
@@ -264,6 +266,84 @@ describe('.unthrottle()', function() {
     setTimeout(() => {
       tester.stop();
     }, 100);
+  });
+});
+describe('.when()', function() {
+  it('should return a promise that resolves', async () => {
+    tester.start({delay: 10});
+    let event = await tester.when('monitor');
+    assert.strictEqual(event.type, 'monitor');
+    assert.ok(tester.when('monitor') instanceof Promise);
+  });
+  it('should return a thenable that resolves', async () => {
+    let resolve = Promise.resolve;
+    delete Promise.resolve;
+    tester.start({delay: 10});
+    let event = await tester.when('monitor');
+    assert.strictEqual(event.type, 'monitor');
+    assert.ok(tester.when('monitor') instanceof tester.Thenable);
+    Promise.resolve = resolve;
+  });
+});
+describe('Thenable class', function() {
+  it('should create a thenable that resolves', (done) => {
+    let deferred = new tester.Thenable();
+    let value = {};
+    deferred.then(result => {
+      assert.strictEqual(result, value);
+      done();
+    });
+    deferred.resolve(value);
+  });
+  it('should create a thenable that rejects', (done) => {
+    let deferred = new tester.Thenable();
+    let value = {};
+    deferred.catch(reason => {
+      assert.strictEqual(reason, value);
+      done();
+    });
+    deferred.reject(value);
+  });
+  it('should handle multiple resolutions', (done) => {
+    let deferred = new tester.Thenable();
+    let value = {};
+    deferred.then(result => {
+      assert.strictEqual(result, value);
+      done();
+    });
+    deferred.resolve(value);
+    deferred.resolve();
+    deferred.reject(12345);
+  });
+  it('should handle multiple rejections', (done) => {
+    let deferred = new tester.Thenable();
+    let value = {};
+    deferred.catch(reason => {
+      assert.strictEqual(reason, value);
+      done();
+    });
+    deferred.reject(value);
+    deferred.reject();
+    deferred.resolve(12345);
+  });
+  it('should handle early resolution', async () => {
+    let deferred = new tester.Thenable();
+    let value = {};
+    deferred.resolve(value);
+    deferred.resolve(123);
+    deferred.reject(12345);
+    let result = await deferred;
+    assert.strictEqual(result, value);
+  });
+  it('should handle early rejection', async () => {
+    let deferred = new tester.Thenable();
+    let value = {};
+    deferred.reject(value);
+    deferred.resolve(123);
+    deferred.reject(12345);
+    assert.rejects(async () => {
+      await deferred;
+    });
   });
 });
 describe('.destroy()', function() {

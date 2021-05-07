@@ -156,6 +156,10 @@ Adds a throttled listener, using [Underscore.js's throttle](http://underscorejs.
 
 Removes a throttled listener previously added using `.throttle()`. `handler` must be the original function.
 
+### .when( eventType )
+
+Returns a Promise(or a basic thenable if Promise is not supported) that resolves with an event object when `eventType` is triggered.
+
 ### .destroy( )
 
 Permanently stops and disables the monitor.
@@ -215,6 +219,22 @@ let fs = require('fs'),
     logFile = fs.createWriteStream('/tmp/log.txt', {flags: 'a'});
 
 monitor.pipe(logFile);
+```
+
+
+## Promise / thenable
+
+`os-monitor` supports Promise, async/await via `.when()`.
+
+```
+monitor.when('freemem').then(event => {
+    // ...
+});
+
+async function callback() {
+    let event = await monitor.when('uptime');
+    // ...
+}
 ```
 
 

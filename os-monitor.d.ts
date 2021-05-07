@@ -1,4 +1,4 @@
-declare const os: any, stream: any, _: any, critical: number, defaults: Function;
+declare const os: any, events: any, stream: any, _: any, critical: number, defaults: Function;
 declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
@@ -18,11 +18,29 @@ declare class Monitor extends stream.Readable {
     private _isEnded;
     throttle(event: string, handler: Function, wait: number): Monitor;
     unthrottle(event: string, handler: Function): Monitor;
+    when(event: string): Promise<Thenable> | Thenable;
     private _sanitizeNumber;
     seconds(n: number): number;
     minutes(n: number): number;
     hours(n: number): number;
     days(n: number): number;
+}
+declare class Thenable extends events.EventEmitter {
+    constructor();
+    static constants: {
+        state: {
+            PENDING: string;
+            FULFILLED: string;
+            REJECTED: string;
+        };
+    };
+    private _thenableState;
+    resolve(result: EventObject): Thenable;
+    reject(error: any): Thenable;
+    then(onFulfilled: Function | undefined, onRejected: Function | undefined): void;
+    catch(onRejected: Function | undefined): void;
+    private _callOnFulfilled;
+    private _callOnRejected;
 }
 interface ConfigObject {
     delay?: number;
@@ -68,4 +86,8 @@ interface InfoObject {
     freemem?: number;
     totalmem?: number;
     options?: ConfigObject;
+}
+interface EventObject extends InfoObject {
+    eventType: string;
+    timestamp: number;
 }
