@@ -118,7 +118,11 @@ Set true to enable the monitor as a [Readable Stream](http://nodejs.org/api/stre
 Set true to execute a monitor cycle at start(). Default: false
 
 
-# methods
+# API
+
+### .version
+
+The `monitor.version` property contains the `os-monitor` version string.
 
 ### .start( [options] )
 
