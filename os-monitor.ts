@@ -48,7 +48,7 @@ class Monitor extends stream.Readable {
   }
 
   public get version(): string {
-    return '1.1.0';
+    return '1.2.0';
   }
 
   public get constants(): MonitorConstants {

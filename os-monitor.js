@@ -67,7 +67,7 @@ var Monitor = /** @class */ (function (_super) {
     }
     Object.defineProperty(Monitor.prototype, "version", {
         get: function () {
-            return '1.1.0';
+            return '1.2.0';
         },
         enumerable: false,
         configurable: true
