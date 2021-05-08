@@ -29,7 +29,8 @@
   },
   "scripts": {
     "build": "tsc -d -t ES5 os-monitor.ts",
-    "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary mocha test/**/*.js",
+    "prepublishOnly": "npm run build && npm test",
     "test": "mocha test/**/*.js"
   },
   "keywords": [
