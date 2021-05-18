@@ -1,4 +1,4 @@
-declare const os: any, events: any, stream: any, _: any, critical: number, defaults: Function;
+declare const os: any, events: any, stream: any, _: any, version: any, critical: number, defaults: Function;
 declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;

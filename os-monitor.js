@@ -34,7 +34,7 @@ var __extends = (this && this.__extends) || (function () {
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), critical = os.cpus().length, defaults = function () {
+var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length, defaults = function () {
     return {
         delay: 3000,
         critical1: critical,
@@ -67,7 +67,7 @@ var Monitor = /** @class */ (function (_super) {
     }
     Object.defineProperty(Monitor.prototype, "version", {
         get: function () {
-            return '1.2.0';
+            return version;
         },
         enumerable: false,
         configurable: true

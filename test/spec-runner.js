@@ -4,7 +4,9 @@ const assert = require('assert'),
         mock = require('mock-os'),
            _ = require('underscore');
 
-const monitor = require('../os-monitor');
+const monitor     = require('../os-monitor'),
+      { version } = require('../package.json');
+      
 let tester;
 
 beforeEach(() => {
@@ -59,6 +61,9 @@ describe('API signature', function() {
   it('should have readonly version', async () => {
     let version = tester.version;
     tester.version = '0.0.0';
+    assert.strictEqual(tester.version, version);
+  });
+  it('should have version from package.json', async () => {
     assert.strictEqual(tester.version, version);
   });
 });

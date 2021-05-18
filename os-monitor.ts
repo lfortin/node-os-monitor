@@ -22,10 +22,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-const os       = require('os'),
-      events   = require('events'),
-      stream   = require('readable-stream'),
-      _        = require('underscore'),
+const os          = require('os'),
+      events      = require('events'),
+      stream      = require('readable-stream'),
+      _           = require('underscore'),
+      { version } = require('./package.json'),
       critical: number = os.cpus().length,
       defaults: Function = (): ConfigObject => {
         return {
@@ -48,7 +49,7 @@ class Monitor extends stream.Readable {
   }
 
   public get version(): string {
-    return '1.2.0';
+    return version;
   }
 
   public get constants(): MonitorConstants {
