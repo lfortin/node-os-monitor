@@ -22,25 +22,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-const os          = require('os'),
-      events      = require('events'),
-      stream      = require('readable-stream'),
-      _           = require('underscore'),
+const os      = require('os'),
+      events  = require('events'),
+      stream  = require('readable-stream'),
+      _       = require('underscore'),
       { version } = require('./package.json'),
-      critical: number = os.cpus().length,
-      defaults: Function = (): ConfigObject => {
-        return {
-          delay     : 3000,
-          critical1 : critical,
-          critical5 : critical,
-          critical15: critical,
-          freemem   : 0,
-          uptime    : 0,
-          silent    : false,
-          stream    : false,
-          immediate : false
-        };
-      };
+      critical: number = os.cpus().length;
 
 class Monitor extends stream.Readable {
 
@@ -66,6 +53,17 @@ class Monitor extends stream.Readable {
         CONFIG: 'config',
         RESET: 'reset',
         DESTROY: 'destroy'
+      },
+      defaults: {
+        delay     : 3000,
+        critical1 : critical,
+        critical5 : critical,
+        critical15: critical,
+        freemem   : 0,
+        uptime    : 0,
+        silent    : false,
+        stream    : false,
+        immediate : false
       }
     };
   }
@@ -81,7 +79,7 @@ class Monitor extends stream.Readable {
     ended: false,
     streamBuffering: true,
     interval: undefined,
-    config: defaults(),
+    config: Monitor.prototype.constants.defaults,
     throttled: []
   };
 
@@ -171,7 +169,7 @@ class Monitor extends stream.Readable {
 
   public reset(): Monitor {
     this.sendEvent(this.constants.events.RESET);
-    this[this.isRunning() ? 'start' : 'config'](defaults());
+    this[this.isRunning() ? 'start' : 'config'](this.constants.defaults);
     return this;
   };
 
@@ -393,7 +391,8 @@ interface MonitorConstants {
     CONFIG: string;
     RESET: string;
     DESTROY: string;
-  }
+  },
+  defaults: ConfigObject
 }
 
 interface InfoObject {

@@ -1,4 +1,4 @@
-declare const os: any, events: any, stream: any, _: any, version: any, critical: number, defaults: Function;
+declare const os: any, events: any, stream: any, _: any, version: any, critical: number;
 declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
@@ -79,6 +79,7 @@ interface MonitorConstants {
         RESET: string;
         DESTROY: string;
     };
+    defaults: ConfigObject;
 }
 interface InfoObject {
     loadavg?: Array<number>;

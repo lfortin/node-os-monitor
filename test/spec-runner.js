@@ -351,6 +351,23 @@ describe('Thenable class', function() {
     });
   });
 });
+describe('.reset()', function() {
+  it('should reset config to defaults', async () => {
+    tester.config({
+      delay: 1,
+      freemem: 0,
+      uptime: 0,
+      critical1: 0,
+      critical5: 0,
+      critical15: 0,
+      immediate: true,
+      silent: true,
+      stream: true,
+    });
+    tester.reset();
+    assert.deepStrictEqual(tester.config(), tester.constants.defaults);
+  });
+});
 describe('.destroy()', function() {
   it('should permanently stop', async () => {
     tester.destroy();

@@ -34,19 +34,7 @@ var __extends = (this && this.__extends) || (function () {
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length, defaults = function () {
-    return {
-        delay: 3000,
-        critical1: critical,
-        critical5: critical,
-        critical15: critical,
-        freemem: 0,
-        uptime: 0,
-        silent: false,
-        stream: false,
-        immediate: false
-    };
-};
+var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length;
 var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
@@ -60,7 +48,7 @@ var Monitor = /** @class */ (function (_super) {
             ended: false,
             streamBuffering: true,
             interval: undefined,
-            config: defaults(),
+            config: Monitor.prototype.constants.defaults,
             throttled: []
         };
         return _this;
@@ -87,6 +75,17 @@ var Monitor = /** @class */ (function (_super) {
                     CONFIG: 'config',
                     RESET: 'reset',
                     DESTROY: 'destroy'
+                },
+                defaults: {
+                    delay: 3000,
+                    critical1: critical,
+                    critical5: critical,
+                    critical15: critical,
+                    freemem: 0,
+                    uptime: 0,
+                    silent: false,
+                    stream: false,
+                    immediate: false
                 }
             };
         },
@@ -164,7 +163,7 @@ var Monitor = /** @class */ (function (_super) {
     };
     Monitor.prototype.reset = function () {
         this.sendEvent(this.constants.events.RESET);
-        this[this.isRunning() ? 'start' : 'config'](defaults());
+        this[this.isRunning() ? 'start' : 'config'](this.constants.defaults);
         return this;
     };
     ;
