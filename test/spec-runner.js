@@ -261,6 +261,7 @@ describe('.unthrottle()', function() {
     let handler = (event) => {
       cycles++;
     }
+    tester.throttle('monitor', _.noop, 50);
     tester.throttle('monitor', handler, 50);
     tester.unthrottle('monitor', handler);
     tester.on('stop', event => {

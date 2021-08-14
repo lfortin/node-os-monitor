@@ -147,10 +147,8 @@ var Monitor = /** @class */ (function (_super) {
             process.nextTick(function () { return _this._cycle(); });
         }
         this._monitorState.interval = setInterval(function () { return _this._cycle(); }, this.config().delay);
-        if (!this.isRunning()) {
-            this._monitorState.running = true;
-            this.sendEvent(this.constants.events.START);
-        }
+        this._monitorState.running = true;
+        this.sendEvent(this.constants.events.START);
         return this;
     };
     Monitor.prototype.stop = function () {
@@ -171,13 +169,11 @@ var Monitor = /** @class */ (function (_super) {
         if (!this._isEnded()) {
             this.sendEvent(this.constants.events.DESTROY);
             this.stop();
-            if (this instanceof stream.Readable) {
-                this.emit('close');
-                if (_.isFunction(stream.Readable.prototype.destroy)) {
-                    stream.Readable.prototype.destroy.apply(this, [err]);
-                }
-                this.push(null);
+            this.emit('close');
+            if (_.isFunction(stream.Readable.prototype.destroy)) {
+                stream.Readable.prototype.destroy.apply(this, [err]);
             }
+            this.push(null);
             this._monitorState.ended = true;
         }
         return this;
