@@ -71,6 +71,7 @@ describe('event emitter', function() {
   it('should emit start event', (done) => {
     tester.on('start', event => {
       assert.strictEqual(event.type, tester.constants.events.START);
+      assert.strictEqual(tester.isRunning(), true);
       done();
     });
     tester.start();
@@ -81,6 +82,7 @@ describe('event emitter', function() {
     });
     tester.on('stop', event => {
       assert.strictEqual(event.type, tester.constants.events.STOP);
+      assert.strictEqual(tester.isRunning(), false);
       done();
     });
     tester.stop();
@@ -88,10 +90,12 @@ describe('event emitter', function() {
   it('should emit config event', (done) => {
     tester.on('config', event => {
       assert.strictEqual(event.type, tester.constants.events.CONFIG);
-      assert.strictEqual(event.options.stream, true);
+      assert.deepStrictEqual(event.options, {stream: true, immediate: true});
+      let config = Object.assign({}, tester.constants.defaults, {stream: true, immediate: true});
+      assert.deepStrictEqual(tester.config(), config);
       done();
     });
-    tester.config({stream: true});
+    tester.config({stream: true, immediate: true});
   });
   it('should emit reset event', (done) => {
     tester.on('reset', event => {
