@@ -89,6 +89,6 @@ interface InfoObject {
     options?: ConfigObject;
 }
 interface EventObject extends InfoObject {
-    eventType: string;
+    type: string;
     timestamp: number;
 }

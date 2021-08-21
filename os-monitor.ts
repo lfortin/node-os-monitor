@@ -400,6 +400,6 @@ interface InfoObject {
 }
 
 interface EventObject extends InfoObject {
-  eventType : string;
+  type      : string;
   timestamp : number;
 }
