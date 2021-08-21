@@ -25,7 +25,15 @@
 const os      = require('os'),
       events  = require('events'),
       stream  = require('readable-stream'),
-      _       = require('underscore'),
+      //_       = require('underscore'),
+      extend  = require('underscore/cjs/extend.js'),
+      clone   = require('underscore/cjs/clone.js'),
+      isFunction    = require('underscore/cjs/isFunction.js'),
+      isObject    = require('underscore/cjs/isObject.js'),
+      isNumber    = require('underscore/cjs/isNumber.js'),
+      now     = require('underscore/cjs/now.js'),
+      toArray = require('underscore/cjs/toArray.js'),
+      throttle= require('underscore/cjs/throttle.js'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
@@ -80,7 +88,7 @@ class Monitor extends stream.Readable {
   public os = os;
 
   // expose Underscore
-  public _ = _;
+  //public _ = _;
 
   private _monitorState: MonitorState = {
     running: false,
@@ -97,8 +105,8 @@ class Monitor extends stream.Readable {
   }
 
   public sendEvent(event: EventType, obj: InfoObject = {}): Monitor {
-    const eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
-  
+    const eventObject: EventObject = extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
+
     // for EventEmitter
     this.emit(event, eventObject);
     // for readable Stream
@@ -195,9 +203,9 @@ class Monitor extends stream.Readable {
 
   public config(options?: ConfigObject): ConfigObject {
 
-    if(_.isObject(options)) {
-      _.extend(this._monitorState.config, options);
-      this.sendEvent(this.constants.events.CONFIG, { options: _.clone(options) });
+    if(isObject(options)) {
+      extend(this._monitorState.config, options);
+      this.sendEvent(this.constants.events.CONFIG, { options: clone(options) });
     }
   
     return this._monitorState.config;
@@ -212,7 +220,7 @@ class Monitor extends stream.Readable {
   }
 
   public throttle(event: EventType, handler: Function, wait: number): Monitor {
-    if(!_.isFunction(handler)) {
+    if(!isFunction(handler)) {
       throw new Error("Handler must be a function");
     }
 
@@ -221,7 +229,7 @@ class Monitor extends stream.Readable {
                           handler.apply(this, [eventObject]);
                         }
                       },
-          throttledFn = _.throttle(_handler, wait || this.config().throttle);
+          throttledFn = throttle(_handler, wait || this.config().throttle);
 
     this._monitorState.throttled.push({event: event, originalFn: handler, throttledFn: throttledFn});
     return this.on(event, throttledFn);
@@ -261,7 +269,7 @@ class Monitor extends stream.Readable {
   * convenience methods
   */
   private _sanitizeNumber(n: number): number {
-    if(!_.isNumber(n)) {
+    if(!isNumber(n)) {
       throw new Error("Number expected");
     }
     if(!n || n < 0) {

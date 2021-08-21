@@ -34,7 +34,9 @@ var __extends = (this && this.__extends) || (function () {
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length;
+var os = require('os'), events = require('events'), stream = require('readable-stream'), 
+//_       = require('underscore'),
+extend = require('underscore/cjs/extend.js'), clone = require('underscore/cjs/clone.js'), isFunction = require('underscore/cjs/isFunction.js'), isObject = require('underscore/cjs/isObject.js'), isNumber = require('underscore/cjs/isNumber.js'), now = require('underscore/cjs/now.js'), toArray = require('underscore/cjs/toArray.js'), throttle = require('underscore/cjs/throttle.js'), version = require('./package.json').version, critical = os.cpus().length;
 var EventType;
 (function (EventType) {
     EventType["MONITOR"] = "monitor";
@@ -60,7 +62,7 @@ var Monitor = /** @class */ (function (_super) {
         // expose OS module
         _this.os = os;
         // expose Underscore
-        _this._ = _;
+        //public _ = _;
         _this._monitorState = {
             running: false,
             ended: false,
@@ -104,7 +106,7 @@ var Monitor = /** @class */ (function (_super) {
     };
     Monitor.prototype.sendEvent = function (event, obj) {
         if (obj === void 0) { obj = {}; }
-        var eventObject = _.extend({ type: event, timestamp: Math.floor(_.now() / 1000) }, obj);
+        var eventObject = extend({ type: event, timestamp: Math.floor(_.now() / 1000) }, obj);
         // for EventEmitter
         this.emit(event, eventObject);
         // for readable Stream
@@ -182,9 +184,9 @@ var Monitor = /** @class */ (function (_super) {
         return this;
     };
     Monitor.prototype.config = function (options) {
-        if (_.isObject(options)) {
-            _.extend(this._monitorState.config, options);
-            this.sendEvent(this.constants.events.CONFIG, { options: _.clone(options) });
+        if (isObject(options)) {
+            extend(this._monitorState.config, options);
+            this.sendEvent(this.constants.events.CONFIG, { options: clone(options) });
         }
         return this._monitorState.config;
     };
@@ -196,14 +198,14 @@ var Monitor = /** @class */ (function (_super) {
     };
     Monitor.prototype.throttle = function (event, handler, wait) {
         var _this = this;
-        if (!_.isFunction(handler)) {
+        if (!isFunction(handler)) {
             throw new Error("Handler must be a function");
         }
         var _handler = function (eventObject) {
             if (_this.isRunning()) {
                 handler.apply(_this, [eventObject]);
             }
-        }, throttledFn = _.throttle(_handler, wait || this.config().throttle);
+        }, throttledFn = throttle(_handler, wait || this.config().throttle);
         this._monitorState.throttled.push({ event: event, originalFn: handler, throttledFn: throttledFn });
         return this.on(event, throttledFn);
     };
@@ -236,7 +238,7 @@ var Monitor = /** @class */ (function (_super) {
     * convenience methods
     */
     Monitor.prototype._sanitizeNumber = function (n) {
-        if (!_.isNumber(n)) {
+        if (!isNumber(n)) {
             throw new Error("Number expected");
         }
         if (!n || n < 0) {

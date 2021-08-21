@@ -59,7 +59,7 @@ describe('API signature', function() {
     assert.ok(tester.Monitor, "Monitor class expected");
     assert.ok(tester.Thenable, "Thenable class expected");
     assert.ok(tester.os, "os object reference expected");
-    assert.ok(tester._, "_ object reference expected");
+    //assert.ok(tester._, "_ object reference expected");
     assert.ok(tester.constants, "constants object expected");
     //assert.ok(monitor.whetever, "whatever expected");
   });

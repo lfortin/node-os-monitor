@@ -1,5 +1,5 @@
 /// <reference types="node" />
-declare const os: any, events: any, stream: any, _: any, version: any, critical: number;
+declare const os: any, events: any, stream: any, extend: any, clone: any, isFunction: any, isObject: any, isNumber: any, now: any, toArray: any, throttle: any, version: any, critical: number;
 declare enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",
@@ -20,7 +20,6 @@ declare class Monitor extends stream.Readable {
     Thenable: typeof Thenable;
     Monitor: typeof Monitor;
     os: any;
-    _: any;
     private _monitorState;
     private _read;
     sendEvent(event: EventType, obj?: InfoObject): Monitor;
