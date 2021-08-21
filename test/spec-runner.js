@@ -219,6 +219,21 @@ describe('readable stream', function() {
     });
     assert.ok(tester.read());
   });
+  it('should emit data event', (done) => {
+    tester.config({stream: true});
+    tester.setEncoding('utf8');
+    tester.resume();
+
+    process.nextTick(() => {
+      tester.once('data', event => {
+        let eventObj = JSON.parse(event);
+        assert.strictEqual(eventObj.type, tester.constants.events.START);
+        assert.ok(eventObj.timestamp);
+        done();
+      });
+      tester.start();
+    });
+  });
   it('should stop buffering if full', async () => {
     tester.pause();
     tester.push(Buffer.alloc(200000));
