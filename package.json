@@ -22,6 +22,9 @@
     "underscore": "~1.13.1"
   },
   "devDependencies": {
+    "@types/node": "^16.11.12",
+    "@types/readable-stream": "^2.3.12",
+    "@types/underscore": "^1.11.4",
     "mocha": "^9.0.3",
     "mock-os": "0.1.0",
     "nyc": "^15.1.0",

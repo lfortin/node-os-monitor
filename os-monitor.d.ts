@@ -1,3 +1,4 @@
+/// <reference types="node" />
 declare const os: any, events: any, stream: any, _: any, version: any, critical: number;
 declare class Monitor extends stream.Readable {
     constructor();
@@ -14,7 +15,7 @@ declare class Monitor extends stream.Readable {
     start(options?: ConfigObject): Monitor;
     stop(): Monitor;
     reset(): Monitor;
-    destroy(err?: any): Monitor;
+    destroy(err?: unknown): Monitor;
     config(options?: ConfigObject): ConfigObject;
     isRunning(): boolean;
     private _isEnded;
@@ -38,7 +39,7 @@ declare class Thenable extends events.EventEmitter {
     };
     private _thenableState;
     resolve(result: EventObject): Thenable;
-    reject(error: any): Thenable;
+    reject(error: unknown): Thenable;
     then(onFulfilled: Function | undefined, onRejected: Function | undefined): void;
     catch(onRejected: Function | undefined): void;
     private _callOnFulfilled;
@@ -60,7 +61,7 @@ interface MonitorState {
     running: boolean;
     ended: boolean;
     streamBuffering: boolean;
-    interval: any;
+    interval: NodeJS.Timeout;
     config: ConfigObject;
     throttled: Array<{
         originalFn: Function;

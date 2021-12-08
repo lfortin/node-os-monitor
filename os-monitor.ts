@@ -177,7 +177,7 @@ class Monitor extends stream.Readable {
     return this;
   };
 
-  public destroy(err?: any): Monitor {
+  public destroy(err?: unknown): Monitor {
 
     if(!this._isEnded()) {
       this.sendEvent(this.constants.events.DESTROY);
@@ -312,7 +312,7 @@ class Thenable extends events.EventEmitter {
     }
     return this;
   }
-  public reject(error: any): Thenable {
+  public reject(error: unknown): Thenable {
     const state = Thenable.constants.state;
     if(this._thenableState.state === state.PENDING) {
       this._thenableState.state = state.REJECTED;
@@ -371,7 +371,7 @@ interface MonitorState {
   running: boolean;
   ended: boolean;
   streamBuffering: boolean;
-  interval: any;
+  interval: NodeJS.Timeout;
   config: ConfigObject;
   throttled: Array<{ originalFn: Function, throttledFn: Function }>;
 }
