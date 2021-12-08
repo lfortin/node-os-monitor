@@ -68,6 +68,12 @@ class Monitor extends stream.Readable {
     };
   }
 
+  // expose Thenable class
+  public Thenable: typeof Thenable = Thenable;
+
+  // expose main Monitor class
+  public Monitor: typeof Monitor = Monitor;
+
   // expose OS module
   public os = os;
 
@@ -346,10 +352,6 @@ class Thenable extends events.EventEmitter {
   }
 }
 
-// expose Thenable class
-Monitor.prototype.Thenable = Thenable;
-// expose main Monitor class
-Monitor.prototype.Monitor = Monitor;
 module.exports = new Monitor();
 
 interface ConfigObject {

@@ -3,6 +3,8 @@ declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
     get constants(): MonitorConstants;
+    Thenable: typeof Thenable;
+    Monitor: typeof Monitor;
     os: any;
     _: any;
     private _monitorState;

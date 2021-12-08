@@ -39,6 +39,10 @@ var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
         var _this = _super.call(this, { highWaterMark: 102400 }) || this;
+        // expose Thenable class
+        _this.Thenable = Thenable;
+        // expose main Monitor class
+        _this.Monitor = Monitor;
         // expose OS module
         _this.os = os;
         // expose Underscore
@@ -104,7 +108,7 @@ var Monitor = /** @class */ (function (_super) {
         // for readable Stream
         if (this.config().stream && this._monitorState.streamBuffering) {
             var prettyJSON = JSON.stringify(eventObject, null, 2);
-            if (!this.push("" + os.EOL + prettyJSON)) {
+            if (!this.push("".concat(os.EOL).concat(prettyJSON))) {
                 this._monitorState.streamBuffering = false;
             }
         }
@@ -325,8 +329,4 @@ var Thenable = /** @class */ (function (_super) {
     };
     return Thenable;
 }(events.EventEmitter));
-// expose Thenable class
-Monitor.prototype.Thenable = Thenable;
-// expose main Monitor class
-Monitor.prototype.Monitor = Monitor;
 module.exports = new Monitor();
