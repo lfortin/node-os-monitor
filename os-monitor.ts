@@ -213,7 +213,7 @@ class Monitor extends stream.Readable {
 
   public throttle(event: string, handler: Function, wait: number): Monitor {
     let self     = this,
-        _handler = _.wrap(handler, function(fn) {
+        _handler = _.wrap(handler, function(fn: Function) {
                      if(self.isRunning()) {
                        fn.apply(self, _.toArray(arguments).slice(1));
                      }
@@ -238,9 +238,9 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  public when(event: string): Promise<Thenable> | Thenable {
-    let deferred: Thenable = new Thenable();
-    let wrappedDeferred: Promise<Thenable>;
+  public when(event: string): Promise<EventObjectThenable> | EventObjectThenable {
+    let deferred: EventObjectThenable = new Thenable();
+    let wrappedDeferred: Promise<EventObjectThenable>;
 
     this.once(event, (eventObj: EventObject) => {
       deferred.resolve(eventObj);
@@ -249,7 +249,7 @@ class Monitor extends stream.Readable {
     try {
       wrappedDeferred = Promise.resolve(deferred);
       return wrappedDeferred;
-    } catch(err) {
+    } catch(err: unknown) {
       return deferred;
     }
   }
@@ -288,7 +288,7 @@ class Monitor extends stream.Readable {
   };
 };
 
-class Thenable extends events.EventEmitter {
+class Thenable<Type> extends events.EventEmitter {
   constructor() {
     super();
   }
@@ -303,7 +303,7 @@ class Thenable extends events.EventEmitter {
     state: Thenable.constants.state.PENDING,
     result: undefined
   };
-  public resolve(result: EventObject): Thenable {
+  public resolve(result: Type): Thenable<Type> {
     const state = Thenable.constants.state;
     if(this._thenableState.state === state.PENDING) {
       this._thenableState.state = state.FULFILLED;
@@ -312,7 +312,7 @@ class Thenable extends events.EventEmitter {
     }
     return this;
   }
-  public reject(error: unknown): Thenable {
+  public reject(error: unknown): Thenable<Type> {
     const state = Thenable.constants.state;
     if(this._thenableState.state === state.PENDING) {
       this._thenableState.state = state.REJECTED;
@@ -405,3 +405,5 @@ interface EventObject extends InfoObject {
   type      : string;
   timestamp : number;
 }
+
+type EventObjectThenable = Thenable<EventObject>;

@@ -21,14 +21,14 @@ declare class Monitor extends stream.Readable {
     private _isEnded;
     throttle(event: string, handler: Function, wait: number): Monitor;
     unthrottle(event: string, handler: Function): Monitor;
-    when(event: string): Promise<Thenable> | Thenable;
+    when(event: string): Promise<EventObjectThenable> | EventObjectThenable;
     private _sanitizeNumber;
     seconds(n: number): number;
     minutes(n: number): number;
     hours(n: number): number;
     days(n: number): number;
 }
-declare class Thenable extends events.EventEmitter {
+declare class Thenable<Type> extends events.EventEmitter {
     constructor();
     static constants: {
         state: {
@@ -38,8 +38,8 @@ declare class Thenable extends events.EventEmitter {
         };
     };
     private _thenableState;
-    resolve(result: EventObject): Thenable;
-    reject(error: unknown): Thenable;
+    resolve(result: Type): Thenable<Type>;
+    reject(error: unknown): Thenable<Type>;
     then(onFulfilled: Function | undefined, onRejected: Function | undefined): void;
     catch(onRejected: Function | undefined): void;
     private _callOnFulfilled;
@@ -95,3 +95,4 @@ interface EventObject extends InfoObject {
     type: string;
     timestamp: number;
 }
+declare type EventObjectThenable = Thenable<EventObject>;
