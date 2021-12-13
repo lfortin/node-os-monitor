@@ -389,11 +389,18 @@ describe('.reset()', function() {
   });
 });
 describe('.destroy()', function() {
-  it('should permanently stop', async () => {
+  it('should permanently stop and throw error', async () => {
     tester.destroy();
     assert.throws(() => {
       tester.start();
     });
+  });
+  it('should permanently stop and emit error event', (done) => {
+    tester.on('error', err => {
+      done();
+    });
+    tester.destroy();
+    tester.start();
   });
 });
 describe('convenience methods', function() {

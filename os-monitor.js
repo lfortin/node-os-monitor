@@ -143,7 +143,8 @@ var Monitor = /** @class */ (function (_super) {
     Monitor.prototype.start = function (options) {
         var _this = this;
         if (this._isEnded()) {
-            throw new Error("monitor has been ended by .destroy() method");
+            this.emit('error', new Error("monitor has been ended by .destroy() method"));
+            return this;
         }
         this.stop()
             .config(options);
