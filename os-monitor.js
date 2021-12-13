@@ -175,10 +175,7 @@ var Monitor = /** @class */ (function (_super) {
             this.sendEvent(this.constants.events.DESTROY);
             this.stop();
             this.emit('close');
-            if (_.isFunction(stream.Readable.prototype.destroy)) {
-                stream.Readable.prototype.destroy.apply(this, [err]);
-            }
-            this.push(null);
+            stream.Readable.prototype.destroy.apply(this, [err]);
             this._monitorState.ended = true;
         }
         return this;
