@@ -125,14 +125,15 @@ describe('event emitter', function() {
       immediate: true,
     });
   });
-  it('should not emit monitor event', async () => {
+  it('should not emit monitor event', (done) => {
     tester.on('monitor', event => {
-      assert.fail('should not emit monitor event');
+      done('should not emit monitor event');
     });
     tester.start({
       immediate: true,
       silent: true,
     });
+    setImmediate(done);
   });
   it('should emit loadavg1 event', (done) => {
     tester.start({
