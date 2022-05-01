@@ -369,7 +369,7 @@ describe('Thenable class', function() {
     deferred.reject(value);
     deferred.resolve(123);
     deferred.reject(12345);
-    assert.rejects(async () => {
+    await assert.rejects(async () => {
       await deferred;
     });
   });
