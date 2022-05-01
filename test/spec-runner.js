@@ -69,12 +69,14 @@ describe('API signature', function() {
 });
 describe('event emitter', function() {
   it('should emit start event', (done) => {
+    let config = Object.assign({}, tester.constants.defaults, {uptime: 1234567, immediate: true});
     tester.on('start', event => {
       assert.strictEqual(event.type, tester.constants.events.START);
       assert.strictEqual(tester.isRunning(), true);
+      assert.deepStrictEqual(tester.config(), config);
       done();
     });
-    tester.start();
+    tester.start(config);
   });
   it('should emit stop event', (done) => {
     tester.start({
