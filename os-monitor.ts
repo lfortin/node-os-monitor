@@ -1,6 +1,6 @@
 // OS Monitoring for Node.js
 
-// Copyright (c) 2012-2021 lfortin
+// Copyright (c) 2012-2022 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
