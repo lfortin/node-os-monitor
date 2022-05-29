@@ -152,6 +152,16 @@ describe('event emitter', function() {
       done();
     });
   });
+  it('should not emit loadavg1 event', (done) => {
+    tester.on('loadavg1', event => {
+      done('should not emit loadavg1 event');
+    });
+    tester.start({
+      critical1: 3,
+      immediate: true,
+    });
+    setImmediate(done);
+  });
   it('should emit loadavg5 event', (done) => {
     tester.start({
       critical5: 1,
@@ -166,6 +176,16 @@ describe('event emitter', function() {
       assert.ok(event.timestamp);
       done();
     });
+  });
+  it('should not emit loadavg5 event', (done) => {
+    tester.on('loadavg5', event => {
+      done('should not emit loadavg5 event');
+    });
+    tester.start({
+      critical5: 3,
+      immediate: true,
+    });
+    setImmediate(done);
   });
   it('should emit loadavg15 event', (done) => {
     tester.start({
@@ -182,6 +202,16 @@ describe('event emitter', function() {
       done();
     });
   });
+  it('should not emit loadavg15 event', (done) => {
+    tester.on('loadavg15', event => {
+      done('should not emit loadavg15 event');
+    });
+    tester.start({
+      critical15: 3,
+      immediate: true,
+    });
+    setImmediate(done);
+  });
   it('should emit freemem event', (done) => {
     tester.start({
       freemem: 10000000,
@@ -197,6 +227,16 @@ describe('event emitter', function() {
       done();
     });
   });
+  it('should not emit freemem event', (done) => {
+    tester.on('freemem', event => {
+      done('should not emit freemem event');
+    });
+    tester.start({
+      freemem: 99999,
+      immediate: true,
+    });
+    setImmediate(done);
+  });
   it('should emit uptime event', (done) => {
     tester.start({
       uptime: 10000,
@@ -211,6 +251,16 @@ describe('event emitter', function() {
       assert.ok(event.timestamp);
       done();
     });
+  });
+  it('should not emit uptime event', (done) => {
+    tester.on('uptime', event => {
+      done('should not emit uptime event');
+    });
+    tester.start({
+      uptime: 9999999999,
+      immediate: true,
+    });
+    setImmediate(done);
   });
 });
 describe('readable stream', function() {
