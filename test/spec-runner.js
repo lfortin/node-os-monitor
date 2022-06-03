@@ -237,6 +237,31 @@ describe('event emitter', function() {
     });
     setImmediate(done);
   });
+  it('should emit freemem event(% config)', (done) => {
+    tester.start({
+      freemem: 0.99,
+      immediate: true,
+    });
+    tester.on('freemem', event => {
+      assert.strictEqual(event.type, tester.constants.events.FREEMEM);
+      assert.ok(event.loadavg);
+      assert.ok(event.freemem);
+      assert.ok(event.totalmem);
+      assert.ok(event.uptime);
+      assert.ok(event.timestamp);
+      done();
+    });
+  });
+  it('should not emit freemem event(% config)', (done) => {
+    tester.on('freemem', event => {
+      done('should not emit freemem event(% config)');
+    });
+    tester.start({
+      freemem: 0.01,
+      immediate: true,
+    });
+    setImmediate(done);
+  });
   it('should emit uptime event', (done) => {
     tester.start({
       uptime: 10000,
