@@ -446,7 +446,19 @@ describe('Thenable class', function() {
     deferred.reject(12345);
     await assert.rejects(async () => {
       await deferred;
+    }, err => {
+      assert.strictEqual(err, value);
+      return true;
     });
+  });
+  it('should ignore undefined handlers', async () => {
+    let deferredToResolve = new tester.Thenable();
+    let deferredToReject = new tester.Thenable();
+    let value = {};
+    deferredToResolve.resolve(value);
+    await deferredToResolve.then();
+    deferredToReject.reject(value);
+    await deferredToReject.catch();
   });
 });
 describe('.reset()', function() {

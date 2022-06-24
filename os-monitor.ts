@@ -319,34 +319,26 @@ class Thenable<Type> extends events.EventEmitter {
     }
     return this;
   }
-  public then(onFulfilled: Function | undefined, onRejected: Function | undefined): void {
+  public then(onFulfilled?: Function, onRejected?: Function): void {
     const state = Thenable.constants.state;
 
     if(this._thenableState.state === state.PENDING) {
-      this.once('resolve', (result: EventObject) => {
-        this._callOnFulfilled(onFulfilled);
+      this.once('resolve', (result: Type) => {
+        onFulfilled && onFulfilled(this._thenableState.result);
       });
-      this.once('reject', error => {
-        this._callOnRejected(onRejected);
+      this.once('reject', (error: unknown) => {
+        onRejected && onRejected(this._thenableState.result);
       });
     }
-    this._callOnFulfilled(onFulfilled);
-    this._callOnRejected(onRejected);
-  }
-  public catch(onRejected: Function | undefined): void {
-    return this.then(undefined, onRejected);
-  }
-  private _callOnFulfilled(onFulfilled: Function): void {
-    const state = Thenable.constants.state;
     if(onFulfilled && this._thenableState.state === state.FULFILLED) {
       onFulfilled(this._thenableState.result);
     }
-  }
-  private _callOnRejected(onRejected: Function): void {
-    const state = Thenable.constants.state;
     if(onRejected && this._thenableState.state === state.REJECTED) {
       onRejected(this._thenableState.result);
     }
+  }
+  public catch(onRejected?: Function): void {
+    return this.then(undefined, onRejected);
   }
 }
 

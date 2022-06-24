@@ -294,29 +294,21 @@ var Thenable = /** @class */ (function (_super) {
         var state = Thenable.constants.state;
         if (this._thenableState.state === state.PENDING) {
             this.once('resolve', function (result) {
-                _this._callOnFulfilled(onFulfilled);
+                onFulfilled && onFulfilled(_this._thenableState.result);
             });
             this.once('reject', function (error) {
-                _this._callOnRejected(onRejected);
+                onRejected && onRejected(_this._thenableState.result);
             });
         }
-        this._callOnFulfilled(onFulfilled);
-        this._callOnRejected(onRejected);
-    };
-    Thenable.prototype.catch = function (onRejected) {
-        return this.then(undefined, onRejected);
-    };
-    Thenable.prototype._callOnFulfilled = function (onFulfilled) {
-        var state = Thenable.constants.state;
         if (onFulfilled && this._thenableState.state === state.FULFILLED) {
             onFulfilled(this._thenableState.result);
         }
-    };
-    Thenable.prototype._callOnRejected = function (onRejected) {
-        var state = Thenable.constants.state;
         if (onRejected && this._thenableState.state === state.REJECTED) {
             onRejected(this._thenableState.result);
         }
+    };
+    Thenable.prototype.catch = function (onRejected) {
+        return this.then(undefined, onRejected);
     };
     Thenable.constants = {
         state: {

@@ -40,10 +40,8 @@ declare class Thenable<Type> extends events.EventEmitter {
     private _thenableState;
     resolve(result: Type): Thenable<Type>;
     reject(error: unknown): Thenable<Type>;
-    then(onFulfilled: Function | undefined, onRejected: Function | undefined): void;
-    catch(onRejected: Function | undefined): void;
-    private _callOnFulfilled;
-    private _callOnRejected;
+    then(onFulfilled?: Function, onRejected?: Function): void;
+    catch(onRejected?: Function): void;
 }
 interface ConfigObject {
     delay?: number;
