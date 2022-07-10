@@ -2,12 +2,17 @@
 const assert = require('assert'),
           os = require('os'),
         mock = require('mock-os'),
-           _ = require('underscore');
+           _ = require('underscore'),
+      semver = require('semver');
 
 const monitor     = require('../os-monitor'),
       { version } = require('../package.json');
       
 let tester;
+
+if(semver.lt(process.version, '14.0.0')) {
+  throw 'Node.js v14 or later is required to run tests';
+}
 
 beforeEach(() => {
   mock({
