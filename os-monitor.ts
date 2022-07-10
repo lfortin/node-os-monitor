@@ -95,13 +95,13 @@ class Monitor extends stream.Readable {
   }
 
   public sendEvent(event: string, obj: InfoObject = {}): Monitor {
-    let eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
+    const eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
   
     // for EventEmitter
     this.emit(event, eventObject);
     // for readable Stream
     if(this.config().stream && this._monitorState.streamBuffering) {
-      let prettyJSON = JSON.stringify(eventObject, null, 2);
+      const prettyJSON = JSON.stringify(eventObject, null, 2);
       if(!this.push(`${os.EOL}${prettyJSON}`)) {
         this._monitorState.streamBuffering = false;
       }
@@ -111,7 +111,7 @@ class Monitor extends stream.Readable {
   }
 
   private _cycle(): void {
-    let info: InfoObject = {
+    const info: InfoObject = {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
@@ -210,12 +210,12 @@ class Monitor extends stream.Readable {
   }
 
   public throttle(event: string, handler: Function, wait: number): Monitor {
-    let self     = this,
-        _handler = _.wrap(handler, function(fn: Function) {
-                     if(self.isRunning()) {
-                       fn.apply(self, _.toArray(arguments).slice(1));
-                     }
-                   }),
+    const self     = this,
+          _handler = _.wrap(handler, function(fn: Function) {
+                      if(self.isRunning()) {
+                        fn.apply(self, _.toArray(arguments).slice(1));
+                      }
+                    }),
         throttledFn = _.throttle(_handler, wait || this.config().throttle);
 
     this._monitorState.throttled.push({originalFn: handler, throttledFn: throttledFn});
@@ -226,7 +226,7 @@ class Monitor extends stream.Readable {
     const throttled = this._monitorState.throttled;
 
     for(let i = throttled.length - 1; i >= 0; i--) {
-      let pair = throttled[i];
+      const pair = throttled[i];
       if(pair.originalFn === handler) {
         this.removeListener(event, pair.throttledFn);
         throttled.splice(i, 1);
@@ -237,7 +237,7 @@ class Monitor extends stream.Readable {
   }
 
   public when(event: string): Promise<EventObjectThenable> | EventObjectThenable {
-    let deferred: EventObjectThenable = new Thenable();
+    const deferred: EventObjectThenable = new Thenable();
     let wrappedDeferred: Promise<EventObjectThenable>;
 
     this.once(event, (eventObj: EventObject) => {
