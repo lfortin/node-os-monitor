@@ -176,7 +176,7 @@ class Monitor extends stream.Readable {
     this.sendEvent(this.constants.events.RESET);
     this[this.isRunning() ? 'start' : 'config'](this.constants.defaults);
     return this;
-  };
+  }
 
   public destroy(err?: unknown): Monitor {
 
@@ -275,16 +275,16 @@ class Monitor extends stream.Readable {
 
   public minutes(n: number): number {
     return this._sanitizeNumber(n * this.seconds(60));
-  };
+  }
   
   public hours(n: number): number {
     return this._sanitizeNumber(n * this.minutes(60));
-  };
+  }
   
   public days(n: number): number {
     return this._sanitizeNumber(n * this.hours(24));
-  };
-};
+  }
+}
 
 class Thenable<Type> extends events.EventEmitter {
   constructor() {

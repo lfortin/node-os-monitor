@@ -169,7 +169,6 @@ var Monitor = /** @class */ (function (_super) {
         this[this.isRunning() ? 'start' : 'config'](this.constants.defaults);
         return this;
     };
-    ;
     Monitor.prototype.destroy = function (err) {
         if (!this._isEnded()) {
             this.sendEvent(this.constants.events.DESTROY);
@@ -249,18 +248,14 @@ var Monitor = /** @class */ (function (_super) {
     Monitor.prototype.minutes = function (n) {
         return this._sanitizeNumber(n * this.seconds(60));
     };
-    ;
     Monitor.prototype.hours = function (n) {
         return this._sanitizeNumber(n * this.minutes(60));
     };
-    ;
     Monitor.prototype.days = function (n) {
         return this._sanitizeNumber(n * this.hours(24));
     };
-    ;
     return Monitor;
 }(stream.Readable));
-;
 var Thenable = /** @class */ (function (_super) {
     __extends(Thenable, _super);
     function Thenable() {
