@@ -345,6 +345,9 @@ describe('.throttle()', function() {
   it('should register throttled handler', (done) => {
     let cycles = 0;
     tester.throttle('monitor', event => {
+      if(event.type !== tester.constants.events.MONITOR) {
+        done(`event.type should be === '${tester.constants.events.MONITOR}'`);
+      }
       cycles++;
     }, 50);
     tester.on('stop', event => {
@@ -355,6 +358,11 @@ describe('.throttle()', function() {
     setTimeout(() => {
       tester.stop();
     }, 100);
+  });
+  it('should fail if handler is not a function', async () => {
+    assert.throws(() => {
+      tester.throttle('monitor', 123);
+    });
   });
 });
 describe('.unthrottle()', function() {

@@ -193,11 +193,19 @@ var Monitor = /** @class */ (function (_super) {
         return !!this._monitorState.ended;
     };
     Monitor.prototype.throttle = function (event, handler, wait) {
-        var self = this, _handler = _.wrap(handler, function (fn) {
-            if (self.isRunning()) {
-                fn.apply(self, _.toArray(arguments).slice(1));
+        var _this = this;
+        if (!_.isFunction(handler)) {
+            throw new Error("Handler must be a function");
+        }
+        var _handler = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
             }
-        }), throttledFn = _.throttle(_handler, wait || this.config().throttle);
+            if (_this.isRunning()) {
+                handler.apply(_this, args);
+            }
+        }, throttledFn = _.throttle(_handler, wait || this.config().throttle);
         this._monitorState.throttled.push({ originalFn: handler, throttledFn: throttledFn });
         return this.on(event, throttledFn);
     };
