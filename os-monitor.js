@@ -197,13 +197,9 @@ var Monitor = /** @class */ (function (_super) {
         if (!_.isFunction(handler)) {
             throw new Error("Handler must be a function");
         }
-        var _handler = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
+        var _handler = function (eventObject) {
             if (_this.isRunning()) {
-                handler.apply(_this, args);
+                handler.apply(_this, [eventObject]);
             }
         }, throttledFn = _.throttle(_handler, wait || this.config().throttle);
         this._monitorState.throttled.push({ originalFn: handler, throttledFn: throttledFn });

@@ -214,12 +214,12 @@ class Monitor extends stream.Readable {
       throw new Error("Handler must be a function");
     }
 
-    const _handler  = (...args: Array<unknown>) => {
+    const _handler  = (eventObject: EventObject) => {
                         if(this.isRunning()) {
-                          handler.apply(this, args);
+                          handler.apply(this, [eventObject]);
                         }
                       },
-        throttledFn = _.throttle(_handler, wait || this.config().throttle);
+          throttledFn = _.throttle(_handler, wait || this.config().throttle);
 
     this._monitorState.throttled.push({originalFn: handler, throttledFn: throttledFn});
     return this.on(event, throttledFn);
