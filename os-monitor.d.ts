@@ -1,5 +1,18 @@
 /// <reference types="node" />
 declare const os: any, events: any, stream: any, _: any, version: any, critical: number;
+declare enum EventType {
+    MONITOR = "monitor",
+    UPTIME = "uptime",
+    FREEMEM = "freemem",
+    LOADAVG1 = "loadavg1",
+    LOADAVG5 = "loadavg5",
+    LOADAVG15 = "loadavg15",
+    START = "start",
+    STOP = "stop",
+    CONFIG = "config",
+    RESET = "reset",
+    DESTROY = "destroy"
+}
 declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
@@ -10,7 +23,7 @@ declare class Monitor extends stream.Readable {
     _: any;
     private _monitorState;
     private _read;
-    sendEvent(event: string, obj?: InfoObject): Monitor;
+    sendEvent(event: EventType, obj?: InfoObject): Monitor;
     private _cycle;
     start(options?: ConfigObject): Monitor;
     stop(): Monitor;
@@ -19,9 +32,9 @@ declare class Monitor extends stream.Readable {
     config(options?: ConfigObject): ConfigObject;
     isRunning(): boolean;
     private _isEnded;
-    throttle(event: string, handler: Function, wait: number): Monitor;
-    unthrottle(event: string, handler: Function): Monitor;
-    when(event: string): Promise<EventObjectThenable> | EventObjectThenable;
+    throttle(event: EventType, handler: Function, wait: number): Monitor;
+    unthrottle(event: EventType, handler: Function): Monitor;
+    when(event: EventType): Promise<EventObjectThenable> | EventObjectThenable;
     private _sanitizeNumber;
     seconds(n: number): number;
     minutes(n: number): number;
@@ -62,24 +75,14 @@ interface MonitorState {
     interval: NodeJS.Timeout;
     config: ConfigObject;
     throttled: Array<{
-        event: string;
+        event: EventType;
         originalFn: Function;
         throttledFn: Function;
     }>;
 }
 interface MonitorConstants {
     events: {
-        MONITOR: string;
-        UPTIME: string;
-        FREEMEM: string;
-        LOADAVG1: string;
-        LOADAVG5: string;
-        LOADAVG15: string;
-        START: string;
-        STOP: string;
-        CONFIG: string;
-        RESET: string;
-        DESTROY: string;
+        [key: string]: EventType;
     };
     defaults: ConfigObject;
 }
@@ -91,7 +94,11 @@ interface InfoObject {
     options?: ConfigObject;
 }
 interface EventObject extends InfoObject {
-    type: string;
+    type: EventType;
     timestamp: number;
+}
+interface ThenableState<Type> {
+    state: string;
+    result?: Type | unknown;
 }
 declare type EventObjectThenable = Thenable<EventObject>;

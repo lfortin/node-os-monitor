@@ -35,6 +35,20 @@ var __extends = (this && this.__extends) || (function () {
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length;
+var EventType;
+(function (EventType) {
+    EventType["MONITOR"] = "monitor";
+    EventType["UPTIME"] = "uptime";
+    EventType["FREEMEM"] = "freemem";
+    EventType["LOADAVG1"] = "loadavg1";
+    EventType["LOADAVG5"] = "loadavg5";
+    EventType["LOADAVG15"] = "loadavg15";
+    EventType["START"] = "start";
+    EventType["STOP"] = "stop";
+    EventType["CONFIG"] = "config";
+    EventType["RESET"] = "reset";
+    EventType["DESTROY"] = "destroy";
+})(EventType || (EventType = {}));
 var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
@@ -67,19 +81,7 @@ var Monitor = /** @class */ (function (_super) {
     Object.defineProperty(Monitor.prototype, "constants", {
         get: function () {
             return {
-                events: {
-                    MONITOR: 'monitor',
-                    UPTIME: 'uptime',
-                    FREEMEM: 'freemem',
-                    LOADAVG1: 'loadavg1',
-                    LOADAVG5: 'loadavg5',
-                    LOADAVG15: 'loadavg15',
-                    START: 'start',
-                    STOP: 'stop',
-                    CONFIG: 'config',
-                    RESET: 'reset',
-                    DESTROY: 'destroy'
-                },
+                events: EventType,
                 defaults: {
                     delay: 3000,
                     critical1: critical,

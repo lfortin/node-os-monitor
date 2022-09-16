@@ -29,6 +29,20 @@ const os      = require('os'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
+enum EventType {
+    MONITOR = "monitor",
+    UPTIME = "uptime",
+    FREEMEM = "freemem",
+    LOADAVG1 = "loadavg1",
+    LOADAVG5 = "loadavg5",
+    LOADAVG15 = "loadavg15",
+    START = "start",
+    STOP = "stop",
+    CONFIG = "config",
+    RESET = "reset",
+    DESTROY = "destroy"
+}
+
 class Monitor extends stream.Readable {
 
   constructor() {
@@ -41,19 +55,7 @@ class Monitor extends stream.Readable {
 
   public get constants(): MonitorConstants {
     return {
-      events: {
-        MONITOR: 'monitor',
-        UPTIME: 'uptime',
-        FREEMEM: 'freemem',
-        LOADAVG1: 'loadavg1',
-        LOADAVG5: 'loadavg5',
-        LOADAVG15: 'loadavg15',
-        START: 'start',
-        STOP: 'stop',
-        CONFIG: 'config',
-        RESET: 'reset',
-        DESTROY: 'destroy'
-      },
+      events: EventType,
       defaults: {
         delay     : 3000,
         critical1 : critical,
@@ -94,7 +96,7 @@ class Monitor extends stream.Readable {
     this._monitorState.streamBuffering = true;
   }
 
-  public sendEvent(event: string, obj: InfoObject = {}): Monitor {
+  public sendEvent(event: EventType, obj: InfoObject = {}): Monitor {
     const eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
   
     // for EventEmitter
@@ -209,7 +211,7 @@ class Monitor extends stream.Readable {
     return !!this._monitorState.ended;
   }
 
-  public throttle(event: string, handler: Function, wait: number): Monitor {
+  public throttle(event: EventType, handler: Function, wait: number): Monitor {
     if(!_.isFunction(handler)) {
       throw new Error("Handler must be a function");
     }
@@ -225,7 +227,7 @@ class Monitor extends stream.Readable {
     return this.on(event, throttledFn);
   }
 
-  public unthrottle(event: string, handler: Function): Monitor {
+  public unthrottle(event: EventType, handler: Function): Monitor {
     const throttled = this._monitorState.throttled;
 
     for(let i = throttled.length - 1; i >= 0; i--) {
@@ -239,7 +241,7 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  public when(event: string): Promise<EventObjectThenable> | EventObjectThenable {
+  public when(event: EventType): Promise<EventObjectThenable> | EventObjectThenable {
     const deferred: EventObjectThenable = new Thenable();
     let wrappedDeferred: Promise<EventObjectThenable>;
 
@@ -300,7 +302,7 @@ class Thenable<Type> extends events.EventEmitter {
       REJECTED: 'rejected'
     }
   };
-  private _thenableState = {
+  private _thenableState: ThenableState<Type> = {
     state: Thenable.constants.state.PENDING,
     result: undefined
   };
@@ -367,27 +369,17 @@ interface MonitorState {
   interval: NodeJS.Timeout;
   config: ConfigObject;
   throttled: Array<{
-    event: string,
-    originalFn: Function,
-    throttledFn: Function
+    event: EventType;
+    originalFn: Function;
+    throttledFn: Function;
   }>;
 }
 
 interface MonitorConstants {
   events: {
-    MONITOR: string;
-    UPTIME: string;
-    FREEMEM: string;
-    LOADAVG1: string;
-    LOADAVG5: string;
-    LOADAVG15: string;
-    START: string;
-    STOP: string;
-    CONFIG: string;
-    RESET: string;
-    DESTROY: string;
-  },
-  defaults: ConfigObject
+    [key: string]: EventType;
+  };
+  defaults: ConfigObject;
 }
 
 interface InfoObject {
@@ -399,8 +391,13 @@ interface InfoObject {
 }
 
 interface EventObject extends InfoObject {
-  type      : string;
+  type      : EventType;
   timestamp : number;
+}
+
+interface ThenableState<Type> {
+  state: string;
+  result?: Type | unknown;
 }
 
 type EventObjectThenable = Thenable<EventObject>;
