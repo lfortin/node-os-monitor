@@ -1,7 +1,7 @@
 {
   "name": "os-monitor",
   "description": "simple OS monitoring for Node.js",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "homepage": "https://github.com/lfortin/node-os-monitor#readme",
   "repository": {
     "type": "git",
