@@ -62,6 +62,7 @@ interface MonitorState {
     interval: NodeJS.Timeout;
     config: ConfigObject;
     throttled: Array<{
+        event: string;
         originalFn: Function;
         throttledFn: Function;
     }>;

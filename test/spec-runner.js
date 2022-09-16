@@ -372,8 +372,14 @@ describe('.unthrottle()', function() {
       cycles++;
     }
     tester.throttle('monitor', _.noop, 50);
+    tester.throttle('freemem', _.noop, 50);
     tester.throttle('monitor', handler, 50);
+    tester.throttle('freemem', handler, 50);
     tester.unthrottle('monitor', handler);
+
+    assert.strictEqual(tester.listenerCount(tester.constants.events.MONITOR), 1);
+    assert.strictEqual(tester.listenerCount(tester.constants.events.FREEMEM), 2);
+
     tester.on('stop', event => {
       assert.strictEqual(cycles, 0);
       done();
