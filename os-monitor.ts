@@ -120,24 +120,24 @@ class Monitor extends stream.Readable {
       totalmem : os.totalmem()
     },
     config = this.config(),
-    freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
+    freemem  = (config.freemem! < 1) ? config.freemem! * info.totalmem! : config.freemem;
 
     if(!config.silent) {
       this.sendEvent(this.constants.events.MONITOR, info);
     }
-    if(info.loadavg[0] > config.critical1) {
+    if(info.loadavg![0] > config.critical1!) {
       this.sendEvent(this.constants.events.LOADAVG1, info);
     }
-    if(info.loadavg[1] > config.critical5) {
+    if(info.loadavg![1] > config.critical5!) {
       this.sendEvent(this.constants.events.LOADAVG5, info);
     }
-    if(info.loadavg[2] > config.critical15) {
+    if(info.loadavg![2] > config.critical15!) {
       this.sendEvent(this.constants.events.LOADAVG15, info);
     }
-    if(info.freemem < freemem) {
+    if(info.freemem! < freemem!) {
       this.sendEvent(this.constants.events.FREEMEM, info);
     }
-    if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
+    if(Number(config.uptime) && info.uptime! > Number(config.uptime)) {
       this.sendEvent(this.constants.events.UPTIME, info);
     }
   }
@@ -366,7 +366,7 @@ interface MonitorState {
   running: boolean;
   ended: boolean;
   streamBuffering: boolean;
-  interval: NodeJS.Timeout;
+  interval?: NodeJS.Timeout;
   config: ConfigObject;
   throttled: Array<{
     event: EventType;

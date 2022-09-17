@@ -72,7 +72,7 @@ interface MonitorState {
     running: boolean;
     ended: boolean;
     streamBuffering: boolean;
-    interval: NodeJS.Timeout;
+    interval?: NodeJS.Timeout;
     config: ConfigObject;
     throttled: Array<{
         event: EventType;
