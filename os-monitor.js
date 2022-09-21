@@ -108,9 +108,12 @@ var Monitor = /** @class */ (function (_super) {
         // for EventEmitter
         this.emit(event, eventObject);
         // for readable Stream
+        if (this._readableState.flowing) {
+            this._monitorState.streamBuffering = true;
+        }
         if (this.config().stream && this._monitorState.streamBuffering) {
             var prettyJSON = JSON.stringify(eventObject, null, 2);
-            if (!this.push("".concat(os.EOL).concat(prettyJSON))) {
+            if (!this.push("".concat(os.EOL).concat(prettyJSON)) && !this._readableState.flowing) {
                 this._monitorState.streamBuffering = false;
             }
         }

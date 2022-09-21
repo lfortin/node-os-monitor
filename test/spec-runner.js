@@ -7,7 +7,11 @@ const assert = require('assert'),
 
 const monitor     = require('../os-monitor'),
       { version } = require('../package.json');
-      
+
+function delay(n) {
+  return new Promise((resolve, reject) => setTimeout(resolve, n));
+}
+
 let tester;
 
 if(semver.lt(process.version, '14.0.0')) {
@@ -317,14 +321,33 @@ describe('readable stream', function() {
       tester.start();
     });
   });
-  it('should stop buffering if full', async () => {
-    tester.pause();
-    tester.push(Buffer.alloc(200000));
-    tester.start({
+  it('should stop buffering if full and not flowing', async () => {
+    tester.config({
       stream: true,
       immediate: true,
+      silent: false,
     });
+    tester.push(Buffer.alloc(200000));
+    tester.start();
+    await delay(1);
     assert.strictEqual(tester.push('hello'), false);
+    assert.strictEqual(tester._monitorState.streamBuffering, false);
+    tester.read();
+    await delay(1);
+    assert.strictEqual(tester.push('hello'), true);
+    assert.strictEqual(tester._monitorState.streamBuffering, true);
+    tester.pause();
+    tester.push(Buffer.alloc(200000));
+    tester.start();
+    await delay(1);
+    assert.strictEqual(tester.push('hello'), false);
+    assert.strictEqual(tester._monitorState.streamBuffering, false);
+    tester.resume();
+    tester.push(Buffer.alloc(200000));
+    tester.start();
+    await delay(1);
+    assert.strictEqual(tester.push('hello'), true);
+    assert.strictEqual(tester._monitorState.streamBuffering, true);
   });
 });
 describe('cycles', function() {

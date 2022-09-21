@@ -102,9 +102,12 @@ class Monitor extends stream.Readable {
     // for EventEmitter
     this.emit(event, eventObject);
     // for readable Stream
+    if(this._readableState.flowing) {
+      this._monitorState.streamBuffering = true;
+    }
     if(this.config().stream && this._monitorState.streamBuffering) {
       const prettyJSON = JSON.stringify(eventObject, null, 2);
-      if(!this.push(`${os.EOL}${prettyJSON}`)) {
+      if(!this.push(`${os.EOL}${prettyJSON}`) && !this._readableState.flowing) {
         this._monitorState.streamBuffering = false;
       }
     }
