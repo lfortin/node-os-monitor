@@ -3,6 +3,7 @@ const assert = require('assert'),
           os = require('os'),
         mock = require('mock-os'),
            _ = require('underscore'),
+      stream = require('readable-stream'),
       semver = require('semver');
 
 const monitor     = require('../os-monitor'),
@@ -320,6 +321,14 @@ describe('readable stream', function() {
       });
       tester.start();
     });
+  });
+  it('should pipe on writable stream', (done) => {
+    let writable = new stream.PassThrough();
+    writable.once('data', () => done());
+    tester.start({
+      stream: true,
+      immediate: true,
+    }).pipe(writable);
   });
   it('should stop buffering if full and not flowing', async () => {
     tester.config({
