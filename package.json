@@ -39,7 +39,12 @@
   },
   "keywords": [
     "monitor",
-    "os"
+    "os",
+    "system",
+    "loadavg",
+    "freemem",
+    "memory",
+    "uptime"
   ],
   "license": "MIT"
 }
