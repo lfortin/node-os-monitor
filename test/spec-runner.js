@@ -42,6 +42,11 @@ describe('Monitor class', function() {
     assert.ok(tester instanceof monitor.Monitor);
   });
 });
+describe('factory method', function() {
+  it('should create new instances', async () => {
+    assert.ok(tester.createMonitor() instanceof monitor.Monitor);
+  });
+});
 describe('API signature', function() {
   it('should have valid API signature', async () => {
     // API signature

@@ -40,6 +40,7 @@ declare class Monitor extends stream.Readable {
     minutes(n: number): number;
     hours(n: number): number;
     days(n: number): number;
+    createMonitor(): Monitor;
 }
 declare class Thenable<Type> extends events.EventEmitter {
     constructor();

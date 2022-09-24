@@ -263,6 +263,9 @@ var Monitor = /** @class */ (function (_super) {
     Monitor.prototype.days = function (n) {
         return this._sanitizeNumber(n * this.hours(24));
     };
+    Monitor.prototype.createMonitor = function () {
+        return new Monitor();
+    };
     return Monitor;
 }(stream.Readable));
 var Thenable = /** @class */ (function (_super) {

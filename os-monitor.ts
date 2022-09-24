@@ -292,6 +292,10 @@ class Monitor extends stream.Readable {
   public days(n: number): number {
     return this._sanitizeNumber(n * this.hours(24));
   }
+
+  public createMonitor(): Monitor {
+    return new Monitor();
+  }
 }
 
 class Thenable<Type> extends events.EventEmitter {
