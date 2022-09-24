@@ -95,7 +95,7 @@ Number of seconds over which event 'uptime' is triggered. Default: undefined
 
 Value of 1 minute load average over which event 'loadavg1' is triggered. Default: os.cpus().length
 
-(The load average is a measure of system activity, calculated by the operating system and expressed as a fractional number. As a rule of thumb, the load average should ideally be less than the number of logical CPUs in the system. ref.: [http://nodejs.org/api/os.html#os_os_loadavg](http://nodejs.org/api/os.html#os_os_loadavg "load average"))
+(A Unix-specific concept, the load average is a measure of system activity, calculated by the operating system and expressed as a fractional number. As a rule of thumb, the load average should ideally be less than the number of logical CPUs in the system. ref.: [http://nodejs.org/api/os.html#os_os_loadavg](http://nodejs.org/api/os.html#os_os_loadavg "load average"))
 
 ###  critical5
 
