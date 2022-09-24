@@ -1,3 +1,4 @@
+"use strict";
 // OS Monitoring for Node.js
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
