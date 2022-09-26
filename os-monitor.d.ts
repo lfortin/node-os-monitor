@@ -32,8 +32,8 @@ declare class Monitor extends stream.Readable {
     config(options?: ConfigObject): ConfigObject;
     isRunning(): boolean;
     private _isEnded;
-    throttle(event: EventType, handler: Function, wait: number): Monitor;
-    unthrottle(event: EventType, handler: Function): Monitor;
+    throttle(event: EventType, handler: EventHandler, wait: number): Monitor;
+    unthrottle(event: EventType, handler: EventHandler): Monitor;
     when(event: EventType): Promise<EventObjectThenable> | EventObjectThenable;
     private _sanitizeNumber;
     seconds(n: number): number;
@@ -54,8 +54,8 @@ declare class Thenable<Type> extends events.EventEmitter {
     private _thenableState;
     resolve(result: Type): Thenable<Type>;
     reject(error: unknown): Thenable<Type>;
-    then(onFulfilled?: Function, onRejected?: Function): void;
-    catch(onRejected?: Function): void;
+    then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void;
+    catch(onRejected?: ThenableRejectedHandler<Type>): void;
 }
 interface ConfigObject {
     delay?: number;
@@ -77,8 +77,8 @@ interface MonitorState {
     config: ConfigObject;
     throttled: Array<{
         event: EventType;
-        originalFn: Function;
-        throttledFn: Function;
+        originalFn: EventHandler;
+        throttledFn: EventHandler;
     }>;
 }
 interface MonitorConstants {
@@ -98,8 +98,17 @@ interface EventObject extends InfoObject {
     type: EventType;
     timestamp: number;
 }
+interface EventHandler {
+    (event: EventObject): void;
+}
 interface ThenableState<Type> {
     state: string;
     result?: Type | unknown;
+}
+interface ThenableResolvedHandler<Type> {
+    (result: Type | unknown): unknown;
+}
+interface ThenableRejectedHandler<Type> {
+    (error: unknown): unknown;
 }
 declare type EventObjectThenable = Thenable<EventObject>;

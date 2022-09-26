@@ -214,23 +214,23 @@ class Monitor extends stream.Readable {
     return !!this._monitorState.ended;
   }
 
-  public throttle(event: EventType, handler: Function, wait: number): Monitor {
+  public throttle(event: EventType, handler: EventHandler, wait: number): Monitor {
     if(!_.isFunction(handler)) {
       throw new Error("Handler must be a function");
     }
 
-    const _handler  = (eventObject: EventObject) => {
-                        if(this.isRunning()) {
-                          handler.apply(this, [eventObject]);
-                        }
-                      },
-          throttledFn = _.throttle(_handler, wait || this.config().throttle);
+    const _handler: EventHandler = (eventObject: EventObject) => {
+                                     if(this.isRunning()) {
+                                       handler.apply(this, [eventObject]);
+                                     }
+                                   },
+          throttledFn: EventHandler = _.throttle(_handler, wait || this.config().throttle);
 
     this._monitorState.throttled.push({event: event, originalFn: handler, throttledFn: throttledFn});
     return this.on(event, throttledFn);
   }
 
-  public unthrottle(event: EventType, handler: Function): Monitor {
+  public unthrottle(event: EventType, handler: EventHandler): Monitor {
     const throttled = this._monitorState.throttled;
 
     for(let i = throttled.length - 1; i >= 0; i--) {
@@ -253,7 +253,7 @@ class Monitor extends stream.Readable {
     });
 
     try {
-      wrappedDeferred = Promise.resolve(deferred);
+      wrappedDeferred = Promise.resolve(deferred) as Promise<EventObjectThenable>;
       return wrappedDeferred;
     } catch(err: unknown) {
       return deferred;
@@ -331,7 +331,7 @@ class Thenable<Type> extends events.EventEmitter {
     }
     return this;
   }
-  public then(onFulfilled?: Function, onRejected?: Function): void {
+  public then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void {
     const state = Thenable.constants.state;
 
     if(this._thenableState.state === state.PENDING) {
@@ -349,7 +349,7 @@ class Thenable<Type> extends events.EventEmitter {
       onRejected(this._thenableState.result);
     }
   }
-  public catch(onRejected?: Function): void {
+  public catch(onRejected?: ThenableRejectedHandler<Type>): void {
     return this.then(undefined, onRejected);
   }
 }
@@ -377,8 +377,8 @@ interface MonitorState {
   config: ConfigObject;
   throttled: Array<{
     event: EventType;
-    originalFn: Function;
-    throttledFn: Function;
+    originalFn: EventHandler;
+    throttledFn: EventHandler;
   }>;
 }
 
@@ -402,9 +402,21 @@ interface EventObject extends InfoObject {
   timestamp : number;
 }
 
+interface EventHandler {
+  (event: EventObject): void;
+}
+
 interface ThenableState<Type> {
   state: string;
   result?: Type | unknown;
+}
+
+interface ThenableResolvedHandler<Type> {
+  (result: Type | unknown): unknown;
+}
+
+interface ThenableRejectedHandler<Type> {
+  (error: unknown): unknown;
 }
 
 type EventObjectThenable = Thenable<EventObject>;
