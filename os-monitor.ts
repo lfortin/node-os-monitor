@@ -96,7 +96,7 @@ class Monitor extends stream.Readable {
     this._monitorState.streamBuffering = true;
   }
 
-  public sendEvent(event: EventType, obj: InfoObject = {}): Monitor {
+  public sendEvent(event: EventType, obj: Partial<InfoObject> = {}): Monitor {
     const eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
   
     // for EventEmitter
@@ -123,29 +123,29 @@ class Monitor extends stream.Readable {
       totalmem : os.totalmem()
     },
     config = this.config(),
-    freemem  = (config.freemem! < 1) ? config.freemem! * info.totalmem! : config.freemem;
+    freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
       this.sendEvent(this.constants.events.MONITOR, info);
     }
-    if(info.loadavg![0] > config.critical1!) {
+    if(info.loadavg[0] > config.critical1) {
       this.sendEvent(this.constants.events.LOADAVG1, info);
     }
-    if(info.loadavg![1] > config.critical5!) {
+    if(info.loadavg[1] > config.critical5) {
       this.sendEvent(this.constants.events.LOADAVG5, info);
     }
-    if(info.loadavg![2] > config.critical15!) {
+    if(info.loadavg[2] > config.critical15) {
       this.sendEvent(this.constants.events.LOADAVG15, info);
     }
-    if(info.freemem! < freemem!) {
+    if(info.freemem < freemem) {
       this.sendEvent(this.constants.events.FREEMEM, info);
     }
-    if(Number(config.uptime) && info.uptime! > Number(config.uptime)) {
+    if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
       this.sendEvent(this.constants.events.UPTIME, info);
     }
   }
 
-  public start(options?: ConfigObject): Monitor {
+  public start(options?: Partial<ConfigObject>): Monitor {
     if(this._isEnded()) {
       this.emit('error', new Error("monitor has been ended by .destroy() method"));
       return this;
@@ -196,7 +196,7 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  public config(options?: ConfigObject): ConfigObject {
+  public config(options?: Partial<ConfigObject>): ConfigObject {
 
     if(_.isObject(options)) {
       _.extend(this._monitorState.config, options);
@@ -231,7 +231,7 @@ class Monitor extends stream.Readable {
   }
 
   public unthrottle(event: EventType, handler: EventHandler): Monitor {
-    const throttled = this._monitorState.throttled;
+    const {throttled} = this._monitorState;
 
     for(let i = throttled.length - 1; i >= 0; i--) {
       const pair = throttled[i];
@@ -299,9 +299,6 @@ class Monitor extends stream.Readable {
 }
 
 class Thenable<Type> extends events.EventEmitter {
-  constructor() {
-    super();
-  }
   static constants = {
     state: {
       PENDING: 'pending',
@@ -314,7 +311,7 @@ class Thenable<Type> extends events.EventEmitter {
     result: undefined
   };
   public resolve(result: Type): Thenable<Type> {
-    const state = Thenable.constants.state;
+    const {state} = Thenable.constants;
     if(this._thenableState.state === state.PENDING) {
       this._thenableState.state = state.FULFILLED;
       this._thenableState.result = result;
@@ -323,7 +320,7 @@ class Thenable<Type> extends events.EventEmitter {
     return this;
   }
   public reject(error: unknown): Thenable<Type> {
-    const state = Thenable.constants.state;
+    const {state} = Thenable.constants;
     if(this._thenableState.state === state.PENDING) {
       this._thenableState.state = state.REJECTED;
       this._thenableState.result = error;
@@ -332,7 +329,7 @@ class Thenable<Type> extends events.EventEmitter {
     return this;
   }
   public then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void {
-    const state = Thenable.constants.state;
+    const {state} = Thenable.constants;
 
     if(this._thenableState.state === state.PENDING) {
       this.once('resolve', (result: Type) => {
@@ -357,16 +354,16 @@ class Thenable<Type> extends events.EventEmitter {
 module.exports = new Monitor();
 
 interface ConfigObject {
-  delay?     : number;
-  critical1? : number;
-  critical5? : number;
-  critical15?: number;
-  freemem?   : number;
-  uptime?    : number;
-  silent?    : boolean;
-  stream?    : boolean;
-  immediate? : boolean;
-  throttle?  : number;
+  delay     : number;
+  critical1 : number;
+  critical5 : number;
+  critical15: number;
+  freemem   : number;
+  uptime    : number;
+  silent    : boolean;
+  stream    : boolean;
+  immediate : boolean;
+  throttle? : number;
 }
 
 interface MonitorState {
@@ -390,11 +387,11 @@ interface MonitorConstants {
 }
 
 interface InfoObject {
-  loadavg?  : Array<number>;
-  uptime?   : number;
-  freemem?  : number;
-  totalmem? : number;
-  options?  : ConfigObject;
+  loadavg  : Array<number>;
+  uptime   : number;
+  freemem  : number;
+  totalmem : number;
+  options? : Partial<ConfigObject>;
 }
 
 interface EventObject extends InfoObject {

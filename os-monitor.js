@@ -272,7 +272,7 @@ var Monitor = /** @class */ (function (_super) {
 var Thenable = /** @class */ (function (_super) {
     __extends(Thenable, _super);
     function Thenable() {
-        var _this = _super.call(this) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._thenableState = {
             state: Thenable.constants.state.PENDING,
             result: undefined

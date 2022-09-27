@@ -23,13 +23,13 @@ declare class Monitor extends stream.Readable {
     _: any;
     private _monitorState;
     private _read;
-    sendEvent(event: EventType, obj?: InfoObject): Monitor;
+    sendEvent(event: EventType, obj?: Partial<InfoObject>): Monitor;
     private _cycle;
-    start(options?: ConfigObject): Monitor;
+    start(options?: Partial<ConfigObject>): Monitor;
     stop(): Monitor;
     reset(): Monitor;
     destroy(err?: unknown): Monitor;
-    config(options?: ConfigObject): ConfigObject;
+    config(options?: Partial<ConfigObject>): ConfigObject;
     isRunning(): boolean;
     private _isEnded;
     throttle(event: EventType, handler: EventHandler, wait: number): Monitor;
@@ -43,7 +43,6 @@ declare class Monitor extends stream.Readable {
     createMonitor(): Monitor;
 }
 declare class Thenable<Type> extends events.EventEmitter {
-    constructor();
     static constants: {
         state: {
             PENDING: string;
@@ -58,15 +57,15 @@ declare class Thenable<Type> extends events.EventEmitter {
     catch(onRejected?: ThenableRejectedHandler<Type>): void;
 }
 interface ConfigObject {
-    delay?: number;
-    critical1?: number;
-    critical5?: number;
-    critical15?: number;
-    freemem?: number;
-    uptime?: number;
-    silent?: boolean;
-    stream?: boolean;
-    immediate?: boolean;
+    delay: number;
+    critical1: number;
+    critical5: number;
+    critical15: number;
+    freemem: number;
+    uptime: number;
+    silent: boolean;
+    stream: boolean;
+    immediate: boolean;
     throttle?: number;
 }
 interface MonitorState {
@@ -88,11 +87,11 @@ interface MonitorConstants {
     defaults: ConfigObject;
 }
 interface InfoObject {
-    loadavg?: Array<number>;
-    uptime?: number;
-    freemem?: number;
-    totalmem?: number;
-    options?: ConfigObject;
+    loadavg: Array<number>;
+    uptime: number;
+    freemem: number;
+    totalmem: number;
+    options?: Partial<ConfigObject>;
 }
 interface EventObject extends InfoObject {
     type: EventType;
