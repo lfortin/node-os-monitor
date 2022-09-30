@@ -367,7 +367,7 @@ describe('readable stream', function() {
 describe('cycles', function() {
   it('should execute multiple cycles', (done) => {
     let cycles = 0;
-    tester.start({delay: 25});
+    tester.start({delay: 3});
     tester.on('monitor', () => {
       cycles++;
     });
@@ -375,7 +375,7 @@ describe('cycles', function() {
       assert.ok(cycles > 2);
       done();
     });
-    setTimeout(() => tester.stop(), 100);
+    setTimeout(() => tester.stop(), 15);
   });
 });
 describe('.throttle()', function() {
@@ -386,15 +386,15 @@ describe('.throttle()', function() {
         done(`event.type should be === '${tester.constants.events.MONITOR}'`);
       }
       cycles++;
-    }, 50);
+    }, 30);
     tester.on('stop', event => {
       assert.ok(cycles < 3);
       done();
     });
-    tester.start({delay: 10});
+    tester.start({delay: 5});
     setTimeout(() => {
       tester.stop();
-    }, 100);
+    }, 50);
   });
   it('should fail if handler is not a function', async () => {
     assert.throws(() => {
@@ -421,10 +421,10 @@ describe('.unthrottle()', function() {
       assert.strictEqual(cycles, 0);
       done();
     });
-    tester.start({delay: 10});
+    tester.start({delay: 2});
     setTimeout(() => {
       tester.stop();
-    }, 100);
+    }, 15);
   });
 });
 describe('.when()', function() {
