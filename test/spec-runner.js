@@ -375,7 +375,7 @@ describe('cycles', function() {
       assert.ok(cycles > 2);
       done();
     });
-    setTimeout(() => tester.stop(), 15);
+    setTimeout(() => tester.stop(), 50);
   });
 });
 describe('.throttle()', function() {
