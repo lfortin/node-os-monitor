@@ -68,10 +68,54 @@ var Monitor = /** @class */ (function (_super) {
             streamBuffering: true,
             interval: undefined,
             config: Monitor.prototype.constants.defaults,
-            throttled: []
+            throttled: [],
+            plugins: {}
         };
+        _this._initPlugins();
         return _this;
     }
+    Monitor.prototype._initPlugins = function () {
+        var _a;
+        var _this = this;
+        this.extend((_a = {},
+            _a[this.constants.events.MONITOR] = function (info, cb) {
+                var config = _this.config();
+                if (!config.silent) {
+                    cb(info);
+                }
+            },
+            _a[this.constants.events.LOADAVG1] = function (info, cb) {
+                var config = _this.config();
+                if (info.loadavg[0] > config.critical1) {
+                    cb(info);
+                }
+            },
+            _a[this.constants.events.LOADAVG5] = function (info, cb) {
+                var config = _this.config();
+                if (info.loadavg[1] > config.critical5) {
+                    cb(info);
+                }
+            },
+            _a[this.constants.events.LOADAVG15] = function (info, cb) {
+                var config = _this.config();
+                if (info.loadavg[2] > config.critical15) {
+                    cb(info);
+                }
+            },
+            _a[this.constants.events.FREEMEM] = function (info, cb) {
+                var config = _this.config(), freemem = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
+                if (info.freemem < freemem) {
+                    cb(info);
+                }
+            },
+            _a[this.constants.events.UPTIME] = function (info, cb) {
+                var config = _this.config();
+                if (Number(config.uptime) && info.uptime > Number(config.uptime)) {
+                    cb(info);
+                }
+            },
+            _a));
+    };
     Object.defineProperty(Monitor.prototype, "version", {
         get: function () {
             return version;
@@ -120,30 +164,27 @@ var Monitor = /** @class */ (function (_super) {
         }
         return this;
     };
+    Monitor.prototype.extend = function (handlers) {
+        _.extend(this._monitorState.plugins, handlers);
+        return this;
+    };
     Monitor.prototype._cycle = function () {
+        var _this = this;
         var info = {
             loadavg: os.loadavg(),
             uptime: os.uptime(),
             freemem: os.freemem(),
             totalmem: os.totalmem()
-        }, config = this.config(), freemem = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
-        if (!config.silent) {
-            this.sendEvent(this.constants.events.MONITOR, info);
-        }
-        if (info.loadavg[0] > config.critical1) {
-            this.sendEvent(this.constants.events.LOADAVG1, info);
-        }
-        if (info.loadavg[1] > config.critical5) {
-            this.sendEvent(this.constants.events.LOADAVG5, info);
-        }
-        if (info.loadavg[2] > config.critical15) {
-            this.sendEvent(this.constants.events.LOADAVG15, info);
-        }
-        if (info.freemem < freemem) {
-            this.sendEvent(this.constants.events.FREEMEM, info);
-        }
-        if (Number(config.uptime) && info.uptime > Number(config.uptime)) {
-            this.sendEvent(this.constants.events.UPTIME, info);
+        };
+        var _loop_1 = function (event_1) {
+            var plugin = this_1._monitorState.plugins[event_1];
+            plugin(info, function (info) {
+                _this.sendEvent(event_1, info);
+            });
+        };
+        var this_1 = this;
+        for (var event_1 in this._monitorState.plugins) {
+            _loop_1(event_1);
         }
     };
     Monitor.prototype.start = function (options) {

@@ -15,6 +15,7 @@ declare enum EventType {
 }
 declare class Monitor extends stream.Readable {
     constructor();
+    private _initPlugins;
     get version(): string;
     get constants(): MonitorConstants;
     Thenable: typeof Thenable;
@@ -24,6 +25,9 @@ declare class Monitor extends stream.Readable {
     private _monitorState;
     private _read;
     sendEvent(event: EventType, obj?: Partial<InfoObject>): Monitor;
+    extend(handlers: {
+        [key: string]: Function;
+    }): Monitor;
     private _cycle;
     start(options?: Partial<ConfigObject>): Monitor;
     stop(): Monitor;
@@ -79,6 +83,9 @@ interface MonitorState {
         originalFn: EventHandler;
         throttledFn: EventHandler;
     }>;
+    plugins: {
+        [key: string]: Function;
+    };
 }
 interface MonitorConstants {
     events: {

@@ -47,6 +47,49 @@ class Monitor extends stream.Readable {
 
   constructor() {
     super({highWaterMark: 102400});
+    this._initPlugins();
+  }
+
+  private _initPlugins(): void {
+    this.extend({
+      [this.constants.events.MONITOR]: (info: InfoObject, cb: Function) => {
+        const config = this.config();
+        if(!config.silent) {
+          cb(info);
+        }
+      },
+      [this.constants.events.LOADAVG1]: (info: InfoObject, cb: Function) => {
+        const config = this.config();
+        if(info.loadavg[0] > config.critical1) {
+          cb(info);
+        }
+      },
+      [this.constants.events.LOADAVG5]: (info: InfoObject, cb: Function) => {
+        const config = this.config();
+        if(info.loadavg[1] > config.critical5) {
+          cb(info);
+        }
+      },
+      [this.constants.events.LOADAVG15]: (info: InfoObject, cb: Function) => {
+        const config = this.config();
+        if(info.loadavg[2] > config.critical15) {
+          cb(info);
+        }
+      },
+      [this.constants.events.FREEMEM]: (info: InfoObject, cb: Function) => {
+        const config = this.config(),
+        freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
+        if(info.freemem < freemem) {
+          cb(info);
+        }
+      },
+      [this.constants.events.UPTIME]: (info: InfoObject, cb: Function) => {
+        const config = this.config();
+        if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
+          cb(info);
+        }
+      },
+    });
   }
 
   public get version(): string {
@@ -88,7 +131,8 @@ class Monitor extends stream.Readable {
     streamBuffering: true,
     interval: undefined,
     config: Monitor.prototype.constants.defaults,
-    throttled: []
+    throttled: [],
+    plugins: {}
   };
 
   // readable stream implementation requirement
@@ -115,33 +159,24 @@ class Monitor extends stream.Readable {
     return this;
   }
 
+  public extend(handlers: {[key: string]: Function}): Monitor {
+    _.extend(this._monitorState.plugins, handlers);
+    return this;
+  }
+
   private _cycle(): void {
     const info: InfoObject = {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
       totalmem : os.totalmem()
-    },
-    config = this.config(),
-    freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
+    };
 
-    if(!config.silent) {
-      this.sendEvent(this.constants.events.MONITOR, info);
-    }
-    if(info.loadavg[0] > config.critical1) {
-      this.sendEvent(this.constants.events.LOADAVG1, info);
-    }
-    if(info.loadavg[1] > config.critical5) {
-      this.sendEvent(this.constants.events.LOADAVG5, info);
-    }
-    if(info.loadavg[2] > config.critical15) {
-      this.sendEvent(this.constants.events.LOADAVG15, info);
-    }
-    if(info.freemem < freemem) {
-      this.sendEvent(this.constants.events.FREEMEM, info);
-    }
-    if(Number(config.uptime) && info.uptime > Number(config.uptime)) {
-      this.sendEvent(this.constants.events.UPTIME, info);
+    for(const event in this._monitorState.plugins) {
+      const plugin = this._monitorState.plugins[event];
+      plugin(info, (info: InfoObject) => {
+        this.sendEvent(event as EventType, info);
+      });
     }
   }
 
@@ -377,6 +412,9 @@ interface MonitorState {
     originalFn: EventHandler;
     throttledFn: EventHandler;
   }>;
+  plugins: {
+    [key: string]: Function;
+  };
 }
 
 interface MonitorConstants {
