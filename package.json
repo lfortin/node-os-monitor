@@ -22,18 +22,18 @@
     "underscore": "~1.13.6"
   },
   "devDependencies": {
-    "@types/node": "^18.7.0",
-    "@types/readable-stream": "^2.3.13",
+    "@types/node": "^18.11.3",
+    "@types/readable-stream": "^2.3.14",
     "@types/underscore": "^1.11.4",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "@typescript-eslint/parser": "^5.38.1",
-    "eslint": "^8.24.0",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
-    "mocha": "^10.0.0",
+    "mocha": "^10.1.0",
     "mock-os": "^1.0.0",
     "nyc": "^15.1.0",
-    "semver": "^7.3.7",
-    "typescript": "^4.8.0"
+    "semver": "^7.3.8",
+    "typescript": "^4.8.4"
   },
   "scripts": {
     "build": "tsc -d -t ES5 --strict os-monitor.ts",
