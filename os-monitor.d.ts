@@ -110,4 +110,4 @@ interface ThenableResolvedHandler<Type> {
 interface ThenableRejectedHandler<Type> {
     (error: unknown): unknown;
 }
-declare type EventObjectThenable = Thenable<EventObject>;
+type EventObjectThenable = Thenable<EventObject>;
