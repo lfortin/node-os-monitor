@@ -1,9 +1,10 @@
 /// <reference types="node" />
-declare const os: any, events: any, stream: any, _: any, version: any, critical: number;
+declare const os: any, fs: any, events: any, stream: any, _: any, version: any, critical: number;
 declare enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",
     FREEMEM = "freemem",
+    DISKFREE = "diskfree",
     LOADAVG1 = "loadavg1",
     LOADAVG5 = "loadavg5",
     LOADAVG15 = "loadavg15",
@@ -25,6 +26,7 @@ declare class Monitor extends stream.Readable {
     private _read;
     sendEvent(event: EventType, obj?: Partial<InfoObject>): Monitor;
     private _cycle;
+    private _sendEvents;
     start(options?: Partial<ConfigObject>): Monitor;
     stop(): Monitor;
     reset(): Monitor;
@@ -40,6 +42,7 @@ declare class Monitor extends stream.Readable {
     minutes(n: number): number;
     hours(n: number): number;
     days(n: number): number;
+    blocks(bytes: number, blockSize?: number): number;
     createMonitor(): Monitor;
 }
 declare class Thenable<Type> extends events.EventEmitter {
@@ -56,6 +59,18 @@ declare class Thenable<Type> extends events.EventEmitter {
     then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void;
     catch(onRejected?: ThenableRejectedHandler<Type>): void;
 }
+interface StatFs {
+    type: number;
+    bsize: number;
+    blocks: number;
+    bfree: number;
+    bavail: number;
+    files: number;
+    ffree: number;
+}
+interface DiskfreeConfig {
+    [key: string]: number;
+}
 interface ConfigObject {
     delay: number;
     critical1: number;
@@ -66,6 +81,7 @@ interface ConfigObject {
     silent: boolean;
     stream: boolean;
     immediate: boolean;
+    diskfree: DiskfreeConfig;
     throttle?: number;
 }
 interface MonitorState {
@@ -86,11 +102,15 @@ interface MonitorConstants {
     };
     defaults: ConfigObject;
 }
+interface DiskfreeInfo {
+    [key: string]: number;
+}
 interface InfoObject {
     loadavg: Array<number>;
     uptime: number;
     freemem: number;
     totalmem: number;
+    diskfree?: DiskfreeInfo;
     options?: Partial<ConfigObject>;
 }
 interface EventObject extends InfoObject {

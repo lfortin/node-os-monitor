@@ -22,10 +22,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-const os      = require('os'),
-      events  = require('events'),
-      stream  = require('readable-stream'),
-      _       = require('underscore'),
+const os          = require('os'),
+      fs          = require('fs'),
+      events      = require('events'),
+      stream      = require('readable-stream'),
+      _           = require('underscore'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
@@ -33,6 +34,7 @@ enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",
     FREEMEM = "freemem",
+    DISKFREE = "diskfree",
     LOADAVG1 = "loadavg1",
     LOADAVG5 = "loadavg5",
     LOADAVG15 = "loadavg15",
@@ -63,6 +65,7 @@ class Monitor extends stream.Readable {
         critical15: critical,
         freemem   : 0,
         uptime    : 0,
+        diskfree  : {},
         silent    : false,
         stream    : false,
         immediate : false
@@ -122,7 +125,28 @@ class Monitor extends stream.Readable {
       freemem  : os.freemem(),
       totalmem : os.totalmem()
     },
-    config = this.config(),
+    config = this.config();
+    
+    if(fs.statfsSync && config.diskfree && Object.keys(config.diskfree).length) {
+      info.diskfree = info.diskfree || {};
+      for(const path in config.diskfree) {
+        try {
+          const stats: StatFs = fs.statfsSync(path);
+          _.extend(info.diskfree, {[path]: stats.bfree});
+        } catch(err: unknown) { }
+      }
+      for(const path in config.diskfree) {
+        const dfConfig: number = config.diskfree[path];
+        if(info.diskfree[path] < dfConfig) {
+          this.sendEvent(this.constants.events.DISKFREE, info);
+        }
+      }
+    }
+    this._sendEvents(info);
+  }
+
+  private _sendEvents(info: InfoObject): void {
+    const config = this.config(),
     freemem  = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
 
     if(!config.silent) {
@@ -293,6 +317,10 @@ class Monitor extends stream.Readable {
     return this._sanitizeNumber(n * this.hours(24));
   }
 
+  public blocks(bytes: number, blockSize = 1): number {
+    return Math.ceil(bytes / blockSize);
+  }
+
   public createMonitor(): Monitor {
     return new Monitor();
   }
@@ -353,6 +381,20 @@ class Thenable<Type> extends events.EventEmitter {
 
 module.exports = new Monitor();
 
+interface StatFs {
+  type  : number;
+  bsize : number;
+  blocks: number;
+  bfree : number;
+  bavail: number;
+  files : number;
+  ffree : number;
+}
+
+interface DiskfreeConfig {
+  [key: string]: number;
+}
+
 interface ConfigObject {
   delay     : number;
   critical1 : number;
@@ -363,6 +405,7 @@ interface ConfigObject {
   silent    : boolean;
   stream    : boolean;
   immediate : boolean;
+  diskfree  : DiskfreeConfig;
   throttle? : number;
 }
 
@@ -386,11 +429,16 @@ interface MonitorConstants {
   defaults: ConfigObject;
 }
 
+interface DiskfreeInfo {
+  [key: string]: number;
+}
+
 interface InfoObject {
   loadavg  : Array<number>;
   uptime   : number;
   freemem  : number;
   totalmem : number;
+  diskfree?: DiskfreeInfo;
   options? : Partial<ConfigObject>;
 }
 

@@ -35,12 +35,13 @@ var __extends = (this && this.__extends) || (function () {
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-var os = require('os'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length;
+var os = require('os'), fs = require('fs'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length;
 var EventType;
 (function (EventType) {
     EventType["MONITOR"] = "monitor";
     EventType["UPTIME"] = "uptime";
     EventType["FREEMEM"] = "freemem";
+    EventType["DISKFREE"] = "diskfree";
     EventType["LOADAVG1"] = "loadavg1";
     EventType["LOADAVG5"] = "loadavg5";
     EventType["LOADAVG15"] = "loadavg15";
@@ -90,6 +91,7 @@ var Monitor = /** @class */ (function (_super) {
                     critical15: critical,
                     freemem: 0,
                     uptime: 0,
+                    diskfree: {},
                     silent: false,
                     stream: false,
                     immediate: false
@@ -121,12 +123,33 @@ var Monitor = /** @class */ (function (_super) {
         return this;
     };
     Monitor.prototype._cycle = function () {
+        var _a;
         var info = {
             loadavg: os.loadavg(),
             uptime: os.uptime(),
             freemem: os.freemem(),
             totalmem: os.totalmem()
-        }, config = this.config(), freemem = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
+        }, config = this.config();
+        if (fs.statfsSync && config.diskfree && Object.keys(config.diskfree).length) {
+            info.diskfree = info.diskfree || {};
+            for (var path in config.diskfree) {
+                try {
+                    var stats = fs.statfsSync(path);
+                    _.extend(info.diskfree, (_a = {}, _a[path] = stats.bfree, _a));
+                }
+                catch (err) { }
+            }
+            for (var path in config.diskfree) {
+                var dfConfig = config.diskfree[path];
+                if (info.diskfree[path] < dfConfig) {
+                    this.sendEvent(this.constants.events.DISKFREE, info);
+                }
+            }
+        }
+        this._sendEvents(info);
+    };
+    Monitor.prototype._sendEvents = function (info) {
+        var config = this.config(), freemem = (config.freemem < 1) ? config.freemem * info.totalmem : config.freemem;
         if (!config.silent) {
             this.sendEvent(this.constants.events.MONITOR, info);
         }
@@ -263,6 +286,10 @@ var Monitor = /** @class */ (function (_super) {
     };
     Monitor.prototype.days = function (n) {
         return this._sanitizeNumber(n * this.hours(24));
+    };
+    Monitor.prototype.blocks = function (bytes, blockSize) {
+        if (blockSize === void 0) { blockSize = 1; }
+        return Math.ceil(bytes / blockSize);
     };
     Monitor.prototype.createMonitor = function () {
         return new Monitor();

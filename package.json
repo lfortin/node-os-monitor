@@ -33,6 +33,7 @@
     "mock-os": "^1.0.0",
     "nyc": "^15.1.0",
     "semver": "^7.3.8",
+    "sinon": "^15.0.1",
     "typescript": "^4.9.0"
   },
   "scripts": {
@@ -49,7 +50,8 @@
     "loadavg",
     "freemem",
     "memory",
-    "uptime"
+    "uptime",
+    "diskfree"
   ],
   "license": "MIT"
 }

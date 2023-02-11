@@ -1,7 +1,9 @@
 
 const assert = require('assert'),
           os = require('os'),
+          fs = require('fs'),
         mock = require('mock-os'),
+       sinon = require('sinon'),
            _ = require('underscore'),
       stream = require('readable-stream'),
       semver = require('semver');
@@ -301,6 +303,112 @@ describe('event emitter', function() {
       immediate: true,
     });
     setImmediate(done);
+  });
+  it('should emit diskfree event', (done) => {
+    if(!fs.statfsSync) {
+      done();
+      this.skip();
+    }
+    const stub = sinon.stub(fs, 'statfsSync').callsFake((path) => {
+      if(path === '/path1') {
+        return {
+          type: 1397114950,
+          bsize: 4096,
+          blocks: 121938943,
+          bfree: 61058895,
+          bavail: 61058895,
+          files: 999,
+          ffree: 1000000,
+        };
+      } else if(path === '/path2') {
+        return {
+          type: 1397114950,
+          bsize: 4096,
+          blocks: 121938943,
+          bfree: 61058895,
+          bavail: 61058895,
+          files: 999,
+          ffree: 1000000,
+        };
+      } else {
+        return {
+          type: 1397114950,
+          bsize: 4096,
+          blocks: 121938943,
+          bfree: 61058895,
+          bavail: 61058895,
+          files: 999,
+          ffree: 1000000,
+        };
+      }
+    });
+    tester.start({
+      diskfree: {'/path1': 71058895, '/path2': 1000},
+      immediate: true,
+    });
+    tester.on('diskfree', event => {
+      assert.strictEqual(event.type, tester.constants.events.DISKFREE);
+      assert.ok(event.loadavg);
+      assert.ok(event.freemem);
+      assert.ok(event.totalmem);
+      assert.ok(event.uptime);
+      assert.ok(event.diskfree);
+      assert.ok(event.diskfree['/path1']);
+      assert.ok(event.diskfree['/path2']);
+      assert.ok(event.timestamp);
+      stub.restore();
+      done();
+    });
+  });
+  it('should not emit diskfree event', (done) => {
+    if(!fs.statfsSync) {
+      done();
+      this.skip();
+    }
+    const stub = sinon.stub(fs, 'statfsSync').callsFake((path) => {
+      if(path === '/path1') {
+        return {
+          type: 1397114950,
+          bsize: 4096,
+          blocks: 121938943,
+          bfree: 61058895,
+          bavail: 61058895,
+          files: 999,
+          ffree: 1000000,
+        };
+      } else if(path === '/path2') {
+        return {
+          type: 1397114950,
+          bsize: 4096,
+          blocks: 121938943,
+          bfree: 61058895,
+          bavail: 61058895,
+          files: 999,
+          ffree: 1000000,
+        };
+      } else {
+        return {
+          type: 1397114950,
+          bsize: 4096,
+          blocks: 121938943,
+          bfree: 61058895,
+          bavail: 61058895,
+          files: 999,
+          ffree: 1000000,
+        };
+      }
+    });
+    tester.on('diskfree', event => {
+      done('should not emit diskfree event');
+    });
+    tester.start({
+      diskfree: {'/path2': 1000},
+      immediate: true,
+    });
+    setImmediate(() => {
+      stub.restore();
+      done();
+    });
   });
 });
 describe('readable stream', function() {
@@ -617,6 +725,14 @@ describe('convenience methods', function() {
       assert.throws(() => {
         tester.days(2147483649);
       });
+    });
+  });
+  describe('.blocks()', function() {
+    it('should convert bytes into blocks', async () => {
+      assert.strictEqual(tester.blocks(2048, 2048), 1);
+    });
+    it('should convert bytes into blocks using default blockSize', async () => {
+      assert.strictEqual(tester.blocks(2048), 2048);
     });
   });
 });

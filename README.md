@@ -25,6 +25,10 @@ monitor.start();
 monitor.start({ delay: 3000 // interval in ms between monitor cycles
               , freemem: 1000000000 // freemem under which event 'freemem' is triggered
               , uptime: 1000000 // number of secs over which event 'uptime' is triggered
+              , diskfree: {
+                  '/': 100000, // number of free blocks under which event 'diskfree' is triggered
+                  '/home': 100000
+                }
               , critical1: 0.7 // loadavg1 over which event 'loadavg1' is triggered
               , critical5: 0.7 // loadavg5 over which event 'loadavg5' is triggered
               , critical15: 0.7 // loadavg15 over which event 'loadavg15' is triggered
@@ -91,6 +95,10 @@ Amount of memory in bytes under which event 'freemem' is triggered. Can also be 
 
 Number of seconds over which event 'uptime' is triggered. Default: undefined
 
+###  diskfree
+
+Object containing free blocks values, for given file system paths, under which event 'diskfree' is triggered. *Supported from Node.js v19.6.0 and later. ([ref.](https://nodejs.org/api/fs.html#fsstatfspath-options-callback "statfs"))* Default: {}
+
 ###  critical1
 
 Value of 1 minute load average over which event 'loadavg1' is triggered. Default: os.cpus().length
@@ -146,7 +154,7 @@ Resets monitor config to its default values.
 
 ### .on( eventType, handler ), .addListener( eventType, handler )
 
-Adds a listener for the specified event type. Supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
+Adds a listener for the specified event type. Supported events are: 'monitor', 'uptime', 'freemem', 'diskfree', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
 
 ### .once( eventType, handler )
 
@@ -185,6 +193,21 @@ monitor.start({ delay: monitor.seconds(5) });
 
 ```
 
+### .blocks(bytes, blockSize)
+
+Convenience method to get the right amount of file system blocks.
+```javascript
+monitor.blocks(100000000, 4096); // -> 24415 blocks
+
+// start by observing file system path `/filesystem`
+monitor.start({
+  diskfree: {
+    '/filesystem': monitor.blocks(100000000, 4096)
+  }
+});
+
+```
+
 
 ## Event object
 
@@ -200,7 +223,7 @@ There is some useful information in the provided event object:
   timestamp: 1394766898 // UNIX Timestamp
 }
 ```
-All supported events are: 'monitor', 'uptime', 'freemem', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
+All supported events are: 'monitor', 'uptime', 'freemem', 'diskfree', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
 <em>Note that `os-monitor` is an instance of `EventEmitter`</em>.
 
 Events API docs: [nodejs.org/api/events](http://nodejs.org/api/events.html "Events")
