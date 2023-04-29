@@ -133,7 +133,9 @@ class Monitor extends stream.Readable {
         try {
           const stats: StatFs = fs.statfsSync(path);
           _.extend(info.diskfree, {[path]: stats.bfree});
-        } catch(err: unknown) { }
+        } catch(err: unknown) {
+          this.emit('error', err);
+        }
       }
       for(const path in config.diskfree) {
         const dfConfig: number = config.diskfree[path];

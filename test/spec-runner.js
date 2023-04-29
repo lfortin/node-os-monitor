@@ -413,6 +413,27 @@ describe('event emitter', function() {
       done();
     });
   });
+  it('should emit error event when fs.statfsSync() throws', (done) => {
+    if(!fs.statfsSync) {
+      done();
+      this.skip();
+    }
+    const stub = sinon.stub(fs, 'statfsSync').callsFake(() => {
+      throw new Error('fs.statfsSync() failed');
+    });
+    tester.on('diskfree', event => {
+      done('should not emit diskfree event');
+    });
+    tester.start({
+      diskfree: {'/path1': 1000},
+      immediate: true,
+    });
+    tester.on('error', event => {
+      assert.ok(fs.statfsSync.calledOnce);
+      stub.restore();
+      done();
+    });
+  });
 });
 describe('readable stream', function() {
   it('should read data', async () => {

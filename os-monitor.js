@@ -137,7 +137,9 @@ var Monitor = /** @class */ (function (_super) {
                     var stats = fs.statfsSync(path);
                     _.extend(info.diskfree, (_a = {}, _a[path] = stats.bfree, _a));
                 }
-                catch (err) { }
+                catch (err) {
+                    this.emit('error', err);
+                }
             }
             for (var path in config.diskfree) {
                 var dfConfig = config.diskfree[path];
