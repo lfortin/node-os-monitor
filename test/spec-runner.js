@@ -68,6 +68,7 @@ describe('API signature', function() {
     assert.ok(tester.minutes, ".minutes() method expected");
     assert.ok(tester.hours, ".hours() method expected");
     assert.ok(tester.days, ".days() method expected");
+    assert.ok(tester.blocks, ".blocks() method expected");
     assert.ok(tester.Monitor, "Monitor class expected");
     assert.ok(tester.Thenable, "Thenable class expected");
     assert.ok(tester.os, "os object reference expected");
@@ -356,6 +357,7 @@ describe('event emitter', function() {
       assert.ok(event.diskfree['/path1']);
       assert.ok(event.diskfree['/path2']);
       assert.ok(event.timestamp);
+      assert.ok(fs.statfsSync.calledTwice);
       stub.restore();
       done();
     });
@@ -406,6 +408,7 @@ describe('event emitter', function() {
       immediate: true,
     });
     setImmediate(() => {
+      assert.ok(fs.statfsSync.calledOnce);
       stub.restore();
       done();
     });
