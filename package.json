@@ -1,7 +1,7 @@
 {
   "name": "os-monitor",
   "description": "simple OS monitoring for Node.js",
-  "version": "1.3.0",
+  "version": "2.0.0-edge.0",
   "homepage": "https://github.com/lfortin/node-os-monitor#readme",
   "repository": {
     "type": "git",
@@ -15,16 +15,16 @@
   "main": "./os-monitor.js",
   "types": "./os-monitor.d.ts",
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=19.6.0"
   },
   "dependencies": {
-    "readable-stream": "~2.3.7",
-    "underscore": "~1.13.6"
+    "lodash.isnumber": "~3.0.3",
+    "lodash.throttle": "~4.1.1"
   },
   "devDependencies": {
-    "@types/node": "^18.11.3",
-    "@types/readable-stream": "^2.3.14",
-    "@types/underscore": "^1.11.4",
+    "@types/lodash.isnumber": "^3.0.7",
+    "@types/lodash.throttle": "^4.1.7",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
     "eslint": "^8.26.0",
@@ -34,10 +34,11 @@
     "nyc": "^15.1.0",
     "semver": "^7.3.8",
     "sinon": "^15.0.1",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "underscore": "^1.13.6"
   },
   "scripts": {
-    "build": "tsc -d -t ES5 --strict os-monitor.ts",
+    "build": "tsc -d -t esnext --strict os-monitor.ts",
     "coverage": "nyc --reporter=lcov --reporter=text-summary mocha test/**/*.js",
     "lint": "eslint ./os-monitor.ts",
     "prepublishOnly": "npm run build && npm test",

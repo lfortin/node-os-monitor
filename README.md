@@ -162,7 +162,7 @@ Adds a one-time listener for the specified event type. This listener is invoked 
 
 ### .throttle( eventType, handler, delay )
 
-Adds a throttled listener, using [Underscore.js's throttle](http://underscorejs.org/#throttle) function. The throttled listener will not be executed more than once every delay milliseconds.
+Adds a throttled listener. The throttled listener will not be executed more than once every delay milliseconds.
 
 ### .unthrottle( eventType, handler )
 
@@ -170,7 +170,7 @@ Removes a throttled listener previously added using `.throttle()`. `handler` mus
 
 ### .when( eventType )
 
-Returns a Promise(or a basic thenable if Promise is not supported) that resolves with an event object when `eventType` is triggered.
+Returns a Promise that resolves with an event object when `eventType` is triggered.
 
 ### .destroy( )
 
@@ -249,9 +249,9 @@ monitor.pipe(logFile);
 ```
 
 
-## Promise / thenable
+## Promise
 
-`os-monitor` supports Promise, async/await: using `.when(eventType)` returns a Promise(or a basic thenable if Promise is not supported).
+`os-monitor` supports Promise, async/await: using `.when(eventType)` returns a Promise.
 
 ```
 monitor.when('freemem').then(event => {
