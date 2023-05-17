@@ -304,11 +304,7 @@ describe('event emitter', function() {
     setImmediate(done);
   });
   it('should emit diskfree event', (done) => {
-    if(!fs.statfsSync) {
-      done();
-      this.skip();
-    }
-    const stub = sinon.stub(fs, 'statfsSync').callsFake((path) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
       if(path === '/path1') {
         return {
           type: 1397114950,
@@ -355,17 +351,13 @@ describe('event emitter', function() {
       assert.ok(event.diskfree['/path1']);
       assert.ok(event.diskfree['/path2']);
       assert.ok(event.timestamp);
-      assert.ok(fs.statfsSync.calledTwice);
+      assert.ok(fs.promises.statfs.calledTwice);
       stub.restore();
       done();
     });
   });
   it('should not emit diskfree event', (done) => {
-    if(!fs.statfsSync) {
-      done();
-      this.skip();
-    }
-    const stub = sinon.stub(fs, 'statfsSync').callsFake((path) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
       if(path === '/path1') {
         return {
           type: 1397114950,
@@ -406,18 +398,14 @@ describe('event emitter', function() {
       immediate: true,
     });
     setImmediate(() => {
-      assert.ok(fs.statfsSync.calledOnce);
+      assert.ok(fs.promises.statfs.calledOnce);
       stub.restore();
       done();
     });
   });
   it('should emit error event when fs.statfsSync() throws', (done) => {
-    if(!fs.statfsSync) {
-      done();
-      this.skip();
-    }
-    const stub = sinon.stub(fs, 'statfsSync').callsFake(() => {
-      throw new Error('fs.statfsSync() failed');
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async () => {
+      throw new Error('fs.promises.statfs() failed');
     });
     tester.on('diskfree', event => {
       done('should not emit diskfree event');
@@ -427,7 +415,7 @@ describe('event emitter', function() {
       immediate: true,
     });
     tester.on('error', event => {
-      assert.ok(fs.statfsSync.calledOnce);
+      assert.ok(fs.promises.statfs.calledOnce);
       stub.restore();
       done();
     });

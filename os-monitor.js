@@ -92,7 +92,7 @@ class Monitor extends stream.Readable {
         }
         return this;
     }
-    _cycle() {
+    async _cycle() {
         const info = {
             loadavg: os.loadavg(),
             uptime: os.uptime(),
@@ -103,7 +103,7 @@ class Monitor extends stream.Readable {
             info.diskfree = info.diskfree || {};
             for (const path in config.diskfree) {
                 try {
-                    const stats = fs.statfsSync(path);
+                    const stats = await fs.promises.statfs(path);
                     Object.assign(info.diskfree, { [path]: stats.bfree });
                 }
                 catch (err) {

@@ -112,7 +112,7 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  private _cycle(): void {
+  private async _cycle(): Promise<void> {
     const info: InfoObject = {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
@@ -125,7 +125,7 @@ class Monitor extends stream.Readable {
       info.diskfree = info.diskfree || {};
       for(const path in config.diskfree) {
         try {
-          const stats: StatFs = fs.statfsSync(path);
+          const stats: StatFs = await fs.promises.statfs(path);
           Object.assign(info.diskfree, {[path]: stats.bfree});
         } catch(err: unknown) {
           this.emit('error', err);
