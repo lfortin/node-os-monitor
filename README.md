@@ -9,7 +9,13 @@ Allows you to observe some OS parameters, such as free memory available or load 
 
 ## Installation
 
+To install the latest stable version of `os-monitor` (supports Node.js back to v0.10.x):
+
     npm install os-monitor
+
+If you are using a recent version of Node.js (v19.6.x or later), you might want to try the bleeding edge version of `os-monitor`:
+
+    npm install os-monitor@edge
 
 
 # Synopsis
