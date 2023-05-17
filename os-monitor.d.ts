@@ -113,7 +113,7 @@ interface InfoObject {
     diskfree?: DiskfreeInfo;
     options?: Partial<ConfigObject>;
 }
-interface EventObject extends InfoObject {
+interface EventObject extends Partial<InfoObject> {
     type: EventType;
     timestamp: number;
 }
