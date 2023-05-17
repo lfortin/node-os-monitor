@@ -52,6 +52,8 @@
     "freemem",
     "memory",
     "uptime",
+    "disk",
+    "df",
     "diskfree"
   ],
   "license": "MIT"
