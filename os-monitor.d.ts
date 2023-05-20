@@ -23,6 +23,7 @@ declare class Monitor extends stream.Readable {
     private _monitorState;
     private _read;
     sendEvent(event: EventType, obj?: Partial<InfoObject>): Monitor;
+    private _createInfoObject;
     private _cycle;
     private _sendEvents;
     start(options?: Partial<ConfigObject>): Monitor;

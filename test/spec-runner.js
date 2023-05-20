@@ -137,10 +137,43 @@ describe('event emitter', function() {
       assert.ok(event.totalmem);
       assert.ok(event.uptime);
       assert.ok(event.timestamp);
+      assert.ok(!event.diskfree);
+      done();
+    });
+    tester.start({
+      immediate: true
+    });
+  });
+
+  it('should emit monitor event(with diskfree config)', (done) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
+      return {
+        type: 1397114950,
+        bsize: 4096,
+        blocks: 121938943,
+        bfree: 61058895,
+        bavail: 61058895,
+        files: 999,
+        ffree: 1000000,
+      };
+    });
+    tester.on('monitor', event => {
+      assert.strictEqual(event.type, tester.constants.events.MONITOR);
+      assert.ok(event.loadavg);
+      assert.ok(event.freemem);
+      assert.ok(event.totalmem);
+      assert.ok(event.uptime);
+      assert.ok(event.timestamp);
+      assert.ok(event.diskfree);
+      assert.strictEqual(event.diskfree['/'], 61058895);
+      stub.restore();
       done();
     });
     tester.start({
       immediate: true,
+      diskfree: {
+        '/': 123
+      }
     });
   });
   it('should not emit monitor event', (done) => {
@@ -320,7 +353,7 @@ describe('event emitter', function() {
           type: 1397114950,
           bsize: 4096,
           blocks: 121938943,
-          bfree: 61058895,
+          bfree: 41058895,
           bavail: 61058895,
           files: 999,
           ffree: 1000000,
@@ -348,8 +381,8 @@ describe('event emitter', function() {
       assert.ok(event.totalmem);
       assert.ok(event.uptime);
       assert.ok(event.diskfree);
-      assert.ok(event.diskfree['/path1']);
-      assert.ok(event.diskfree['/path2']);
+      assert.strictEqual(event.diskfree['/path1'], 61058895);
+      assert.strictEqual(event.diskfree['/path2'], 41058895);
       assert.ok(event.timestamp);
       assert.ok(fs.promises.statfs.calledTwice);
       stub.restore();
@@ -403,7 +436,7 @@ describe('event emitter', function() {
       done();
     });
   });
-  it('should emit error event when fs.statfsSync() throws', (done) => {
+  it('should emit error event when fs.promises.statfs() throws', (done) => {
     const stub = sinon.stub(fs.promises, 'statfs').callsFake(async () => {
       throw new Error('fs.promises.statfs() failed');
     });

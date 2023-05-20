@@ -92,27 +92,30 @@ class Monitor extends stream.Readable {
         }
         return this;
     }
-    async _cycle() {
-        const info = {
+    _createInfoObject() {
+        return {
             loadavg: os.loadavg(),
             uptime: os.uptime(),
             freemem: os.freemem(),
             totalmem: os.totalmem()
-        }, config = this.config();
+        };
+    }
+    async _cycle() {
+        const info = this._createInfoObject(), config = this.config();
         if (config.diskfree && Object.keys(config.diskfree).length) {
-            info.diskfree = info.diskfree || {};
+            const deferreds = [];
             for (const path in config.diskfree) {
-                try {
-                    const stats = await fs.promises.statfs(path);
-                    Object.assign(info.diskfree, { [path]: stats.bfree });
-                }
-                catch (err) {
+                const deferredStats = fs.promises.statfs(path), deferred = deferredStats.then(stats => {
+                    info.diskfree = Object.assign(info.diskfree || {}, { [path]: stats.bfree });
+                }, (err) => {
                     this.emit('error', err);
-                }
+                });
+                deferreds.push(deferred);
             }
+            await Promise.all(deferreds);
             for (const path in config.diskfree) {
                 const dfConfig = config.diskfree[path];
-                if (info.diskfree[path] < dfConfig) {
+                if (info.diskfree && info.diskfree[path] < dfConfig) {
                     this.sendEvent(this.constants.events.DISKFREE, info);
                 }
             }

@@ -112,28 +112,37 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  private async _cycle(): Promise<void> {
-    const info: InfoObject = {
+  private _createInfoObject(): InfoObject {
+    return {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
       totalmem : os.totalmem()
-    },
-    config = this.config();
+    };
+  }
+
+  private async _cycle(): Promise<void> {
+    const info: InfoObject = this._createInfoObject(),
+          config = this.config();
     
     if(config.diskfree && Object.keys(config.diskfree).length) {
-      info.diskfree = info.diskfree || {};
+      const deferreds: Array<Promise<void>> = [];
+
       for(const path in config.diskfree) {
-        try {
-          const stats: StatFs = await fs.promises.statfs(path);
-          Object.assign(info.diskfree, {[path]: stats.bfree});
-        } catch(err: unknown) {
-          this.emit('error', err);
-        }
+        const deferredStats: Promise<StatFs> = fs.promises.statfs(path),
+              deferred: Promise<void> = deferredStats.then(stats => {
+                info.diskfree = Object.assign(info.diskfree || {}, {[path]: stats.bfree});
+              }, (err: unknown) => {
+                this.emit('error', err);
+              });
+        deferreds.push(deferred);
       }
+
+      await Promise.all(deferreds);
+
       for(const path in config.diskfree) {
         const dfConfig: number = config.diskfree[path];
-        if(info.diskfree[path] < dfConfig) {
+        if(info.diskfree && info.diskfree[path] < dfConfig) {
           this.sendEvent(this.constants.events.DISKFREE, info);
         }
       }
