@@ -13,6 +13,7 @@
     "url": "http://lfortin.github.io"
   },
   "main": "./os-monitor.js",
+  "type": "commonjs",
   "types": "./os-monitor.d.ts",
   "engines": {
     "node": ">=19.6.0"
