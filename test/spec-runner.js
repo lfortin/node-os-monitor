@@ -1,11 +1,11 @@
 
-const assert = require('assert'),
-          os = require('os'),
-          fs = require('fs'),
+const assert = require('node:assert'),
+          os = require('node:os'),
+          fs = require('node:fs'),
+      stream = require('node:stream'),
         mock = require('mock-os'),
        sinon = require('sinon'),
            _ = require('underscore'),
-      stream = require('stream'),
       semver = require('semver');
 
 const monitor     = require('../os-monitor'),

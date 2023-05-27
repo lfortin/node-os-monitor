@@ -22,9 +22,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-const os          = require('os'),
-      fs          = require('fs'),
-      stream      = require('stream'),
+const os          = require('node:os'),
+      fs          = require('node:fs'),
+      stream      = require('node:stream'),
       throttle    = require('lodash.throttle'),
       isNumber    = require('lodash.isnumber'),
       { version } = require('./package.json'),

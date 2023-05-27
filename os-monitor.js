@@ -20,7 +20,7 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-const os = require('os'), fs = require('fs'), stream = require('stream'), throttle = require('lodash.throttle'), isNumber = require('lodash.isnumber'), { version } = require('./package.json'), critical = os.cpus().length;
+const os = require('node:os'), fs = require('node:fs'), stream = require('node:stream'), throttle = require('lodash.throttle'), isNumber = require('lodash.isnumber'), { version } = require('./package.json'), critical = os.cpus().length;
 var EventType;
 (function (EventType) {
     EventType["MONITOR"] = "monitor";
