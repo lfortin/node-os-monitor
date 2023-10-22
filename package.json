@@ -39,7 +39,7 @@
     "underscore": "^1.13.6"
   },
   "scripts": {
-    "build": "tsc -d -t esnext --strict os-monitor.ts",
+    "build": "tsc -d -t esnext --module commonjs --strict os-monitor.ts",
     "coverage": "nyc --reporter=lcov --reporter=text-summary mocha test/**/*.js",
     "lint": "eslint ./os-monitor.ts",
     "prepublishOnly": "npm run build && npm test",
