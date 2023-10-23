@@ -282,17 +282,3 @@ let monitor1 = new monitor.Monitor();
 let monitor2 = new monitor.Monitor();
 let monitor3 = new monitor.Monitor();
 ```
-
-
-## Node.js os module
-
-The node `os` built-in module is also available from the os-monitor object:
-
-```
-const monitor = require('os-monitor');
-
-let type = monitor.os.type();
-let cpus = monitor.os.cpus();
-```
-
-Documentation for the `os` module is available [here](http://nodejs.org/api/os.html).
