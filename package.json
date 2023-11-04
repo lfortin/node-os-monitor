@@ -16,7 +16,7 @@
   "type": "commonjs",
   "types": "./os-monitor.d.ts",
   "engines": {
-    "node": ">=19.6.0"
+    "node": ">=18.15.0"
   },
   "dependencies": {
     "lodash.isnumber": "~3.0.3",

@@ -13,7 +13,7 @@ To install the latest stable version of `os-monitor` (supports Node.js back to v
 
     npm install os-monitor
 
-If you are using a recent version of Node.js (v19.6.x or later), you might want to try the bleeding edge version of `os-monitor`:
+If you are using a recent version of Node.js (v18.15.x or later), you might want to try the bleeding edge version of `os-monitor`:
 
     npm install os-monitor@edge
 
@@ -103,7 +103,7 @@ Number of seconds over which event 'uptime' is triggered. Default: undefined
 
 ###  diskfree
 
-Object containing free blocks values, for given file system paths, under which event 'diskfree' is triggered. *Supported from Node.js v19.6.0 and later. ([ref.](https://nodejs.org/api/fs.html#fsstatfspath-options-callback "statfs"))* Default: {}
+Object containing free blocks values, for given file system paths, under which event 'diskfree' is triggered. *Supported from Node.js v18.15.x and later. ([ref.](https://nodejs.org/api/fs.html#fsstatfspath-options-callback "statfs"))* Default: {}
 
 ###  critical1
 

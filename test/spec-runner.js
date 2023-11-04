@@ -17,8 +17,8 @@ function delay(n) {
 
 let tester;
 
-if(semver.lt(process.version, '14.0.0')) {
-  throw 'Node.js v14 or later is required to run tests';
+if(semver.lt(process.version, '18.15.0')) {
+  throw 'Node.js v18.15.0 or later is required to run tests';
 }
 
 beforeEach(() => {

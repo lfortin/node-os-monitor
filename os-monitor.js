@@ -148,6 +148,9 @@ class Monitor extends stream.Readable {
             this.emit('error', new Error("monitor has been ended by .destroy() method"));
             return this;
         }
+        if (options) {
+            this._validateConfig(options);
+        }
         this.stop()
             .config(options);
         if (this.config().immediate) {
@@ -183,10 +186,16 @@ class Monitor extends stream.Readable {
     }
     config(options) {
         if (options !== null && typeof options === 'object') {
+            this._validateConfig(options);
             Object.assign(this._monitorState.config, options);
             this.sendEvent(this.constants.events.CONFIG, { options: { ...options } });
         }
         return this._monitorState.config;
+    }
+    _validateConfig(options) {
+        if (options.diskfree && Object.keys(options.diskfree).length && !fs.statfs) {
+            throw new Error("diskfree not supported");
+        }
     }
     isRunning() {
         return !!this._monitorState.running;

@@ -31,6 +31,7 @@ declare class Monitor extends stream.Readable {
     reset(): Monitor;
     destroy(err?: unknown): Monitor;
     config(options?: Partial<ConfigObject>): ConfigObject;
+    private _validateConfig;
     isRunning(): boolean;
     private _isEnded;
     throttle(event: EventType, handler: EventHandler, wait: number): Monitor;
