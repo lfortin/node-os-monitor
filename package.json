@@ -38,7 +38,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "build": "tsc -d -t ES5 --strict os-monitor.ts",
+    "build": "tsc -d -t ES5 --module commonjs --strict os-monitor.ts",
     "coverage": "nyc --reporter=lcov --reporter=text-summary mocha test/**/*.js",
     "lint": "eslint ./os-monitor.ts",
     "prepublishOnly": "npm run build && npm test",
