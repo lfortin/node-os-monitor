@@ -130,7 +130,7 @@ var Monitor = /** @class */ (function (_super) {
             freemem: os.freemem(),
             totalmem: os.totalmem()
         }, config = this.config();
-        if (fs.statfsSync && config.diskfree && Object.keys(config.diskfree).length) {
+        if (config.diskfree && Object.keys(config.diskfree).length) {
             info.diskfree = info.diskfree || {};
             for (var path in config.diskfree) {
                 try {
@@ -177,6 +177,9 @@ var Monitor = /** @class */ (function (_super) {
             this.emit('error', new Error("monitor has been ended by .destroy() method"));
             return this;
         }
+        if (options) {
+            this._validateConfig(options);
+        }
         this.stop()
             .config(options);
         if (this.config().immediate) {
@@ -211,11 +214,17 @@ var Monitor = /** @class */ (function (_super) {
         return this;
     };
     Monitor.prototype.config = function (options) {
-        if (_.isObject(options)) {
+        if (options && _.isObject(options)) {
+            this._validateConfig(options);
             _.extend(this._monitorState.config, options);
             this.sendEvent(this.constants.events.CONFIG, { options: _.clone(options) });
         }
         return this._monitorState.config;
+    };
+    Monitor.prototype._validateConfig = function (options) {
+        if (options.diskfree && Object.keys(options.diskfree).length && !fs.statfs) {
+            throw new Error("diskfree not supported");
+        }
     };
     Monitor.prototype.isRunning = function () {
         return !!this._monitorState.running;
