@@ -59,7 +59,7 @@ monitor.on('freemem', (event) => {
   console.log(event.type, 'Free memory is very low!');
 });
 
-// define a throttled handler, using Underscore.js's throttle function (http://underscorejs.org/#throttle)
+// define a throttled handler
 monitor.throttle('loadavg5', (event) => {
 
   // whatever is done here will not happen
