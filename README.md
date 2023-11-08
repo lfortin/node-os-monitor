@@ -2,6 +2,8 @@
 
 [![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
 
+[![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=bleeding-edge)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
+
 A very simple monitor for the built-in `os`, `fs` modules in Node.js.
 
 Allows you to observe some OS parameters, such as free memory available, load average or free disk space.
