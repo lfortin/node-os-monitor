@@ -1,5 +1,5 @@
 /// <reference types="node" />
-declare const os: any, fs: any, events: any, stream: any, _: any, version: any, critical: number;
+declare const os: any, fs: any, stream: any, throttle: any, isNumber: any, version: any, critical: number;
 declare enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",
@@ -18,13 +18,12 @@ declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
     get constants(): MonitorConstants;
-    Thenable: typeof Thenable;
     Monitor: typeof Monitor;
     os: any;
-    _: any;
     private _monitorState;
     private _read;
     sendEvent(event: EventType, obj?: Partial<InfoObject>): Monitor;
+    private _createInfoObject;
     private _cycle;
     private _sendEvents;
     start(options?: Partial<ConfigObject>): Monitor;
@@ -37,7 +36,7 @@ declare class Monitor extends stream.Readable {
     private _isEnded;
     throttle(event: EventType, handler: EventHandler, wait: number): Monitor;
     unthrottle(event: EventType, handler: EventHandler): Monitor;
-    when(event: EventType): Promise<EventObjectThenable> | EventObjectThenable;
+    when(event: EventType): Promise<EventObject>;
     private _sanitizeNumber;
     seconds(n: number): number;
     minutes(n: number): number;
@@ -45,20 +44,6 @@ declare class Monitor extends stream.Readable {
     days(n: number): number;
     blocks(bytes: number, blockSize?: number): number;
     createMonitor(): Monitor;
-}
-declare class Thenable<Type> extends events.EventEmitter {
-    static constants: {
-        state: {
-            PENDING: string;
-            FULFILLED: string;
-            REJECTED: string;
-        };
-    };
-    private _thenableState;
-    resolve(result: Type): Thenable<Type>;
-    reject(error: unknown): Thenable<Type>;
-    then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void;
-    catch(onRejected?: ThenableRejectedHandler<Type>): void;
 }
 interface StatFs {
     type: number;
@@ -121,14 +106,3 @@ interface EventObject extends Partial<InfoObject> {
 interface EventHandler {
     (event: EventObject): void;
 }
-interface ThenableState<Type> {
-    state: string;
-    result?: Type | unknown;
-}
-interface ThenableResolvedHandler<Type> {
-    (result: Type | unknown): unknown;
-}
-interface ThenableRejectedHandler<Type> {
-    (error: unknown): unknown;
-}
-type EventObjectThenable = Thenable<EventObject>;

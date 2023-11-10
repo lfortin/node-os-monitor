@@ -1,11 +1,11 @@
 
-const assert = require('assert'),
-          os = require('os'),
-          fs = require('fs'),
+const assert = require('node:assert'),
+          os = require('node:os'),
+          fs = require('node:fs'),
+      stream = require('node:stream'),
         mock = require('mock-os'),
        sinon = require('sinon'),
            _ = require('underscore'),
-      stream = require('readable-stream'),
       semver = require('semver');
 
 const monitor     = require('../os-monitor'),
@@ -17,8 +17,8 @@ function delay(n) {
 
 let tester;
 
-if(semver.lt(process.version, '14.0.0')) {
-  throw 'Node.js v14 or later is required to run tests';
+if(semver.lt(process.version, '18.15.0')) {
+  throw 'Node.js v18.15.0 or later is required to run tests';
 }
 
 beforeEach(() => {
@@ -70,9 +70,7 @@ describe('API signature', function() {
     assert.ok(tester.days, ".days() method expected");
     assert.ok(tester.blocks, ".blocks() method expected");
     assert.ok(tester.Monitor, "Monitor class expected");
-    assert.ok(tester.Thenable, "Thenable class expected");
     assert.ok(tester.os, "os object reference expected");
-    assert.ok(tester._, "_ object reference expected");
     assert.ok(tester.constants, "constants object expected");
     assert.ok(tester.createMonitor, "factory method expected");
   });
@@ -139,10 +137,43 @@ describe('event emitter', function() {
       assert.ok(event.totalmem);
       assert.ok(event.uptime);
       assert.ok(event.timestamp);
+      assert.ok(!event.diskfree);
+      done();
+    });
+    tester.start({
+      immediate: true
+    });
+  });
+
+  it('should emit monitor event(with diskfree config)', (done) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
+      return {
+        type: 1397114950,
+        bsize: 4096,
+        blocks: 121938943,
+        bfree: 61058895,
+        bavail: 61058895,
+        files: 999,
+        ffree: 1000000,
+      };
+    });
+    tester.on('monitor', event => {
+      assert.strictEqual(event.type, tester.constants.events.MONITOR);
+      assert.ok(event.loadavg);
+      assert.ok(event.freemem);
+      assert.ok(event.totalmem);
+      assert.ok(event.uptime);
+      assert.ok(event.timestamp);
+      assert.ok(event.diskfree);
+      assert.strictEqual(event.diskfree['/'], 61058895);
+      stub.restore();
       done();
     });
     tester.start({
       immediate: true,
+      diskfree: {
+        '/': 123
+      }
     });
   });
   it('should not emit monitor event', (done) => {
@@ -306,11 +337,7 @@ describe('event emitter', function() {
     setImmediate(done);
   });
   it('should emit diskfree event', (done) => {
-    if(!fs.statfsSync) {
-      done();
-      this.skip();
-    }
-    const stub = sinon.stub(fs, 'statfsSync').callsFake((path) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
       if(path === '/path1') {
         return {
           type: 1397114950,
@@ -326,7 +353,7 @@ describe('event emitter', function() {
           type: 1397114950,
           bsize: 4096,
           blocks: 121938943,
-          bfree: 61058895,
+          bfree: 41058895,
           bavail: 61058895,
           files: 999,
           ffree: 1000000,
@@ -354,20 +381,16 @@ describe('event emitter', function() {
       assert.ok(event.totalmem);
       assert.ok(event.uptime);
       assert.ok(event.diskfree);
-      assert.ok(event.diskfree['/path1']);
-      assert.ok(event.diskfree['/path2']);
+      assert.strictEqual(event.diskfree['/path1'], 61058895);
+      assert.strictEqual(event.diskfree['/path2'], 41058895);
       assert.ok(event.timestamp);
-      assert.ok(fs.statfsSync.calledTwice);
+      assert.ok(fs.promises.statfs.calledTwice);
       stub.restore();
       done();
     });
   });
   it('should not emit diskfree event', (done) => {
-    if(!fs.statfsSync) {
-      done();
-      this.skip();
-    }
-    const stub = sinon.stub(fs, 'statfsSync').callsFake((path) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
       if(path === '/path1') {
         return {
           type: 1397114950,
@@ -408,18 +431,14 @@ describe('event emitter', function() {
       immediate: true,
     });
     setImmediate(() => {
-      assert.ok(fs.statfsSync.calledOnce);
+      assert.ok(fs.promises.statfs.calledOnce);
       stub.restore();
       done();
     });
   });
-  it('should emit error event when fs.statfsSync() throws', (done) => {
-    if(!fs.statfsSync) {
-      done();
-      this.skip();
-    }
-    const stub = sinon.stub(fs, 'statfsSync').callsFake(() => {
-      throw new Error('fs.statfsSync() failed');
+  it('should emit error event when fs.promises.statfs() throws', (done) => {
+    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async () => {
+      throw new Error('fs.promises.statfs() failed');
     });
     tester.on('diskfree', event => {
       done('should not emit diskfree event');
@@ -429,7 +448,7 @@ describe('event emitter', function() {
       immediate: true,
     });
     tester.on('error', event => {
-      assert.ok(fs.statfsSync.calledOnce);
+      assert.ok(fs.promises.statfs.calledOnce);
       stub.restore();
       done();
     });
@@ -565,88 +584,6 @@ describe('.when()', function() {
     let event = await tester.when('monitor');
     assert.strictEqual(event.type, 'monitor');
     assert.ok(tester.when('monitor') instanceof Promise);
-  });
-  it('should return a thenable that resolves', async () => {
-    let resolve = Promise.resolve;
-    delete Promise.resolve;
-    tester.start({delay: 10});
-    let event = await tester.when('monitor');
-    assert.strictEqual(event.type, 'monitor');
-    assert.ok(tester.when('monitor') instanceof tester.Thenable);
-    Promise.resolve = resolve;
-  });
-});
-describe('Thenable class', function() {
-  it('should create a thenable that resolves', (done) => {
-    let deferred = new tester.Thenable();
-    let value = {};
-    deferred.then(result => {
-      assert.strictEqual(result, value);
-      done();
-    });
-    deferred.resolve(value);
-  });
-  it('should create a thenable that rejects', (done) => {
-    let deferred = new tester.Thenable();
-    let value = {};
-    deferred.catch(reason => {
-      assert.strictEqual(reason, value);
-      done();
-    });
-    deferred.reject(value);
-  });
-  it('should handle multiple resolutions', (done) => {
-    let deferred = new tester.Thenable();
-    let value = {};
-    deferred.then(result => {
-      assert.strictEqual(result, value);
-      done();
-    });
-    deferred.resolve(value);
-    deferred.resolve();
-    deferred.reject(12345);
-  });
-  it('should handle multiple rejections', (done) => {
-    let deferred = new tester.Thenable();
-    let value = {};
-    deferred.catch(reason => {
-      assert.strictEqual(reason, value);
-      done();
-    });
-    deferred.reject(value);
-    deferred.reject();
-    deferred.resolve(12345);
-  });
-  it('should handle early resolution', async () => {
-    let deferred = new tester.Thenable();
-    let value = {};
-    deferred.resolve(value);
-    deferred.resolve(123);
-    deferred.reject(12345);
-    let result = await deferred;
-    assert.strictEqual(result, value);
-  });
-  it('should handle early rejection', async () => {
-    let deferred = new tester.Thenable();
-    let value = {};
-    deferred.reject(value);
-    deferred.resolve(123);
-    deferred.reject(12345);
-    await assert.rejects(async () => {
-      await deferred;
-    }, err => {
-      assert.strictEqual(err, value);
-      return true;
-    });
-  });
-  it('should ignore undefined handlers', async () => {
-    let deferredToResolve = new tester.Thenable();
-    let deferredToReject = new tester.Thenable();
-    let value = {};
-    deferredToResolve.resolve(value);
-    await deferredToResolve.then();
-    deferredToReject.reject(value);
-    await deferredToReject.catch();
   });
 });
 describe('.reset()', function() {

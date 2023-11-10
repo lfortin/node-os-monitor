@@ -22,11 +22,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-const os          = require('os'),
-      fs          = require('fs'),
-      events      = require('events'),
-      stream      = require('readable-stream'),
-      _           = require('underscore'),
+const os          = require('node:os'),
+      fs          = require('node:fs'),
+      stream      = require('node:stream'),
+      throttle    = require('lodash.throttle'),
+      isNumber    = require('lodash.isnumber'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
@@ -73,17 +73,11 @@ class Monitor extends stream.Readable {
     };
   }
 
-  // expose Thenable class
-  public Thenable: typeof Thenable = Thenable;
-
   // expose main Monitor class
   public Monitor: typeof Monitor = Monitor;
 
   // expose OS module
   public os = os;
-
-  // expose Underscore
-  public _ = _;
 
   private _monitorState: MonitorState = {
     running: false,
@@ -100,7 +94,7 @@ class Monitor extends stream.Readable {
   }
 
   public sendEvent(event: EventType, obj: Partial<InfoObject> = {}): Monitor {
-    const eventObject: EventObject = _.extend({type: event, timestamp: Math.floor(_.now() / 1000)}, obj);
+    const eventObject: EventObject = {...obj, type: event, timestamp: Math.floor(Date.now() / 1000)};
   
     // for EventEmitter
     this.emit(event, eventObject);
@@ -118,28 +112,37 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  private _cycle(): void {
-    const info: InfoObject = {
+  private _createInfoObject(): InfoObject {
+    return {
       loadavg  : os.loadavg(),
       uptime   : os.uptime(),
       freemem  : os.freemem(),
       totalmem : os.totalmem()
-    },
-    config = this.config();
+    };
+  }
+
+  private async _cycle(): Promise<void> {
+    const info: InfoObject = this._createInfoObject(),
+          config = this.config();
     
     if(config.diskfree && Object.keys(config.diskfree).length) {
-      info.diskfree = info.diskfree || {};
+      const deferreds: Array<Promise<void>> = [];
+
       for(const path in config.diskfree) {
-        try {
-          const stats: StatFs = fs.statfsSync(path);
-          _.extend(info.diskfree, {[path]: stats.bfree});
-        } catch(err: unknown) {
-          this.emit('error', err);
-        }
+        const deferredStats: Promise<StatFs> = fs.promises.statfs(path),
+              deferred: Promise<void> = deferredStats.then(stats => {
+                info.diskfree = Object.assign(info.diskfree || {}, {[path]: stats.bfree});
+              }, (err: unknown) => {
+                this.emit('error', err);
+              });
+        deferreds.push(deferred);
       }
+
+      await Promise.all(deferreds);
+
       for(const path in config.diskfree) {
         const dfConfig: number = config.diskfree[path];
-        if(info.diskfree[path] < dfConfig) {
+        if(info.diskfree && info.diskfree[path] < dfConfig) {
           this.sendEvent(this.constants.events.DISKFREE, info);
         }
       }
@@ -227,10 +230,10 @@ class Monitor extends stream.Readable {
 
   public config(options?: Partial<ConfigObject>): ConfigObject {
 
-    if(options && _.isObject(options)) {
+    if(options !== null && typeof options === 'object') {
       this._validateConfig(options);
-      _.extend(this._monitorState.config, options);
-      this.sendEvent(this.constants.events.CONFIG, { options: _.clone(options) });
+      Object.assign(this._monitorState.config, options);
+      this.sendEvent(this.constants.events.CONFIG, { options: { ...options } });
     }
   
     return this._monitorState.config;
@@ -251,7 +254,7 @@ class Monitor extends stream.Readable {
   }
 
   public throttle(event: EventType, handler: EventHandler, wait: number): Monitor {
-    if(!_.isFunction(handler)) {
+    if(typeof handler !== 'function') {
       throw new Error("Handler must be a function");
     }
 
@@ -260,7 +263,7 @@ class Monitor extends stream.Readable {
                                        handler.apply(this, [eventObject]);
                                      }
                                    },
-          throttledFn: EventHandler = _.throttle(_handler, wait || this.config().throttle);
+          throttledFn: EventHandler = throttle(_handler, wait || this.config().throttle);
 
     this._monitorState.throttled.push({event: event, originalFn: handler, throttledFn: throttledFn});
     return this.on(event, throttledFn);
@@ -280,27 +283,17 @@ class Monitor extends stream.Readable {
     return this;
   }
 
-  public when(event: EventType): Promise<EventObjectThenable> | EventObjectThenable {
-    const deferred: EventObjectThenable = new Thenable();
-    let wrappedDeferred: Promise<EventObjectThenable>;
-
-    this.once(event, (eventObj: EventObject) => {
-      deferred.resolve(eventObj);
+  public when(event: EventType): Promise<EventObject> {
+    return new Promise((resolve) => {
+      this.once(event, (eventObj: EventObject) => resolve(eventObj));
     });
-
-    try {
-      wrappedDeferred = Promise.resolve(deferred) as Promise<EventObjectThenable>;
-      return wrappedDeferred;
-    } catch(err: unknown) {
-      return deferred;
-    }
   }
 
   /*
   * convenience methods
   */
   private _sanitizeNumber(n: number): number {
-    if(!_.isNumber(n)) {
+    if(!isNumber(n)) {
       throw new Error("Number expected");
     }
     if(!n || n < 0) {
@@ -335,59 +328,6 @@ class Monitor extends stream.Readable {
 
   public createMonitor(): Monitor {
     return new Monitor();
-  }
-}
-
-class Thenable<Type> extends events.EventEmitter {
-  static constants = {
-    state: {
-      PENDING: 'pending',
-      FULFILLED: 'fulfilled',
-      REJECTED: 'rejected'
-    }
-  };
-  private _thenableState: ThenableState<Type> = {
-    state: Thenable.constants.state.PENDING,
-    result: undefined
-  };
-  public resolve(result: Type): Thenable<Type> {
-    const {state} = Thenable.constants;
-    if(this._thenableState.state === state.PENDING) {
-      this._thenableState.state = state.FULFILLED;
-      this._thenableState.result = result;
-      this.emit('resolve', result);
-    }
-    return this;
-  }
-  public reject(error: unknown): Thenable<Type> {
-    const {state} = Thenable.constants;
-    if(this._thenableState.state === state.PENDING) {
-      this._thenableState.state = state.REJECTED;
-      this._thenableState.result = error;
-      this.emit('reject', error);
-    }
-    return this;
-  }
-  public then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void {
-    const {state} = Thenable.constants;
-
-    if(this._thenableState.state === state.PENDING) {
-      this.once('resolve', (result: Type) => {
-        onFulfilled && onFulfilled(this._thenableState.result);
-      });
-      this.once('reject', (error: unknown) => {
-        onRejected && onRejected(this._thenableState.result);
-      });
-    }
-    if(onFulfilled && this._thenableState.state === state.FULFILLED) {
-      onFulfilled(this._thenableState.result);
-    }
-    if(onRejected && this._thenableState.state === state.REJECTED) {
-      onRejected(this._thenableState.result);
-    }
-  }
-  public catch(onRejected?: ThenableRejectedHandler<Type>): void {
-    return this.then(undefined, onRejected);
   }
 }
 
@@ -462,18 +402,3 @@ interface EventObject extends Partial<InfoObject> {
 interface EventHandler {
   (event: EventObject): void;
 }
-
-interface ThenableState<Type> {
-  state: string;
-  result?: Type | unknown;
-}
-
-interface ThenableResolvedHandler<Type> {
-  (result: Type | unknown): unknown;
-}
-
-interface ThenableRejectedHandler<Type> {
-  (error: unknown): unknown;
-}
-
-type EventObjectThenable = Thenable<EventObject>;

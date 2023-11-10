@@ -2,20 +2,22 @@
 
 [![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
 
-A very simple monitor for the built-in `os` module in Node.js.
+[![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=bleeding-edge)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
 
-Allows you to observe some OS parameters, such as free memory available or load average.
+A very simple monitor for the built-in `os`, `fs` modules in Node.js.
+
+Allows you to observe some OS parameters, such as free memory available, load average or free disk space.
 
 
 ## Installation
 
-To install the latest stable version of `os-monitor` (supports Node.js back to v0.10.x):
+To install the latest stable version of `os-monitor`:
 
     npm install os-monitor
 
-If you are using a recent version of Node.js (v18.15.x or later), you might want to try the bleeding edge version of `os-monitor`:
+If you are using an old version of Node.js (older than v18.15.x), you might need the legacy version(1.x) of `os-monitor`; it supports Node.js back to v0.10.x:
 
-    npm install os-monitor@edge
+    npm install os-monitor@legacy
 
 
 # Synopsis
@@ -59,7 +61,7 @@ monitor.on('freemem', (event) => {
   console.log(event.type, 'Free memory is very low!');
 });
 
-// define a throttled handler, using Underscore.js's throttle function (http://underscorejs.org/#throttle)
+// define a throttled handler
 monitor.throttle('loadavg5', (event) => {
 
   // whatever is done here will not happen
@@ -168,7 +170,7 @@ Adds a one-time listener for the specified event type. This listener is invoked 
 
 ### .throttle( eventType, handler, delay )
 
-Adds a throttled listener, using [Underscore.js's throttle](http://underscorejs.org/#throttle) function. The throttled listener will not be executed more than once every delay milliseconds.
+Adds a throttled listener. The throttled listener will not be executed more than once every delay milliseconds.
 
 ### .unthrottle( eventType, handler )
 
@@ -176,7 +178,7 @@ Removes a throttled listener previously added using `.throttle()`. `handler` mus
 
 ### .when( eventType )
 
-Returns a Promise(or a basic thenable if Promise is not supported) that resolves with an event object when `eventType` is triggered.
+Returns a Promise that resolves with an event object when `eventType` is triggered.
 
 ### .destroy( )
 
@@ -255,9 +257,9 @@ monitor.pipe(logFile);
 ```
 
 
-## Promise / thenable
+## Promise
 
-`os-monitor` supports Promise, async/await: using `.when(eventType)` returns a Promise(or a basic thenable if Promise is not supported).
+`os-monitor` supports Promise, async/await: using `.when(eventType)` returns a Promise.
 
 ```
 monitor.when('freemem').then(event => {
@@ -282,17 +284,3 @@ let monitor1 = new monitor.Monitor();
 let monitor2 = new monitor.Monitor();
 let monitor3 = new monitor.Monitor();
 ```
-
-
-## Node.js os module
-
-The node `os` built-in module is also available from the os-monitor object:
-
-```
-const monitor = require('os-monitor');
-
-let type = monitor.os.type();
-let cpus = monitor.os.cpus();
-```
-
-Documentation for the `os` module is available [here](http://nodejs.org/api/os.html).
