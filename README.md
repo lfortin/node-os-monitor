@@ -2,7 +2,7 @@
 
 [![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
 
-[![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=bleeding-edge)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
+[![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
 
 A very simple monitor for the built-in `os`, `fs` modules in Node.js.
 
