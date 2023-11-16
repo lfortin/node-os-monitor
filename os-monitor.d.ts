@@ -1,5 +1,5 @@
 /// <reference types="node" />
-declare const os: any, fs: any, stream: any, throttle: any, isNumber: any, version: any, critical: number;
+declare const os: any, fs: any, stream: any, throttle: any, version: any, critical: number;
 declare enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",

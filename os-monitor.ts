@@ -26,7 +26,6 @@ const os          = require('node:os'),
       fs          = require('node:fs'),
       stream      = require('node:stream'),
       throttle    = require('lodash.throttle'),
-      isNumber    = require('lodash.isnumber'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
@@ -293,8 +292,8 @@ class Monitor extends stream.Readable {
   * convenience methods
   */
   private _sanitizeNumber(n: number): number {
-    if(!isNumber(n)) {
-      throw new Error("Number expected");
+    if(!Number.isInteger(n)) {
+      throw new Error("Integer expected");
     }
     if(!n || n < 0) {
       throw new Error("Number must be greater than 0");

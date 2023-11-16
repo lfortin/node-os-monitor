@@ -20,7 +20,7 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-const os = require('node:os'), fs = require('node:fs'), stream = require('node:stream'), throttle = require('lodash.throttle'), isNumber = require('lodash.isnumber'), { version } = require('./package.json'), critical = os.cpus().length;
+const os = require('node:os'), fs = require('node:fs'), stream = require('node:stream'), throttle = require('lodash.throttle'), { version } = require('./package.json'), critical = os.cpus().length;
 var EventType;
 (function (EventType) {
     EventType["MONITOR"] = "monitor";
@@ -235,8 +235,8 @@ class Monitor extends stream.Readable {
     * convenience methods
     */
     _sanitizeNumber(n) {
-        if (!isNumber(n)) {
-            throw new Error("Number expected");
+        if (!Number.isInteger(n)) {
+            throw new Error("Integer expected");
         }
         if (!n || n < 0) {
             throw new Error("Number must be greater than 0");
