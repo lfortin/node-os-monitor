@@ -21,6 +21,7 @@
   "dependencies": {
     "lodash.throttle": "~4.1.1"
   },
+  "bundleDependencies": true,
   "devDependencies": {
     "@types/lodash.isnumber": "^3.0.7",
     "@types/lodash.throttle": "^4.1.7",
