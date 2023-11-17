@@ -2,7 +2,7 @@
 
 [![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
 
-[![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
+[![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=master&event=push)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
 
 A very simple monitor for the built-in `os`, `fs` modules in Node.js.
 
@@ -184,7 +184,7 @@ Returns a Promise that resolves with an event object when `eventType` is trigger
 
 Permanently stops and disables the monitor.
 
-### .seconds(n), .minutes(n), .hours(n), .days(n)
+### .seconds( n ), .minutes( n ), .hours( n ), .days( n )
 
 Convenience methods to get the right amount of milliseconds.
 ```javascript
@@ -201,7 +201,7 @@ monitor.start({ delay: monitor.seconds(5) });
 
 ```
 
-### .blocks(bytes, blockSize)
+### .blocks( bytes, blockSize )
 
 Convenience method to get the right amount of file system blocks.
 ```javascript
