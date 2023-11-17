@@ -180,7 +180,7 @@ Returns a Promise(or a basic thenable if Promise is not supported) that resolves
 
 Permanently stops and disables the monitor.
 
-### .seconds(n), .minutes(n), .hours(n), .days(n)
+### .seconds( n ), .minutes( n ), .hours( n ), .days( n )
 
 Convenience methods to get the right amount of milliseconds.
 ```javascript
@@ -197,7 +197,7 @@ monitor.start({ delay: monitor.seconds(5) });
 
 ```
 
-### .blocks(bytes, blockSize)
+### .blocks( bytes, blockSize )
 
 Convenience method to get the right amount of file system blocks.
 ```javascript
