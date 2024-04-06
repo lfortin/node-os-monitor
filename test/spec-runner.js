@@ -186,130 +186,134 @@ describe('event emitter', function() {
     });
     setImmediate(done);
   });
-  it('should emit loadavg1 event', (done) => {
-    tester.start({
-      critical1: 1,
-      immediate: true,
+  describe('loadavg', function() {
+    it('should emit loadavg1 event', (done) => {
+      tester.start({
+        critical1: 1,
+        immediate: true,
+      });
+      tester.on('loadavg1', event => {
+        assert.strictEqual(event.type, tester.constants.events.LOADAVG1);
+        assert.ok(event.loadavg);
+        assert.ok(event.freemem);
+        assert.ok(event.totalmem);
+        assert.ok(event.uptime);
+        assert.ok(event.timestamp);
+        done();
+      });
     });
-    tester.on('loadavg1', event => {
-      assert.strictEqual(event.type, tester.constants.events.LOADAVG1);
-      assert.ok(event.loadavg);
-      assert.ok(event.freemem);
-      assert.ok(event.totalmem);
-      assert.ok(event.uptime);
-      assert.ok(event.timestamp);
-      done();
+    it('should not emit loadavg1 event', (done) => {
+      tester.on('loadavg1', event => {
+        done('should not emit loadavg1 event');
+      });
+      tester.start({
+        critical1: 3,
+        immediate: true,
+      });
+      setImmediate(done);
     });
-  });
-  it('should not emit loadavg1 event', (done) => {
-    tester.on('loadavg1', event => {
-      done('should not emit loadavg1 event');
+    it('should emit loadavg5 event', (done) => {
+      tester.start({
+        critical5: 1,
+        immediate: true,
+      });
+      tester.on('loadavg5', event => {
+        assert.strictEqual(event.type, tester.constants.events.LOADAVG5);
+        assert.ok(event.loadavg);
+        assert.ok(event.freemem);
+        assert.ok(event.totalmem);
+        assert.ok(event.uptime);
+        assert.ok(event.timestamp);
+        done();
+      });
     });
-    tester.start({
-      critical1: 3,
-      immediate: true,
+    it('should not emit loadavg5 event', (done) => {
+      tester.on('loadavg5', event => {
+        done('should not emit loadavg5 event');
+      });
+      tester.start({
+        critical5: 3,
+        immediate: true,
+      });
+      setImmediate(done);
     });
-    setImmediate(done);
-  });
-  it('should emit loadavg5 event', (done) => {
-    tester.start({
-      critical5: 1,
-      immediate: true,
+    it('should emit loadavg15 event', (done) => {
+      tester.start({
+        critical15: 1,
+        immediate: true,
+      });
+      tester.on('loadavg15', event => {
+        assert.strictEqual(event.type, tester.constants.events.LOADAVG15);
+        assert.ok(event.loadavg);
+        assert.ok(event.freemem);
+        assert.ok(event.totalmem);
+        assert.ok(event.uptime);
+        assert.ok(event.timestamp);
+        done();
+      });
     });
-    tester.on('loadavg5', event => {
-      assert.strictEqual(event.type, tester.constants.events.LOADAVG5);
-      assert.ok(event.loadavg);
-      assert.ok(event.freemem);
-      assert.ok(event.totalmem);
-      assert.ok(event.uptime);
-      assert.ok(event.timestamp);
-      done();
-    });
-  });
-  it('should not emit loadavg5 event', (done) => {
-    tester.on('loadavg5', event => {
-      done('should not emit loadavg5 event');
-    });
-    tester.start({
-      critical5: 3,
-      immediate: true,
-    });
-    setImmediate(done);
-  });
-  it('should emit loadavg15 event', (done) => {
-    tester.start({
-      critical15: 1,
-      immediate: true,
-    });
-    tester.on('loadavg15', event => {
-      assert.strictEqual(event.type, tester.constants.events.LOADAVG15);
-      assert.ok(event.loadavg);
-      assert.ok(event.freemem);
-      assert.ok(event.totalmem);
-      assert.ok(event.uptime);
-      assert.ok(event.timestamp);
-      done();
-    });
-  });
-  it('should not emit loadavg15 event', (done) => {
-    tester.on('loadavg15', event => {
-      done('should not emit loadavg15 event');
-    });
-    tester.start({
-      critical15: 3,
-      immediate: true,
-    });
-    setImmediate(done);
-  });
-  it('should emit freemem event', (done) => {
-    tester.start({
-      freemem: 10000000,
-      immediate: true,
-    });
-    tester.on('freemem', event => {
-      assert.strictEqual(event.type, tester.constants.events.FREEMEM);
-      assert.ok(event.loadavg);
-      assert.ok(event.freemem);
-      assert.ok(event.totalmem);
-      assert.ok(event.uptime);
-      assert.ok(event.timestamp);
-      done();
+    it('should not emit loadavg15 event', (done) => {
+      tester.on('loadavg15', event => {
+        done('should not emit loadavg15 event');
+      });
+      tester.start({
+        critical15: 3,
+        immediate: true,
+      });
+      setImmediate(done);
     });
   });
-  it('should not emit freemem event', (done) => {
-    tester.on('freemem', event => {
-      done('should not emit freemem event');
+  describe('freemem', function() {
+    it('should emit freemem event', (done) => {
+      tester.start({
+        freemem: 10000000,
+        immediate: true,
+      });
+      tester.on('freemem', event => {
+        assert.strictEqual(event.type, tester.constants.events.FREEMEM);
+        assert.ok(event.loadavg);
+        assert.ok(event.freemem);
+        assert.ok(event.totalmem);
+        assert.ok(event.uptime);
+        assert.ok(event.timestamp);
+        done();
+      });
     });
-    tester.start({
-      freemem: 99999,
-      immediate: true,
+    it('should not emit freemem event', (done) => {
+      tester.on('freemem', event => {
+        done('should not emit freemem event');
+      });
+      tester.start({
+        freemem: 99999,
+        immediate: true,
+      });
+      setImmediate(done);
     });
-    setImmediate(done);
-  });
-  it('should emit freemem event(% config)', (done) => {
-    tester.start({
-      freemem: 0.99,
-      immediate: true,
+    it('should emit freemem event(% config)', (done) => {
+      tester.start({
+        freemem: 0.99,
+        immediate: true,
+      });
+      tester.on('freemem', event => {
+        assert.strictEqual(event.type, tester.constants.events.FREEMEM);
+        assert.ok(event.loadavg);
+        assert.ok(event.freemem);
+        assert.ok(event.totalmem);
+        assert.ok(event.uptime);
+        assert.ok(event.timestamp);
+        done();
+      });
     });
-    tester.on('freemem', event => {
-      assert.strictEqual(event.type, tester.constants.events.FREEMEM);
-      assert.ok(event.loadavg);
-      assert.ok(event.freemem);
-      assert.ok(event.totalmem);
-      assert.ok(event.uptime);
-      assert.ok(event.timestamp);
-      done();
+    it('should not emit freemem event(% config)', (done) => {
+      tester.on('freemem', event => {
+        done('should not emit freemem event(% config)');
+      });
+      tester.start({
+        freemem: 0.01,
+        immediate: true,
+      });
+      setImmediate(done);
     });
-  });
-  it('should not emit freemem event(% config)', (done) => {
-    tester.on('freemem', event => {
-      done('should not emit freemem event(% config)');
-    });
-    tester.start({
-      freemem: 0.01,
-      immediate: true,
-    });
-    setImmediate(done);
   });
   it('should emit uptime event', (done) => {
     tester.start({
@@ -336,121 +340,138 @@ describe('event emitter', function() {
     });
     setImmediate(done);
   });
-  it('should emit diskfree event', (done) => {
-    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
-      if(path === '/path1') {
-        return {
-          type: 1397114950,
-          bsize: 4096,
-          blocks: 121938943,
-          bfree: 61058895,
-          bavail: 61058895,
-          files: 999,
-          ffree: 1000000,
-        };
-      } else if(path === '/path2') {
-        return {
-          type: 1397114950,
-          bsize: 4096,
-          blocks: 121938943,
-          bfree: 41058895,
-          bavail: 61058895,
-          files: 999,
-          ffree: 1000000,
-        };
-      } else {
-        return {
-          type: 1397114950,
-          bsize: 4096,
-          blocks: 121938943,
-          bfree: 61058895,
-          bavail: 61058895,
-          files: 999,
-          ffree: 1000000,
-        };
+  describe('diskfree', function() {
+    it('should emit diskfree event', (done) => {
+      const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
+        if(path === '/path1') {
+          return {
+            type: 1397114950,
+            bsize: 4096,
+            blocks: 121938943,
+            bfree: 61058895,
+            bavail: 61058895,
+            files: 999,
+            ffree: 1000000,
+          };
+        } else if(path === '/path2') {
+          return {
+            type: 1397114950,
+            bsize: 4096,
+            blocks: 121938943,
+            bfree: 41058895,
+            bavail: 61058895,
+            files: 999,
+            ffree: 1000000,
+          };
+        } else {
+          return {
+            type: 1397114950,
+            bsize: 4096,
+            blocks: 121938943,
+            bfree: 61058895,
+            bavail: 61058895,
+            files: 999,
+            ffree: 1000000,
+          };
+        }
+      });
+      tester.start({
+        diskfree: {'/path1': 71058895, '/path2': 1000},
+        immediate: true,
+      });
+      tester.on('diskfree', event => {
+        assert.strictEqual(event.type, tester.constants.events.DISKFREE);
+        assert.ok(event.loadavg);
+        assert.ok(event.freemem);
+        assert.ok(event.totalmem);
+        assert.ok(event.uptime);
+        assert.ok(event.diskfree);
+        assert.strictEqual(event.diskfree['/path1'], 61058895);
+        assert.strictEqual(event.diskfree['/path2'], 41058895);
+        assert.ok(event.timestamp);
+        assert.ok(fs.promises.statfs.calledTwice);
+        stub.restore();
+        done();
+      });
+    });
+    it('should not emit diskfree event', (done) => {
+      const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
+        if(path === '/path1') {
+          return {
+            type: 1397114950,
+            bsize: 4096,
+            blocks: 121938943,
+            bfree: 61058895,
+            bavail: 61058895,
+            files: 999,
+            ffree: 1000000,
+          };
+        } else if(path === '/path2') {
+          return {
+            type: 1397114950,
+            bsize: 4096,
+            blocks: 121938943,
+            bfree: 61058895,
+            bavail: 61058895,
+            files: 999,
+            ffree: 1000000,
+          };
+        } else {
+          return {
+            type: 1397114950,
+            bsize: 4096,
+            blocks: 121938943,
+            bfree: 61058895,
+            bavail: 61058895,
+            files: 999,
+            ffree: 1000000,
+          };
+        }
+      });
+      tester.on('diskfree', event => {
+        done('should not emit diskfree event');
+      });
+      tester.start({
+        diskfree: {'/path2': 1000},
+        immediate: true,
+      });
+      setImmediate(() => {
+        assert.ok(fs.promises.statfs.calledOnce);
+        stub.restore();
+        done();
+      });
+    });
+    it('should emit error event when fs.promises.statfs() throws', (done) => {
+      const stub = sinon.stub(fs.promises, 'statfs').callsFake(async () => {
+        throw new Error('fs.promises.statfs() failed');
+      });
+      tester.on('diskfree', event => {
+        done('should not emit diskfree event');
+      });
+      tester.start({
+        diskfree: {'/path1': 1000},
+        immediate: true,
+      });
+      tester.on('error', event => {
+        assert.ok(fs.promises.statfs.calledOnce);
+        stub.restore();
+        done();
+      });
+    });
+    it('should throw if fs.statfs does not exist', async () => {
+      const statfs = fs.statfs;
+      fs.statfs = undefined;
+      try {
+        assert.throws(() => {
+          tester.start({
+            diskfree: {'/path1': 1000},
+          });
+        });
+      } catch(err) {
+        fs.statfs = statfs;
+        throw err;
       }
-    });
-    tester.start({
-      diskfree: {'/path1': 71058895, '/path2': 1000},
-      immediate: true,
-    });
-    tester.on('diskfree', event => {
-      assert.strictEqual(event.type, tester.constants.events.DISKFREE);
-      assert.ok(event.loadavg);
-      assert.ok(event.freemem);
-      assert.ok(event.totalmem);
-      assert.ok(event.uptime);
-      assert.ok(event.diskfree);
-      assert.strictEqual(event.diskfree['/path1'], 61058895);
-      assert.strictEqual(event.diskfree['/path2'], 41058895);
-      assert.ok(event.timestamp);
-      assert.ok(fs.promises.statfs.calledTwice);
-      stub.restore();
-      done();
-    });
-  });
-  it('should not emit diskfree event', (done) => {
-    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async (path) => {
-      if(path === '/path1') {
-        return {
-          type: 1397114950,
-          bsize: 4096,
-          blocks: 121938943,
-          bfree: 61058895,
-          bavail: 61058895,
-          files: 999,
-          ffree: 1000000,
-        };
-      } else if(path === '/path2') {
-        return {
-          type: 1397114950,
-          bsize: 4096,
-          blocks: 121938943,
-          bfree: 61058895,
-          bavail: 61058895,
-          files: 999,
-          ffree: 1000000,
-        };
-      } else {
-        return {
-          type: 1397114950,
-          bsize: 4096,
-          blocks: 121938943,
-          bfree: 61058895,
-          bavail: 61058895,
-          files: 999,
-          ffree: 1000000,
-        };
-      }
-    });
-    tester.on('diskfree', event => {
-      done('should not emit diskfree event');
-    });
-    tester.start({
-      diskfree: {'/path2': 1000},
-      immediate: true,
-    });
-    setImmediate(() => {
-      assert.ok(fs.promises.statfs.calledOnce);
-      stub.restore();
-      done();
-    });
-  });
-  it('should emit error event when fs.promises.statfs() throws', (done) => {
-    const stub = sinon.stub(fs.promises, 'statfs').callsFake(async () => {
-      throw new Error('fs.promises.statfs() failed');
-    });
-    tester.on('diskfree', event => {
-      done('should not emit diskfree event');
-    });
-    tester.start({
-      diskfree: {'/path1': 1000},
-      immediate: true,
-    });
-    tester.on('error', event => {
-      assert.ok(fs.promises.statfs.calledOnce);
-      stub.restore();
-      done();
+      fs.statfs = statfs;
     });
   });
 });
