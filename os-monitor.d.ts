@@ -1,4 +1,3 @@
-/// <reference types="node" />
 declare const os: any, fs: any, events: any, stream: any, _: any, version: any, critical: number;
 declare enum EventType {
     MONITOR = "monitor",
