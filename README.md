@@ -219,12 +219,20 @@ There is some useful information in the provided event object:
 
 ```
 {
-  type: 'monitor', // event type
-  loadavg: [ 0.4599609375, 0.53076171875, 0.4990234375 ], // load average values for 1, 5, 15 minutes
-  uptime: 1614056, // os uptime in seconds
-  freemem: 241262592, // free memory available in bytes
-  totalmem: 2147483648, // total memory available in bytes
-  timestamp: 1394766898 // UNIX Timestamp
+  "type": "monitor", // event type
+  "loadavg": [
+    0.4599609375,
+    0.53076171875,
+    0.4990234375
+  ], // load average values for 1, 5, 15 minutes
+  "uptime": 1614056, // os uptime in seconds
+  "freemem": 241262592, // free memory available in bytes
+  "totalmem": 2147483648, // total memory available in bytes
+  "diskfree": {
+    "/": 25786328,
+    "/home": 12786329
+  }, // available blocks per file system path, if any config was passed for 'diskfree' event
+  "timestamp": 1394766898 // UNIX Timestamp
 }
 ```
 All supported events are: 'monitor', 'uptime', 'freemem', 'diskfree', 'loadavg1', 'loadavg5', 'loadavg15', 'start', 'stop', 'config', 'reset', 'destroy'.
