@@ -23,7 +23,9 @@ If you are using an old version of Node.js (older than v18.15.x), you might need
 # Synopsis
 
 ```javascript
-const monitor = require("os-monitor");
+const { Monitor } = require("os-monitor");
+
+const monitor = new Monitor();
 
 
 // basic usage
@@ -283,12 +285,12 @@ async function callback() {
 
 ## Monitor class
 
-Need concurrent monitor instances? The monitor class is available from the os-monitor object:
+Need concurrent monitor instances? Multiple instances can be created using the `Monitor` class:
 
 ```
-const monitor = require('os-monitor');
+const { Monitor } = require('os-monitor');
 
-let monitor1 = new monitor.Monitor();
-let monitor2 = new monitor.Monitor();
-let monitor3 = new monitor.Monitor();
+let monitor1 = new Monitor();
+let monitor2 = new Monitor();
+let monitor3 = new Monitor();
 ```
