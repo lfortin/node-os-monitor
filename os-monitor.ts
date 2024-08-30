@@ -30,7 +30,7 @@ const os          = require('os'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
-enum EventType {
+export enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",
     FREEMEM = "freemem",
@@ -45,7 +45,7 @@ enum EventType {
     DESTROY = "destroy"
 }
 
-class Monitor extends stream.Readable {
+export class Monitor extends stream.Readable {
 
   constructor() {
     super({highWaterMark: 102400});
@@ -338,7 +338,7 @@ class Monitor extends stream.Readable {
   }
 }
 
-class Thenable<Type> extends events.EventEmitter {
+export class Thenable<Type> extends events.EventEmitter {
   static constants = {
     state: {
       PENDING: 'pending',
@@ -393,7 +393,7 @@ class Thenable<Type> extends events.EventEmitter {
 
 module.exports = new Monitor();
 
-interface StatFs {
+export interface StatFs {
   type  : number;
   bsize : number;
   blocks: number;
@@ -403,11 +403,11 @@ interface StatFs {
   ffree : number;
 }
 
-interface DiskfreeConfig {
+export interface DiskfreeConfig {
   [key: string]: number;
 }
 
-interface ConfigObject {
+export interface ConfigObject {
   delay     : number;
   critical1 : number;
   critical5 : number;
@@ -434,18 +434,18 @@ interface MonitorState {
   }>;
 }
 
-interface MonitorConstants {
+export interface MonitorConstants {
   events: {
     [key: string]: EventType;
   };
   defaults: ConfigObject;
 }
 
-interface DiskfreeInfo {
+export interface DiskfreeInfo {
   [key: string]: number;
 }
 
-interface InfoObject {
+export interface InfoObject {
   loadavg  : Array<number>;
   uptime   : number;
   freemem  : number;
@@ -454,26 +454,26 @@ interface InfoObject {
   options? : Partial<ConfigObject>;
 }
 
-interface EventObject extends Partial<InfoObject> {
+export interface EventObject extends Partial<InfoObject> {
   type      : EventType;
   timestamp : number;
 }
 
-interface EventHandler {
+export interface EventHandler {
   (event: EventObject): void;
 }
 
-interface ThenableState<Type> {
+export interface ThenableState<Type> {
   state: string;
   result?: Type | unknown;
 }
 
-interface ThenableResolvedHandler<Type> {
+export interface ThenableResolvedHandler<Type> {
   (result: Type | unknown): unknown;
 }
 
-interface ThenableRejectedHandler<Type> {
+export interface ThenableRejectedHandler<Type> {
   (error: unknown): unknown;
 }
 
-type EventObjectThenable = Thenable<EventObject>;
+export type EventObjectThenable = Thenable<EventObject>;

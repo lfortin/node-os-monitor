@@ -15,6 +15,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Thenable = exports.Monitor = exports.EventType = void 0;
 // Copyright (c) 2012-2024 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -50,7 +52,7 @@ var EventType;
     EventType["CONFIG"] = "config";
     EventType["RESET"] = "reset";
     EventType["DESTROY"] = "destroy";
-})(EventType || (EventType = {}));
+})(EventType || (exports.EventType = EventType = {}));
 var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
@@ -307,6 +309,7 @@ var Monitor = /** @class */ (function (_super) {
     };
     return Monitor;
 }(stream.Readable));
+exports.Monitor = Monitor;
 var Thenable = /** @class */ (function (_super) {
     __extends(Thenable, _super);
     function Thenable() {
@@ -365,4 +368,5 @@ var Thenable = /** @class */ (function (_super) {
     };
     return Thenable;
 }(events.EventEmitter));
+exports.Thenable = Thenable;
 module.exports = new Monitor();
