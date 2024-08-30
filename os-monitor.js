@@ -1,5 +1,7 @@
 "use strict";
 // OS Monitoring for Node.js
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Monitor = exports.EventType = void 0;
 // Copyright (c) 2012-2024 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,7 +37,7 @@ var EventType;
     EventType["CONFIG"] = "config";
     EventType["RESET"] = "reset";
     EventType["DESTROY"] = "destroy";
-})(EventType || (EventType = {}));
+})(EventType || (exports.EventType = EventType = {}));
 class Monitor extends stream.Readable {
     constructor() {
         super({ highWaterMark: 102400 });
@@ -266,4 +268,5 @@ class Monitor extends stream.Readable {
         return new Monitor();
     }
 }
+exports.Monitor = Monitor;
 module.exports = new Monitor();

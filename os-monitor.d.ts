@@ -1,5 +1,5 @@
-declare const os: any, fs: any, stream: any, throttle: any, version: any, critical: number;
-declare enum EventType {
+declare const stream: any;
+export declare enum EventType {
     MONITOR = "monitor",
     UPTIME = "uptime",
     FREEMEM = "freemem",
@@ -13,7 +13,7 @@ declare enum EventType {
     RESET = "reset",
     DESTROY = "destroy"
 }
-declare class Monitor extends stream.Readable {
+export declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
     get constants(): MonitorConstants;
@@ -44,7 +44,7 @@ declare class Monitor extends stream.Readable {
     blocks(bytes: number, blockSize?: number): number;
     createMonitor(): Monitor;
 }
-interface StatFs {
+export interface StatFs {
     type: number;
     bsize: number;
     blocks: number;
@@ -53,10 +53,10 @@ interface StatFs {
     files: number;
     ffree: number;
 }
-interface DiskfreeConfig {
+export interface DiskfreeConfig {
     [key: string]: number;
 }
-interface ConfigObject {
+export interface ConfigObject {
     delay: number;
     critical1: number;
     critical5: number;
@@ -69,28 +69,16 @@ interface ConfigObject {
     diskfree: DiskfreeConfig;
     throttle?: number;
 }
-interface MonitorState {
-    running: boolean;
-    ended: boolean;
-    streamBuffering: boolean;
-    interval?: NodeJS.Timeout;
-    config: ConfigObject;
-    throttled: Array<{
-        event: EventType;
-        originalFn: EventHandler;
-        throttledFn: EventHandler;
-    }>;
-}
-interface MonitorConstants {
+export interface MonitorConstants {
     events: {
         [key: string]: EventType;
     };
     defaults: ConfigObject;
 }
-interface DiskfreeInfo {
+export interface DiskfreeInfo {
     [key: string]: number;
 }
-interface InfoObject {
+export interface InfoObject {
     loadavg: Array<number>;
     uptime: number;
     freemem: number;
@@ -98,10 +86,11 @@ interface InfoObject {
     diskfree?: DiskfreeInfo;
     options?: Partial<ConfigObject>;
 }
-interface EventObject extends Partial<InfoObject> {
+export interface EventObject extends Partial<InfoObject> {
     type: EventType;
     timestamp: number;
 }
-interface EventHandler {
+export interface EventHandler {
     (event: EventObject): void;
 }
+export {};
