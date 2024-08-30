@@ -19,7 +19,9 @@ To install the legacy version of `os-monitor` (supports Node.js back to v0.10.x)
 # Synopsis
 
 ```javascript
-const monitor = require("os-monitor");
+const { Monitor } = require("os-monitor");
+
+const monitor = new Monitor();
 
 
 // basic usage
@@ -279,14 +281,14 @@ async function callback() {
 
 ## Monitor class
 
-Need concurrent monitor instances? The monitor class is available from the os-monitor object:
+Need concurrent monitor instances? Multiple instances can be created using the `Monitor` class:
 
 ```
-const monitor = require('os-monitor');
+const { Monitor } = require('os-monitor');
 
-let monitor1 = new monitor.Monitor();
-let monitor2 = new monitor.Monitor();
-let monitor3 = new monitor.Monitor();
+let monitor1 = new Monitor();
+let monitor2 = new Monitor();
+let monitor3 = new Monitor();
 ```
 
 
