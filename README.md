@@ -294,3 +294,12 @@ let monitor1 = new Monitor();
 let monitor2 = new Monitor();
 let monitor3 = new Monitor();
 ```
+
+
+## License
+
+`os-monitor` is released under the [MIT License](https://github.com/lfortin/node-os-monitor/blob/master/LICENSE).
+
+**100% Free:** `os-monitor` will always be free to use in both proprietary and open-source projects.
+
+**Attribution is required:** You must retain my name and the license information in any distributed code. These items do not have to be user-facing and can remain within the codebase.
