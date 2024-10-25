@@ -8,6 +8,7 @@ A very simple monitor for the built-in `os`, `fs` modules in Node.js.
 
 Allows you to observe some OS parameters, such as free memory available, load average or free disk space.
 
+Released under the [MIT License](https://opensource.org/license/mit).
 
 ## Installation
 
@@ -300,6 +301,6 @@ let monitor3 = new Monitor();
 
 `os-monitor` is released under the [MIT License](https://github.com/lfortin/node-os-monitor/blob/master/LICENSE).
 
-**100% Free:** `os-monitor` will always be free to use in both proprietary and open-source projects.
+**100% Free:** `os-monitor` can be used freely in both proprietary and open-source projects.
 
-**Attribution is required:** You must retain my name and the license information in any distributed code. These items do not have to be user-facing and can remain within the codebase.
+**Attribution is required:** You must retain the author's name and the license information in any distributed code. These items do not need to be user-facing and can remain within the codebase.
