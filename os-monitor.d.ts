@@ -1,20 +1,6 @@
 declare const stream: any;
-export declare enum EventType {
-    MONITOR = "monitor",
-    UPTIME = "uptime",
-    FREEMEM = "freemem",
-    DISKFREE = "diskfree",
-    LOADAVG1 = "loadavg1",
-    LOADAVG5 = "loadavg5",
-    LOADAVG15 = "loadavg15",
-    START = "start",
-    STOP = "stop",
-    CONFIG = "config",
-    RESET = "reset",
-    DESTROY = "destroy"
-}
+export type EventType = "monitor" | "uptime" | "freemem" | "diskfree" | "loadavg1" | "loadavg5" | "loadavg15" | "start" | "stop" | "config" | "reset" | "destroy";
 export declare class Monitor extends stream.Readable {
-    static [x: string]: any;
     constructor();
     get version(): string;
     get constants(): MonitorConstants;

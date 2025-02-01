@@ -36,11 +36,11 @@
     "nyc": "^17.0.0",
     "semver": "^7.3.8",
     "sinon": "^19.0.2",
-    "typescript": "^5.0.0",
+    "typescript": "^5.8.0-beta",
     "underscore": "^1.13.6"
   },
   "scripts": {
-    "build": "tsc -d -t es2023 --module commonjs --strict os-monitor.ts",
+    "build": "tsc -d -t es2023 --module commonjs --strict --erasableSyntaxOnly os-monitor.ts",
     "coverage": "nyc --reporter=lcov --reporter=text-summary mocha test/**/*.js",
     "lint": "eslint ./os-monitor.ts",
     "prepublishOnly": "npm run build && npm test",

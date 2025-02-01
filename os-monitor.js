@@ -1,7 +1,7 @@
 "use strict";
 // OS Monitoring for Node.js
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Monitor = exports.EventType = void 0;
+exports.Monitor = void 0;
 // Copyright (c) 2012-2024 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -23,21 +23,20 @@ exports.Monitor = exports.EventType = void 0;
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 const os = require('node:os'), fs = require('node:fs'), stream = require('node:stream'), throttle = require('lodash.throttle'), { version } = require('./package.json'), critical = os.cpus().length;
-var EventType;
-(function (EventType) {
-    EventType["MONITOR"] = "monitor";
-    EventType["UPTIME"] = "uptime";
-    EventType["FREEMEM"] = "freemem";
-    EventType["DISKFREE"] = "diskfree";
-    EventType["LOADAVG1"] = "loadavg1";
-    EventType["LOADAVG5"] = "loadavg5";
-    EventType["LOADAVG15"] = "loadavg15";
-    EventType["START"] = "start";
-    EventType["STOP"] = "stop";
-    EventType["CONFIG"] = "config";
-    EventType["RESET"] = "reset";
-    EventType["DESTROY"] = "destroy";
-})(EventType || (exports.EventType = EventType = {}));
+const EventTypes = {
+    MONITOR: "monitor",
+    UPTIME: "uptime",
+    FREEMEM: "freemem",
+    DISKFREE: "diskfree",
+    LOADAVG1: "loadavg1",
+    LOADAVG5: "loadavg5",
+    LOADAVG15: "loadavg15",
+    START: "start",
+    STOP: "stop",
+    CONFIG: "config",
+    RESET: "reset",
+    DESTROY: "destroy",
+};
 class Monitor extends stream.Readable {
     constructor() {
         super({ highWaterMark: 102400 });
@@ -47,7 +46,7 @@ class Monitor extends stream.Readable {
     }
     get constants() {
         return {
-            events: EventType,
+            events: EventTypes,
             defaults: {
                 delay: 3000,
                 critical1: critical,
