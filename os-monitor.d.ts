@@ -14,7 +14,6 @@ export declare enum EventType {
     DESTROY = "destroy"
 }
 export declare class Monitor extends stream.Readable {
-    static [x: string]: any;
     constructor();
     get version(): string;
     get constants(): MonitorConstants;
