@@ -29,20 +29,20 @@ const os          = require('node:os'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
-export enum EventType {
-    MONITOR = "monitor",
-    UPTIME = "uptime",
-    FREEMEM = "freemem",
-    DISKFREE = "diskfree",
-    LOADAVG1 = "loadavg1",
-    LOADAVG5 = "loadavg5",
-    LOADAVG15 = "loadavg15",
-    START = "start",
-    STOP = "stop",
-    CONFIG = "config",
-    RESET = "reset",
-    DESTROY = "destroy"
-}
+const EventTypes = {
+  MONITOR: "monitor",
+  UPTIME: "uptime",
+  FREEMEM: "freemem",
+  DISKFREE: "diskfree",
+  LOADAVG1: "loadavg1",
+  LOADAVG5: "loadavg5",
+  LOADAVG15: "loadavg15",
+  START: "start",
+  STOP: "stop",
+  CONFIG: "config",
+  RESET: "reset",
+  DESTROY: "destroy"
+} as const;
 
 export class Monitor extends stream.Readable {
 
@@ -56,7 +56,7 @@ export class Monitor extends stream.Readable {
 
   public get constants(): MonitorConstants {
     return {
-      events: EventType,
+      events: EventTypes,
       defaults: {
         delay     : 3000,
         critical1 : critical,
@@ -331,6 +331,8 @@ export class Monitor extends stream.Readable {
 }
 
 module.exports = new Monitor();
+
+export type EventType = typeof EventTypes[keyof typeof EventTypes];
 
 export interface StatFs {
   type  : number;
