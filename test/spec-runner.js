@@ -1,6 +1,5 @@
 
 const assert = require('node:assert'),
-          os = require('node:os'),
           fs = require('node:fs'),
       stream = require('node:stream'),
         mock = require('mock-os'),
