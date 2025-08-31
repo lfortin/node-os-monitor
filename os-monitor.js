@@ -17,7 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Thenable = exports.Monitor = void 0;
-// Copyright (c) 2012-2024 lfortin
+// Copyright (c) 2012-2025 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
