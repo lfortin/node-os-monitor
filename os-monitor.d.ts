@@ -1,18 +1,18 @@
 declare const events: any, stream: any;
-export declare enum EventType {
-    MONITOR = "monitor",
-    UPTIME = "uptime",
-    FREEMEM = "freemem",
-    DISKFREE = "diskfree",
-    LOADAVG1 = "loadavg1",
-    LOADAVG5 = "loadavg5",
-    LOADAVG15 = "loadavg15",
-    START = "start",
-    STOP = "stop",
-    CONFIG = "config",
-    RESET = "reset",
-    DESTROY = "destroy"
-}
+declare const EventTypes: {
+    readonly MONITOR: "monitor";
+    readonly UPTIME: "uptime";
+    readonly FREEMEM: "freemem";
+    readonly DISKFREE: "diskfree";
+    readonly LOADAVG1: "loadavg1";
+    readonly LOADAVG5: "loadavg5";
+    readonly LOADAVG15: "loadavg15";
+    readonly START: "start";
+    readonly STOP: "stop";
+    readonly CONFIG: "config";
+    readonly RESET: "reset";
+    readonly DESTROY: "destroy";
+};
 export declare class Monitor extends stream.Readable {
     constructor();
     get version(): string;
@@ -59,6 +59,7 @@ export declare class Thenable<Type> extends events.EventEmitter {
     then(onFulfilled?: ThenableResolvedHandler<Type>, onRejected?: ThenableRejectedHandler<Type>): void;
     catch(onRejected?: ThenableRejectedHandler<Type>): void;
 }
+export type EventType = typeof EventTypes[keyof typeof EventTypes];
 export interface StatFs {
     type: number;
     bsize: number;

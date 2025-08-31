@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Thenable = exports.Monitor = exports.EventType = void 0;
+exports.Thenable = exports.Monitor = void 0;
 // Copyright (c) 2012-2024 lfortin
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -38,21 +38,20 @@ exports.Thenable = exports.Monitor = exports.EventType = void 0;
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var os = require('os'), fs = require('fs'), events = require('events'), stream = require('readable-stream'), _ = require('underscore'), version = require('./package.json').version, critical = os.cpus().length;
-var EventType;
-(function (EventType) {
-    EventType["MONITOR"] = "monitor";
-    EventType["UPTIME"] = "uptime";
-    EventType["FREEMEM"] = "freemem";
-    EventType["DISKFREE"] = "diskfree";
-    EventType["LOADAVG1"] = "loadavg1";
-    EventType["LOADAVG5"] = "loadavg5";
-    EventType["LOADAVG15"] = "loadavg15";
-    EventType["START"] = "start";
-    EventType["STOP"] = "stop";
-    EventType["CONFIG"] = "config";
-    EventType["RESET"] = "reset";
-    EventType["DESTROY"] = "destroy";
-})(EventType || (exports.EventType = EventType = {}));
+var EventTypes = {
+    MONITOR: "monitor",
+    UPTIME: "uptime",
+    FREEMEM: "freemem",
+    DISKFREE: "diskfree",
+    LOADAVG1: "loadavg1",
+    LOADAVG5: "loadavg5",
+    LOADAVG15: "loadavg15",
+    START: "start",
+    STOP: "stop",
+    CONFIG: "config",
+    RESET: "reset",
+    DESTROY: "destroy"
+};
 var Monitor = /** @class */ (function (_super) {
     __extends(Monitor, _super);
     function Monitor() {
@@ -85,7 +84,7 @@ var Monitor = /** @class */ (function (_super) {
     Object.defineProperty(Monitor.prototype, "constants", {
         get: function () {
             return {
-                events: EventType,
+                events: EventTypes,
                 defaults: {
                     delay: 3000,
                     critical1: critical,
