@@ -1,6 +1,5 @@
 
 const assert = require('assert'),
-          os = require('os'),
           fs = require('fs'),
         mock = require('mock-os'),
        sinon = require('sinon'),
