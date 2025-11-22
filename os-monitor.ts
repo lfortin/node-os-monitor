@@ -29,6 +29,7 @@ const os          = require('node:os'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
+// eslint-disable-next-line one-var
 const EventTypes = {
   MONITOR: "monitor",
   UPTIME: "uptime",
