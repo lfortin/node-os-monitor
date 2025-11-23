@@ -42,7 +42,7 @@ export declare class Monitor extends stream.Readable {
     hours(n: number): number;
     days(n: number): number;
     blocks(bytes: number, blockSize?: number): number;
-    createMonitor(): Monitor;
+    createMonitor(options?: Partial<ConfigObject>): Monitor;
 }
 export type EventType = typeof EventTypes[keyof typeof EventTypes];
 export interface StatFs {

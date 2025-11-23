@@ -28,9 +28,9 @@ npm install os-monitor@legacy
 ## Synopsis
 
 ```javascript
-const { Monitor } = require("os-monitor");
+const { createMonitor } = require("os-monitor");
 
-const monitor = new Monitor();
+const monitor = createMonitor();
 
 
 // basic usage
@@ -92,8 +92,7 @@ monitor.isRunning(); // -> true / false
 
 
 // use as readable stream
-monitor.start({stream: true}).pipe(process.stdout);
-
+monitor.start({ stream: true }).pipe(process.stdout);
 ```
 
 ## config options
@@ -205,7 +204,6 @@ monitor.days(1); // -> 86400000 ms
 
 // start with a delay of 5000 ms
 monitor.start({ delay: monitor.seconds(5) });
-
 ```
 
 ### .blocks( bytes, blockSize )
@@ -220,7 +218,13 @@ monitor.start({
     '/filesystem': monitor.blocks(100000000, 4096)
   }
 });
+```
 
+### .createMonitor( [options] )
+
+Factory method that creates and returns a new monitor instance. Accepts an optional options object to override default settings.
+```javascript
+let streamMonitor = monitor.createMonitor({ stream: true });
 ```
 
 
@@ -290,14 +294,23 @@ async function callback() {
 
 ## Monitor class
 
-Need concurrent monitor instances? Multiple instances can be created using the `Monitor` class:
+The `Monitor` class is available to allow advanced users to extend and create fully customized monitor implementations.
 
 ```javascript
-const { Monitor } = require('os-monitor');
+const { Monitor } = require("os-monitor");
 
-let monitor1 = new Monitor();
-let monitor2 = new Monitor();
-let monitor3 = new Monitor();
+class MyMonitor extends Monitor {
+  constructor() {
+    super();
+  }
+
+  customMethod() {
+    // Custom functionality...
+  }
+}
+
+let monitor = new MyMonitor();
+
 ```
 
 

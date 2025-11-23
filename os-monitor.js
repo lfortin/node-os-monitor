@@ -264,8 +264,10 @@ class Monitor extends stream.Readable {
     blocks(bytes, blockSize = 1) {
         return Math.ceil(bytes / blockSize);
     }
-    createMonitor() {
-        return new Monitor();
+    createMonitor(options) {
+        const monitor = new Monitor();
+        monitor.config(options);
+        return monitor;
     }
 }
 exports.Monitor = Monitor;

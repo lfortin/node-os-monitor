@@ -44,8 +44,13 @@ describe('Monitor class', function() {
   });
 });
 describe('factory method', function() {
-  it('should create new instances', async () => {
+  it('should create new instances without options', async () => {
     assert.ok(tester.createMonitor() instanceof monitor.Monitor);
+  });
+  it('should create new instances with options', async () => {
+    const monitorWithOptions = tester.createMonitor({delay: 10000});
+    assert.ok(monitorWithOptions instanceof monitor.Monitor);
+    assert.strictEqual(monitorWithOptions.config().delay, 10000);
   });
 });
 describe('API signature', function() {

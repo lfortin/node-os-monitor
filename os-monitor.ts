@@ -326,8 +326,11 @@ export class Monitor extends stream.Readable {
     return Math.ceil(bytes / blockSize);
   }
 
-  public createMonitor(): Monitor {
-    return new Monitor();
+  public createMonitor(options?: Partial<ConfigObject>): Monitor {
+    const monitor = new Monitor();
+    monitor.config(options);
+
+    return monitor;
   }
 }
 
