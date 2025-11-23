@@ -14,7 +14,7 @@
   },
   "main": "./os-monitor.js",
   "type": "commonjs",
-  "types": "./os-monitor.d.ts",
+  "types": "./index.d.ts",
   "engines": {
     "node": ">=18.15.0"
   },
