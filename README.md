@@ -1,6 +1,7 @@
 # os-monitor
 
-> :warning: this documentation refers to the legacy version(1.x) of `os-monitor`
+> ⚠️ Legacy docs (os-monitor v1.x).
+> Using Node.js 18+? Upgrade to **v2** — it’s drop-in compatible.
 
 [![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
 
