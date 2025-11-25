@@ -2,7 +2,7 @@
   "name": "os-monitor",
   "description": "simple OS monitoring for Node.js",
   "version": "2.1.1",
-  "homepage": "https://github.com/lfortin/node-os-monitor#readme",
+  "homepage": "https://lfortin.github.io/os-monitor",
   "repository": {
     "type": "git",
     "url": "git://github.com/lfortin/node-os-monitor.git"
