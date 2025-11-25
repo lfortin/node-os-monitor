@@ -40,7 +40,10 @@ const EventTypes = {
 };
 class Monitor extends stream.Readable {
     constructor() {
-        super({ highWaterMark: 102400 });
+        super({
+            highWaterMark: 102400,
+            emitClose: true
+        });
     }
     get version() {
         return version;
@@ -180,7 +183,6 @@ class Monitor extends stream.Readable {
         if (!this._isEnded()) {
             this.sendEvent(this.constants.events.DESTROY);
             this.stop();
-            this.emit('close');
             stream.Readable.prototype.destroy.apply(this, [err]);
             this._monitorState.ended = true;
         }

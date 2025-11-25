@@ -642,6 +642,12 @@ describe('.destroy()', function() {
     tester.destroy();
     tester.start();
   });
+  it('should emit close event', (done) => {
+    tester.on('close', event => {
+      done();
+    });
+    tester.destroy();
+  });
 });
 describe('convenience methods', function() {
   describe('.seconds(), .minutes(), .hours(), .days()', function() {
