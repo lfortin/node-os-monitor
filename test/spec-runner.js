@@ -539,6 +539,12 @@ describe('readable stream', function() {
     assert.strictEqual(tester.push('hello'), true);
     assert.strictEqual(tester._monitorState.streamBuffering, true);
   });
+  it('should emit close event when destroyed', (done) => {
+    tester.on('close', event => {
+      done();
+    });
+    tester.destroy();
+  });
 });
 describe('cycles', function() {
   it('should execute multiple cycles', (done) => {
@@ -641,12 +647,6 @@ describe('.destroy()', function() {
     });
     tester.destroy();
     tester.start();
-  });
-  it('should emit close event', (done) => {
-    tester.on('close', event => {
-      done();
-    });
-    tester.destroy();
   });
 });
 describe('convenience methods', function() {
