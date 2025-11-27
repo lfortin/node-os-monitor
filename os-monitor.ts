@@ -45,6 +45,20 @@ const EventTypes = {
   DESTROY: "destroy"
 } as const;
 
+// eslint-disable-next-line one-var
+const defaultConfig: ConfigObject = {
+  delay     : 3000,
+  critical1 : critical,
+  critical5 : critical,
+  critical15: critical,
+  freemem   : 0,
+  uptime    : 0,
+  diskfree  : {},
+  silent    : false,
+  stream    : false,
+  immediate : false
+} as const;
+
 export class Monitor extends stream.Readable {
 
   constructor() {
@@ -60,19 +74,8 @@ export class Monitor extends stream.Readable {
 
   public get constants(): MonitorConstants {
     return {
-      events: EventTypes,
-      defaults: {
-        delay     : 3000,
-        critical1 : critical,
-        critical5 : critical,
-        critical15: critical,
-        freemem   : 0,
-        uptime    : 0,
-        diskfree  : {},
-        silent    : false,
-        stream    : false,
-        immediate : false
-      }
+      events: { ...EventTypes },
+      defaults: { ...defaultConfig }
     };
   }
 

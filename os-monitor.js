@@ -38,6 +38,19 @@ const EventTypes = {
     RESET: "reset",
     DESTROY: "destroy"
 };
+// eslint-disable-next-line one-var
+const defaultConfig = {
+    delay: 3000,
+    critical1: critical,
+    critical5: critical,
+    critical15: critical,
+    freemem: 0,
+    uptime: 0,
+    diskfree: {},
+    silent: false,
+    stream: false,
+    immediate: false
+};
 class Monitor extends stream.Readable {
     constructor() {
         super({
@@ -50,19 +63,8 @@ class Monitor extends stream.Readable {
     }
     get constants() {
         return {
-            events: EventTypes,
-            defaults: {
-                delay: 3000,
-                critical1: critical,
-                critical5: critical,
-                critical15: critical,
-                freemem: 0,
-                uptime: 0,
-                diskfree: {},
-                silent: false,
-                stream: false,
-                immediate: false
-            }
+            events: { ...EventTypes },
+            defaults: { ...defaultConfig }
         };
     }
     // expose main Monitor class

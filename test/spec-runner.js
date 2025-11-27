@@ -87,6 +87,17 @@ describe('API signature', function() {
     assert.strictEqual(tester.version, version);
   });
 });
+describe('constants', function() {
+  it('should have readonly constants', async () => {
+    tester.constants.events.INVALID = 'invalid';
+    assert.notStrictEqual(tester.constants.events.INVALID, 'invalid');
+  });
+  it('should have constants with unique object references', async () => {
+    assert.ok(tester.constants !== tester.constants, "unique object references expected");
+    assert.ok(tester.constants.events !== tester.constants.events, "unique object references expected");
+    assert.ok(tester.constants.defaults !== tester.constants.defaults, "unique object references expected");
+  });
+});
 describe('event emitter', function() {
   it('should emit start event', (done) => {
     let config = Object.assign({}, tester.constants.defaults, {uptime: 1234567, immediate: true});
