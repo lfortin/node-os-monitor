@@ -18,12 +18,6 @@
   "engines": {
     "node": ">=18.15.0"
   },
-  "dependencies": {
-    "lodash.throttle": "~4.1.1"
-  },
-  "bundleDependencies": [
-    "lodash.throttle"
-  ],
   "devDependencies": {
     "@types/lodash.throttle": "^4.1.7",
     "@types/node": "^22.7.4",
@@ -41,7 +35,7 @@
   },
   "scripts": {
     "build": "tsc -d -t es2024 --module commonjs --strict os-monitor.ts",
-    "coverage": "nyc --reporter=lcov --reporter=text-summary mocha test/**/*.js",
+    "coverage": "nyc --include=os-monitor.js --reporter=lcov --reporter=text-summary mocha test/**/*.js",
     "lint": "eslint ./os-monitor.ts",
     "prepublishOnly": "npm run build && npm test",
     "test": "mocha test/**/*.js"

@@ -22,7 +22,7 @@ exports.Monitor = void 0;
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-const os = require('node:os'), fs = require('node:fs'), stream = require('node:stream'), throttle = require('lodash.throttle'), { version } = require('./package.json'), critical = os.cpus().length;
+const os = require('node:os'), fs = require('node:fs'), stream = require('node:stream'), throttle = require('./vendor/lodash.throttle'), { version } = require('./package.json'), critical = os.cpus().length;
 // eslint-disable-next-line one-var
 const EventTypes = {
     MONITOR: "monitor",

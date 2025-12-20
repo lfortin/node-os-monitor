@@ -25,7 +25,7 @@
 const os          = require('node:os'),
       fs          = require('node:fs'),
       stream      = require('node:stream'),
-      throttle    = require('lodash.throttle'),
+      throttle    = require('./vendor/lodash.throttle'),
       { version } = require('./package.json'),
       critical: number = os.cpus().length;
 
