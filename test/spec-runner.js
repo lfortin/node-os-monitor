@@ -628,6 +628,23 @@ describe('.when()', function() {
     assert.ok(tester.when('monitor') instanceof Promise);
   });
 });
+describe('.config()', function() {
+  it('should return default config object', async () => {
+    let config = tester.config();
+    assert.deepStrictEqual(config, tester.constants.defaults);
+  });
+  it('should return updated config object', async () => {
+    let config = tester.config({delay: 1000, immediate: true});
+    assert.deepStrictEqual(config, {
+      ...tester.constants.defaults,
+      delay: 1000,
+      immediate: true
+    });
+  });
+  it('should throw an error if config is not an object', async () => {
+    assert.throws(() => tester.config(1), /config options must be an object/);
+  });
+});
 describe('.reset()', function() {
   it('should reset config to defaults', async () => {
     tester.config({

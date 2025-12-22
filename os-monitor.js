@@ -191,7 +191,7 @@ class Monitor extends stream.Readable {
         return this;
     }
     config(options) {
-        if (options !== null && typeof options === 'object') {
+        if (options) {
             this._validateConfig(options);
             Object.assign(this._monitorState.config, options);
             this.sendEvent(this.constants.events.CONFIG, { options: { ...options } });
@@ -199,7 +199,13 @@ class Monitor extends stream.Readable {
         return this._monitorState.config;
     }
     _validateConfig(options) {
-        if (options.diskfree && Object.keys(options.diskfree).length && !fs.statfs) {
+        if (!options || typeof options !== "object") {
+            throw new Error("config options must be an object");
+        }
+        const config = options;
+        if (typeof config.diskfree === "object" &&
+            Object.keys(config.diskfree).length &&
+            !fs.statfs) {
             throw new Error("diskfree not supported");
         }
     }

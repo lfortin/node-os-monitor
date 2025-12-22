@@ -235,7 +235,7 @@ export class Monitor extends stream.Readable {
 
   public config(options?: Partial<ConfigObject>): ConfigObject {
 
-    if(options !== null && typeof options === 'object') {
+    if(options) {
       this._validateConfig(options);
       Object.assign(this._monitorState.config, options);
       this.sendEvent(this.constants.events.CONFIG, { options: { ...options } });
@@ -244,8 +244,20 @@ export class Monitor extends stream.Readable {
     return this._monitorState.config;
   }
 
-  private _validateConfig(options: Partial<ConfigObject>): void {
-    if(options.diskfree && Object.keys(options.diskfree).length && !fs.statfs) {
+  private _validateConfig(
+    options: unknown
+  ): asserts options is Partial<ConfigObject> {
+    if (!options || typeof options !== "object") {
+      throw new Error("config options must be an object");
+    }
+
+    const config = options as Partial<ConfigObject>;
+
+    if (
+      typeof config.diskfree === "object" &&
+      Object.keys(config.diskfree).length &&
+      !fs.statfs
+    ) {
       throw new Error("diskfree not supported");
     }
   }
