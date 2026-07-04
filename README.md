@@ -3,6 +3,7 @@
 [![NPM](https://nodei.co/npm/os-monitor.png)](https://nodei.co/npm/os-monitor/)
 
 [![Node.js (install, build and test)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml/badge.svg?branch=master&event=push)](https://github.com/lfortin/node-os-monitor/actions/workflows/node.js.yml)
+[![Socket Badge](https://badge.socket.dev/npm/package/os-monitor)](https://socket.dev/npm/package/os-monitor)
 
 A very simple monitor for the built-in `os`, `fs` modules in Node.js.
 
