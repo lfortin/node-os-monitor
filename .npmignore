@@ -1,0 +1,10 @@
+node_modules
+*~
+
+coverage
+.nyc_output
+.vscode
+.DS_Store
+
+.eslintrc.cjs
+CONTRIBUTING.md
