@@ -34,7 +34,7 @@
     "underscore": "^1.13.6"
   },
   "scripts": {
-    "build": "tsc -d -t es2024 --module commonjs --strict os-monitor.ts",
+    "build": "tsc -d -t es2024 --module commonjs --strict --erasableSyntaxOnly os-monitor.ts",
     "coverage": "nyc --include=os-monitor.js --reporter=lcov --reporter=text-summary mocha test/**/*.js",
     "lint": "eslint ./os-monitor.ts",
     "prepublishOnly": "npm run build && npm test",
